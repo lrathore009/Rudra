@@ -1,6 +1,7 @@
 /**
  * High-detail procedural Trishul + Damru geometry.
- * Flat double-edged blades (not round tubes) — authentic Shiva trident silhouette.
+ * Authentic Shiva trident: tall centre blade, curved side prongs,
+ * lathe-turned shaft, damaru with skin heads + bead strings.
  */
 import * as THREE from "three";
 
@@ -40,74 +41,6 @@ export const DAMRU_SKIN = {
   roughness: 0.82,
 } as const;
 
-/** Leaf-shaped flat blade profile for extrusion */
-function bladeProfile(maxHalfWidth: number, length: number): THREE.Shape {
-  const s = new THREE.Shape();
-  s.moveTo(0, 0);
-  s.lineTo(maxHalfWidth * 0.35, length * 0.08);
-  s.lineTo(maxHalfWidth, length * 0.22);
-  s.lineTo(maxHalfWidth * 0.72, length * 0.55);
-  s.lineTo(maxHalfWidth * 0.42, length * 0.82);
-  s.lineTo(maxHalfWidth * 0.28, length);
-  s.lineTo(-maxHalfWidth * 0.28, length);
-  s.lineTo(-maxHalfWidth * 0.42, length * 0.82);
-  s.lineTo(-maxHalfWidth * 0.72, length * 0.55);
-  s.lineTo(-maxHalfWidth, length * 0.22);
-  s.lineTo(-maxHalfWidth * 0.35, length * 0.08);
-  s.closePath();
-  return s;
-}
-
-/** Flat center blade — tallest, straight, spear-like */
-export function createCenterBladeGeometry(): THREE.ExtrudeGeometry {
-  const profile = bladeProfile(0.14, 1.55);
-  const geo = new THREE.ExtrudeGeometry(profile, {
-    depth: 0.022,
-    bevelEnabled: true,
-    bevelThickness: 0.004,
-    bevelSize: 0.004,
-    bevelSegments: 2,
-  });
-  geo.translate(0, 0, -0.011);
-  geo.rotateX(-Math.PI / 2);
-  return geo;
-}
-
-/** Sharp center blade tip — triangular wedge */
-export function createCenterBladeTipGeometry(): THREE.BufferGeometry {
-  const geo = new THREE.ConeGeometry(0.055, 0.42, 4, 1);
-  geo.scale(1, 1, 0.18);
-  return geo;
-}
-
-/** Curved side prong path — sweeps outward then upward (classic trishul horns) */
-export function createSideProngCurve(side: 1 | -1): THREE.CatmullRomCurve3 {
-  return new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(side * 0.1, 0.22, 0),
-    new THREE.Vector3(side * 0.42, 0.48, 0.015),
-    new THREE.Vector3(side * 0.52, 0.82, 0),
-    new THREE.Vector3(side * 0.38, 1.15, -0.02),
-    new THREE.Vector3(side * 0.18, 1.38, 0),
-  ]);
-}
-
-/** Flat curved side blade extruded along prong path */
-export function createSideBladeGeometry(side: 1 | -1): THREE.ExtrudeGeometry {
-  const curve = createSideProngCurve(side);
-  const profile = bladeProfile(0.09, 0.85);
-  const geo = new THREE.ExtrudeGeometry(profile, {
-    extrudePath: curve,
-    steps: 48,
-    depth: 0.018,
-    bevelEnabled: true,
-    bevelThickness: 0.003,
-    bevelSize: 0.003,
-    bevelSegments: 2,
-  });
-  return geo;
-}
-
 /** Ornate lathe-turned shaft with ring bands */
 export function createShaftGeometry(): THREE.LatheGeometry {
   const pts: THREE.Vector2[] = [];
@@ -117,32 +50,40 @@ export function createShaftGeometry(): THREE.LatheGeometry {
     const y = t * 2.6 - 1.15;
     const band = Math.sin(t * Math.PI * 14) * 0.008;
     const flare = t < 0.08 ? 0.04 * (1 - t / 0.08) : 0;
-    const crown = t > 0.88 ? 0.035 * ((t - 0.88) / 0.12) : 0;
+    const crown = t > 0.88 ? 0.025 * ((t - 0.88) / 0.12) : 0;
     const r = 0.055 + band + flare + crown;
     pts.push(new THREE.Vector2(Math.max(0.035, r), y));
   }
   return new THREE.LatheGeometry(pts, 48);
 }
 
-/** Prong crown — three-blade socket where prongs meet shaft */
-export function createProngCrown(material: THREE.Material): THREE.Group {
-  const g = new THREE.Group();
-  const guard = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.1, 0.08, 6), material);
-  guard.position.y = 0.04;
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.014, 8, 24), material);
-  ring.rotation.x = Math.PI / 2;
-  g.add(guard, ring);
-  return g;
+/** Curved side prong — sweeps outward then upward (classic trishul) */
+export function createSideProngCurve(side: 1 | -1): THREE.CatmullRomCurve3 {
+  return new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(side * 0.08, 0.25, 0),
+    new THREE.Vector3(side * 0.35, 0.55, 0.02),
+    new THREE.Vector3(side * 0.42, 0.95, 0),
+    new THREE.Vector3(side * 0.28, 1.35, -0.02),
+    new THREE.Vector3(side * 0.12, 1.55, 0),
+  ]);
 }
 
-/** Central prong assembly — flat blade + wedge tip + crown */
+export function createProngTube(curve: THREE.Curve<THREE.Vector3>, radius = 0.055): THREE.TubeGeometry {
+  return new THREE.TubeGeometry(curve, 40, radius, 12, false);
+}
+
+/** Central prong — straight, tallest blade with tapered tip */
 export function createCenterProngGroup(material: THREE.Material): THREE.Group {
   const g = new THREE.Group();
-  const blade = new THREE.Mesh(createCenterBladeGeometry(), material);
-  blade.position.y = 0.78;
-  const tip = new THREE.Mesh(createCenterBladeTipGeometry(), material);
-  tip.position.y = 1.68;
-  g.add(blade, tip, createProngCrown(material));
+  const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.07, 1.05, 12), material);
+  blade.position.y = 0.52;
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.35, 12), material);
+  tip.position.y = 1.22;
+  const guard = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.018, 8, 24), material);
+  guard.rotation.x = Math.PI / 2;
+  guard.position.y = 0.05;
+  g.add(blade, tip, guard);
   return g;
 }
 

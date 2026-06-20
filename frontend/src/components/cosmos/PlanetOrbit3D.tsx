@@ -7,7 +7,6 @@ import * as THREE from "three";
 import { facetColor } from "@/lib/rudra-theme";
 import type { CosmosPlanet } from "./planet-config";
 import { TexturedPlanetBody } from "./PlanetMesh";
-import { ORBIT_RING_LIST, TRISHUL_SCALE } from "./cosmos-scale";
 
 export function PlanetOrbit3D({
   planet,
@@ -34,7 +33,7 @@ export function PlanetOrbit3D({
     const a = angleRef.current;
     const x = Math.cos(a) * planet.radius;
     const z = Math.sin(a) * planet.radius;
-    const y = Math.sin(a * 0.65 + planet.inclination) * planet.inclination * TRISHUL_SCALE * 0.35;
+    const y = Math.sin(a * 0.65 + planet.inclination) * planet.inclination * 3.5;
     ref.current.position.set(x, y, z);
 
     if (spinRef.current) spinRef.current.rotation.y += dt * planet.spin;
@@ -69,7 +68,7 @@ export function PlanetOrbit3D({
 
       <group ref={spinRef}>
         <TexturedPlanetBody body={planet.solarBody} accent={accent} highlighted={highlighted} />
-        {highlighted && <pointLight color={accent} intensity={awakened ? 2.5 : 1.2} distance={TRISHUL_SCALE * 0.8} />}
+        {highlighted && <pointLight color={accent} intensity={awakened ? 2.5 : 1.2} distance={4} />}
       </group>
 
       {(hovered || selected || awakened) && (
@@ -90,14 +89,15 @@ export function PlanetOrbit3D({
   );
 }
 
-/** Orbital path rings — inner → outer, scaled to Trishul */
+/** Orbital path rings — inner → outer solar distances */
 export function OrbitRings() {
+  const radii = [4.5, 5.2, 5.8, 6.2, 6.5, 9.2, 10.5, 11.5, 12.8];
   return (
     <group>
-      {ORBIT_RING_LIST.map((r, i) => (
-        <mesh key={r} rotation={[Math.PI / 2 + i * 0.015, 0, i * 0.12]}>
-          <torusGeometry args={[r, 0.008, 8, 160]} />
-          <meshBasicMaterial color="#55ccff" transparent opacity={0.06} />
+      {radii.map((r, i) => (
+        <mesh key={r} rotation={[Math.PI / 2 + i * 0.02, 0, i * 0.15]}>
+          <torusGeometry args={[r, 0.012, 8, 160]} />
+          <meshBasicMaterial color="#55ccff" transparent opacity={0.07} />
         </mesh>
       ))}
     </group>
@@ -108,7 +108,7 @@ export function getPlanetWorldPosition(planet: CosmosPlanet, time: number): THRE
   const a = planet.angle + time * planet.speed;
   return new THREE.Vector3(
     Math.cos(a) * planet.radius,
-    Math.sin(a * 0.65 + planet.inclination) * planet.inclination * TRISHUL_SCALE * 0.35,
+    Math.sin(a * 0.65 + planet.inclination) * planet.inclination * 3.5,
     Math.sin(a) * planet.radius
   );
 }
