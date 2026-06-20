@@ -1,54 +1,27 @@
 /** Navagraha — nine cognitive forces orbiting Rudra (internal agent routing unchanged) */
 
-export type GrahaId =
-  | "surya"
-  | "chandra"
-  | "mangal"
-  | "budha"
-  | "guru"
-  | "shukra"
-  | "shani"
-  | "rahu"
-  | "ketu";
+import { grahaPosition3D } from "./orbit-math";
+import type { GrahaId, Navagraha } from "./navagraha-types";
 
-export type GrahaSurface = "default" | "corona" | "banded" | "hex" | "swirl";
-
-export interface Navagraha {
-  id: GrahaId;
-  name: string;
-  tag: string;
-  symbol: string;
-  domain: string;
-  agentType: string;
-  orbitRadiusX: number;
-  orbitRadiusZ: number;
-  orbitLift: number;
-  orbitColor: string;
-  /** Screen-space label anchor (% of viewport) — mockup-composed quadrants */
-  screenLabel: { leftPct: number; topPct: number };
-  labelOffsetX: number;
-  labelOffsetY: number;
-  speed: number;
-  angle: number;
-  size: number;
-  axialTilt: number;
-  surface: GrahaSurface;
-  texture?: string;
-  hasRings?: boolean;
-  appearance: {
-    color: string;
-    emissive: string;
-    emissiveIntensity: number;
-    metalness: number;
-    roughness: number;
-    clearcoat?: number;
-  };
-}
+export type { GrahaId, GrahaSurface, Navagraha } from "./navagraha-types";
 
 const T = "/textures/planets";
 
-/** Fixed layout matching sovereign reference mockup — spread around Trishula. */
-export const NAVAGRAHA: Navagraha[] = [
+const ORBIT_INCLINATION: Record<GrahaId, number> = {
+  rahu: 38,
+  chandra: 22,
+  surya: 14,
+  shukra: 28,
+  ketu: 42,
+  guru: -18,
+  shani: -30,
+  budha: -12,
+  mangal: 32,
+};
+
+type NavagrahaSeed = Omit<Navagraha, "orbitInclination" | "orbitAscending" | "rimAngle">;
+
+const NAVAGRAHA_SEED: NavagrahaSeed[] = [
   {
     id: "rahu",
     name: "Rahu",
@@ -248,6 +221,13 @@ export const NAVAGRAHA: Navagraha[] = [
   },
 ];
 
+export const NAVAGRAHA: Navagraha[] = NAVAGRAHA_SEED.map((g) => ({
+  ...g,
+  orbitInclination: ORBIT_INCLINATION[g.id],
+  orbitAscending: (g.angle * 180) / Math.PI,
+  rimAngle: g.angle,
+}));
+
 export const SSS_TEXTURE_BASE = T;
 export const SSS_STARS_MILKY_WAY = `${T}/2k_stars_milky_way.jpg`;
 
@@ -270,8 +250,6 @@ export function grahaByTag(tag?: string): Navagraha | undefined {
 }
 
 export function grahaPosition(graha: Navagraha, angle: number): { x: number; y: number; z: number } {
-  const x = Math.cos(angle) * graha.orbitRadiusX;
-  const z = Math.sin(angle) * graha.orbitRadiusZ;
-  const y = graha.orbitLift + Math.sin(angle * 0.5) * 0.15;
-  return { x, y, z };
+  const v = grahaPosition3D(graha, angle);
+  return { x: v.x, y: v.y, z: v.z };
 }

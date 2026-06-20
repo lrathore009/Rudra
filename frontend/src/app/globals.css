@@ -893,6 +893,7 @@ body { background: hsl(var(--cosmos-void)); }
    ============================================================ */
 .cosmic-playground {
   background: hsl(var(--cosmos-void));
+  perspective: 1200px;
 }
 .cosmic-canvas {
   position: absolute !important;
@@ -1011,11 +1012,60 @@ body { background: hsl(var(--cosmos-void)); }
   color: hsl(var(--cosmos-star) / 0.55);
   background: hsl(var(--cosmos-deep) / 0.55);
   backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, color 0.2s, transform 0.2s;
+}
+.cosmic-realm-tile:hover {
+  border-color: hsl(var(--cosmos-gold) / 0.45);
+  color: hsl(var(--cosmos-star) / 0.85);
+  transform: translateY(-2px);
 }
 .cosmic-realm-tile-active {
   border-color: hsl(var(--cosmos-gold) / 0.55);
   color: hsl(var(--cosmos-gold));
   box-shadow: 0 0 14px hsl(var(--cosmos-gold) / 0.2);
+}
+.cosmic-nav-toolbar {
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.2);
+  border-radius: 8px;
+  padding: 0.35rem;
+  background: hsl(var(--cosmos-void) / 0.72);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px hsl(var(--cosmos-void) / 0.5);
+}
+.cosmic-nav-btn {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.22);
+  border-radius: 6px;
+  background: hsl(var(--cosmos-deep) / 0.55);
+  color: hsl(var(--cosmos-star) / 0.75);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+}
+.cosmic-nav-btn:hover {
+  border-color: hsl(var(--cosmos-cyan) / 0.5);
+  background: hsl(var(--cosmos-cyan) / 0.12);
+  color: hsl(var(--cosmos-cyan));
+  transform: scale(1.04);
+}
+.cosmic-nav-btn-home {
+  margin-top: 0.15rem;
+  border-color: hsl(var(--cosmos-gold) / 0.3);
+}
+.cosmic-nav-hint {
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.12);
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  background: hsl(var(--cosmos-void) / 0.65);
+  backdrop-filter: blur(8px);
+}
+.cosmic-nav-hint-dismiss {
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 /* Screen-composed graha labels (mockup quadrants) */
 .graha-screen-labels {
@@ -1257,8 +1307,21 @@ body { background: hsl(var(--cosmos-void)); }
   bottom: 0;
   left: 50%;
   width: min(720px, calc(100% - 1rem));
-  transform: translateX(-50%);
-  animation: drawerRise 0.28s ease-out;
+  transform: translateX(-50%) perspective(1000px) rotateX(5deg) translateZ(40px);
+  animation: drawerRise3d 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cosmic-realm-wrap-3d {
+  transform: translateX(-50%) perspective(1100px) rotateX(7deg) translateZ(56px) scale(1.01);
+}
+@keyframes drawerRise3d {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(28px) perspective(900px) rotateX(14deg) translateZ(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) perspective(1100px) rotateX(7deg) translateZ(56px) scale(1.01);
+  }
 }
 .cosmic-realm-panel {
   border-radius: 20px 20px 0 0;

@@ -1,8 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Environment } from "@react-three/drei";
+import { PerspectiveCamera, Environment, ContactShadows } from "@react-three/drei";
+import { CosmicNavigation } from "./CosmicNavigation";
+import type { CosmicNavHandle } from "./cosmic-nav-types";
 import * as THREE from "three";
 import { CosmicEnvironment } from "./CosmicEnvironment";
 import { TrishulDamru3D, type TrishulPhase } from "./TrishulDamru3D";
@@ -11,6 +13,9 @@ import { NAVAGRAHA, THIRD_EYE_OFFSET, TRISHUL_SCALE, grahaById, grahaPosition, t
 import { GrahaOrbit3D, GrahaPositionsProvider, useGrahaPositionsRef } from "./GrahaOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
 import { useReducedMotion } from "./use-reduced-motion";
+import { CosmicUI3D } from "./CosmicUI3D";
+import { GrahaRimLabels3D } from "./GrahaRimLabels3D";
+import type { CosmicUI3DProps } from "./cosmic-ui-types";
 
 export type CosmosPhase =
   | "idle"
@@ -47,6 +52,9 @@ function SceneContent({
   pulseGrahaIds,
   errorFacet,
   variant = "main",
+  ui,
+  streamingActive,
+  navRef,
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -54,6 +62,9 @@ function SceneContent({
   pulseGrahaIds: GrahaId[];
   errorFacet?: string;
   variant?: "main" | "login";
+  ui?: CosmicUI3DProps;
+  streamingActive?: boolean;
+  navRef?: Ref<CosmicNavHandle | null>;
 }) {
   const reducedMotion = useReducedMotion();
   const positionsRef = useGrahaPositionsRef();
@@ -110,8 +121,8 @@ function SceneContent({
             if (leadGrahaId) {
               setPhase("dispatch");
               setSpinning(true);
-              const g = grahaById(leadGrahaId);
               const pos = positionsRef.current.get(leadGrahaId);
+              const g = grahaById(leadGrahaId);
               const fallback = g ? grahaPosition(g, g.angle) : null;
               if (pos || fallback) {
                 setBoltTarget(
@@ -155,21 +166,27 @@ function SceneContent({
   return (
     <>
       <PerspectiveCamera makeDefault position={isLogin ? [0, 0.6, 22] : [0, 0.8, 26]} fov={isLogin ? 50 : 54} />
-      {!isLogin && (
-        <OrbitControls
-          enablePan={false}
-          enableZoom={false}
-          enableRotate={false}
-          autoRotate={false}
-          target={[0, 0.2, 0]}
-        />
-      )}
-      <directionalLight position={[4, 16, 22]} intensity={1.35} color="#ffeedd" />
-      <pointLight position={[-6, 8, 10]} intensity={0.55} color="#8866cc" />
-      <pointLight position={[6, 4, -8]} intensity={0.35} color="#4488ff" />
-      <pointLight position={[0, -2, 8]} intensity={1.8} color="#ffcc88" />
-      <ambientLight intensity={0.2} color="#2a2844" />
-      <Environment preset="night" environmentIntensity={0.28} />
+      <CosmicNavigation variant={variant} navRef={navRef} />
+      <directionalLight
+        castShadow
+        position={[6, 18, 14]}
+        intensity={1.55}
+        color="#fff4e8"
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-far={60}
+        shadow-camera-left={-18}
+        shadow-camera-right={18}
+        shadow-camera-top={18}
+        shadow-camera-bottom={-18}
+        shadow-bias={-0.00015}
+      />
+      <directionalLight position={[-8, 6, -10]} intensity={0.45} color="#6688cc" />
+      <pointLight position={[-6, 8, 10]} intensity={0.65} color="#8866cc" />
+      <pointLight position={[6, 4, -8]} intensity={0.42} color="#4488ff" />
+      <pointLight position={[0, -2, 8]} intensity={2.1} color="#ffcc88" />
+      <ambientLight intensity={0.22} color="#2a2844" />
+      <Environment preset="night" environmentIntensity={0.42} />
+      <ContactShadows position={[0, -3.4, 0]} opacity={0.42} scale={28} blur={2.4} far={12} color="#0a0818" />
       <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} />
 
       <RudraPlatform reducedMotion={reducedMotion} />
@@ -193,6 +210,17 @@ function SceneContent({
         />
       </group>
       <LightningBolt3D origin={thirdEyeOrigin} target={boltTarget} active={showBolt} />
+
+      {isLogin && (
+        <GrahaRimLabels3D
+          leadGrahaId={leadGrahaId}
+          supportingGrahaIds={supportingGrahaIds}
+          pulseGrahaIds={pulseGrahaIds}
+          processing={processing}
+        />
+      )}
+
+      {ui && !isLogin && <CosmicUI3D {...ui} streamingActive={streamingActive} />}
     </>
   );
 }
@@ -204,6 +232,9 @@ export function CosmicScene({
   pulseGrahaIds = [],
   errorFacet,
   variant = "main",
+  ui,
+  streamingActive,
+  navRef,
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -211,11 +242,15 @@ export function CosmicScene({
   pulseGrahaIds?: GrahaId[];
   errorFacet?: string;
   variant?: "main" | "login";
+  ui?: CosmicUI3DProps;
+  streamingActive?: boolean;
+  navRef?: Ref<CosmicNavHandle | null>;
 }) {
   return (
     <Canvas
       className="cosmic-canvas"
-      gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+      shadows
+      gl={{ antialias: true, alpha: false, powerPreference: "high-performance", logarithmicDepthBuffer: true }}
       dpr={[1, 1.75]}
     >
       <Suspense fallback={null}>
@@ -227,6 +262,9 @@ export function CosmicScene({
             pulseGrahaIds={pulseGrahaIds}
             errorFacet={errorFacet}
             variant={variant}
+            ui={ui}
+            streamingActive={streamingActive}
+            navRef={navRef}
           />
         </GrahaPositionsProvider>
       </Suspense>

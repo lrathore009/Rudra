@@ -2,10 +2,12 @@
 
 import { createContext, useContext, useMemo, useRef, type ReactNode } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Line, useTexture } from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { grahaColor } from "@/lib/rudra-theme";
-import { grahaPosition, type GrahaId, type Navagraha } from "./navagraha-config";
+import { grahaPosition3D } from "./orbit-math";
+import type { GrahaId, Navagraha } from "./navagraha-types";
+import { OrbitTube3D } from "./OrbitTube3D";
 
 type PositionMap = Map<GrahaId, THREE.Vector3>;
 
@@ -20,21 +22,6 @@ export function useGrahaPositionsRef() {
   const ctx = useContext(GrahaPositionsContext);
   if (!ctx) throw new Error("useGrahaPositionsRef requires GrahaPositionsProvider");
   return ctx;
-}
-
-function ellipsePoints(graha: Navagraha, segments = 128): THREE.Vector3[] {
-  const pts: THREE.Vector3[] = [];
-  for (let i = 0; i <= segments; i++) {
-    const t = (i / segments) * Math.PI * 2;
-    pts.push(
-      new THREE.Vector3(
-        Math.cos(t) * graha.orbitRadiusX,
-        graha.orbitLift,
-        Math.sin(t) * graha.orbitRadiusZ
-      )
-    );
-  }
-  return pts;
 }
 
 function GrahaSurfaceExtras({ graha }: { graha: Navagraha }) {
@@ -171,7 +158,6 @@ function ShaniRings() {
 export function GrahaOrbit3D({
   graha,
   role,
-  processing,
   reducedMotion,
 }: {
   graha: Navagraha;
@@ -184,7 +170,12 @@ export function GrahaOrbit3D({
   const angleRef = useRef(graha.angle);
   const positionsRef = useGrahaPositionsRef();
   const accent = grahaColor(graha.name, 1);
-  const pathPoints = useMemo(() => ellipsePoints(graha), [graha]);
+
+  const tubeOpacity = useMemo(() => {
+    if (role === "lead") return 0.75;
+    if (role === "supporting" || role === "pulse") return 0.52;
+    return 0.38;
+  }, [role]);
 
   useFrame((state, dt) => {
     if (!orbitRef.current) return;
@@ -192,9 +183,9 @@ export function GrahaOrbit3D({
     const motion = reducedMotion ? 0 : 1;
     angleRef.current += dt * graha.speed * speedMul * motion;
 
-    const pos = grahaPosition(graha, angleRef.current);
-    orbitRef.current.position.set(pos.x, pos.y, pos.z);
-    positionsRef.current.set(graha.id, new THREE.Vector3(pos.x, pos.y, pos.z));
+    const pos = grahaPosition3D(graha, angleRef.current);
+    orbitRef.current.position.copy(pos);
+    positionsRef.current.set(graha.id, pos.clone());
     orbitRef.current.renderOrder = pos.z > 0.5 ? 200 : pos.z < -0.5 ? 50 : 120;
 
     if (bodyRef.current) {
@@ -209,13 +200,9 @@ export function GrahaOrbit3D({
     orbitRef.current.scale.setScalar(graha.size * pulse);
   });
 
-  const pathOpacity =
-    role === "lead" ? 0.82 : role === "supporting" || role === "pulse" ? 0.58 : 0.42;
-
   return (
     <group>
-      <Line points={pathPoints} color={graha.orbitColor} transparent opacity={pathOpacity * 0.45} lineWidth={4.2} />
-      <Line points={pathPoints} color={graha.orbitColor} transparent opacity={pathOpacity} lineWidth={2.2} />
+      <OrbitTube3D graha={graha} opacity={tubeOpacity} glowOpacity={tubeOpacity * 0.35} />
       <group ref={orbitRef}>
         <group ref={bodyRef}>
           <GrahaBodyInner graha={graha} />

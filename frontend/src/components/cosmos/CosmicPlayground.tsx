@@ -1,9 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { CosmicScene } from "./CosmicScene";
-import { CosmicHUD } from "./CosmicHUD";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
-import { GrahaScreenLabels } from "./GrahaScreenLabels";
+import { CosmicViewControls } from "./CosmicViewControls";
+import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import type { RudraThemeMode } from "@/lib/rudra-theme";
@@ -111,55 +112,70 @@ export function CosmicPlayground({
   uplinkActive?: boolean;
   memorySynced?: boolean;
 }) {
+  const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
+  const showCounsel =
+    processing || Boolean(streamingMsgId) || Boolean(latestAssistant?.content);
+  const navRef = useRef<CosmicNavHandle | null>(null);
+
   return (
     <div className="cosmic-playground relative h-screen w-screen overflow-hidden">
       <CosmicScene
+        navRef={navRef}
         processing={processing}
         leadGrahaId={leadGrahaId}
         supportingGrahaIds={supportingGrahaIds ?? []}
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
+        streamingActive={Boolean(streamingMsgId)}
+        ui={{
+          themeMode,
+          onThemeCycle,
+          status,
+          clock,
+          onLogout,
+          muted,
+          onToggleMute,
+          tickerIdx,
+          input,
+          onInputChange,
+          onSubmit,
+          onStop,
+          onVoice,
+          listening,
+          processing,
+          placeholder,
+          voiceHint,
+          leadGrahaName,
+          supportingGrahaNames,
+          activeRealm,
+          onRealmChange,
+          uplinkActive,
+          memorySynced,
+          leadGrahaId,
+          supportingGrahaIds,
+          pulseGrahaIds,
+          counselText: latestAssistant?.content ?? "",
+          showCounsel,
+        }}
       />
 
-      <GrahaScreenLabels
-        leadGrahaId={leadGrahaId}
-        supportingGrahaIds={supportingGrahaIds}
-        pulseGrahaIds={pulseGrahaIds}
-        processing={processing}
-      />
+      <CosmicViewControls navRef={navRef} />
 
-      <CosmicHUD
-        themeMode={themeMode}
-        onThemeCycle={onThemeCycle}
-        status={status}
-        clock={clock}
-        onLogout={onLogout}
-        muted={muted}
-        onToggleMute={onToggleMute}
-        greeting={greeting}
-        logLine={logLine}
-        tickerIdx={tickerIdx}
-        operator={operator}
-        messages={messages}
-        streamingMsgId={streamingMsgId}
-        input={input}
-        onInputChange={onInputChange}
-        onSubmit={onSubmit}
-        onStop={onStop}
-        onVoice={onVoice}
-        listening={listening}
-        processing={processing}
-        placeholder={placeholder}
-        voiceHint={voiceHint}
-        leadGrahaName={leadGrahaName}
-        supportingGrahaNames={supportingGrahaNames}
-        actions={actions}
-        activeRealm={activeRealm}
-        onRealmChange={onRealmChange}
-        showResponse={processing || Boolean(streamingMsgId) || messages.some((m) => m.role === "assistant" && m.content)}
-        uplinkActive={uplinkActive}
-        memorySynced={memorySynced}
-      />
+      {voiceHint && (
+        <p className="pointer-events-none absolute bottom-28 left-0 right-0 z-20 text-center font-terminal text-[9px] text-destructive/80">
+          {voiceHint}
+        </p>
+      )}
+
+      <div className="sr-only">
+        {actions.map((a) => (
+          <button key={a.label} type="button" onClick={a.run}>
+            {a.label}
+          </button>
+        ))}
+        {operator && <span>{greeting}</span>}
+        <span>{logLine}</span>
+      </div>
 
       {activeRealm && (
         <>
@@ -169,7 +185,7 @@ export function CosmicPlayground({
             aria-label="Close realm"
             onClick={() => onRealmChange(null)}
           />
-          <div className="cosmic-realm-wrap">
+          <div className="cosmic-realm-wrap cosmic-realm-wrap-3d">
             <CosmicRealmPanel
               realm={activeRealm}
               onClose={() => onRealmChange(null)}
