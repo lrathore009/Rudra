@@ -42,11 +42,15 @@ async function proxy(req: NextRequest, pathSegments: string[]): Promise<NextResp
 
     const resHeaders = new Headers();
     upstream.headers.forEach((value, key) => {
-      if (key === "transfer-encoding") return;
+      const lower = key.toLowerCase();
+      if (lower === "transfer-encoding" || lower === "content-encoding" || lower === "content-length") {
+        return;
+      }
       resHeaders.set(key, value);
     });
 
-    return new NextResponse(upstream.body, {
+    const buffer = await upstream.arrayBuffer();
+    return new NextResponse(buffer, {
       status: upstream.status,
       statusText: upstream.statusText,
       headers: resHeaders,
