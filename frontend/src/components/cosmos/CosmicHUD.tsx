@@ -110,6 +110,12 @@ export function CosmicHUD({
             {greeting}
           </span>
         </div>
+        <div className="flex items-center gap-2 sm:hidden">
+          <span className={cn("cosmic-status-badge text-[8px]", nominal && "cosmic-status-badge-nominal")}>
+            <Radio className="h-2.5 w-2.5" />
+            {nominal ? "Nominal" : status}
+          </span>
+        </div>
         <div className="hidden items-center gap-2 sm:flex">
           <span className={cn("cosmic-status-badge", nominal && "cosmic-status-badge-nominal")}>
             <Radio className="h-3 w-3" />

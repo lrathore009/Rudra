@@ -215,8 +215,8 @@ export function TrishulDamru3D({
   reducedMotion?: boolean;
 }) {
   return (
-    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.04} floatIntensity={reducedMotion ? 0 : 0.15}>
-      <group position={[0, 0.15, 0]}>
+    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.04} floatIntensity={reducedMotion ? 0 : 0.12}>
+      <group position={[0, 0.05, 0]}>
         <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} reducedMotion={reducedMotion} />
       </group>
     </Float>

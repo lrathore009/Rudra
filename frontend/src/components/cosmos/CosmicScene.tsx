@@ -150,17 +150,17 @@ function SceneContent({
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 2, 30]} fov={52} />
+      <PerspectiveCamera makeDefault position={[0, 0.8, 26]} fov={54} />
       <OrbitControls
         enablePan={false}
         enableZoom
-        minDistance={18}
-        maxDistance={48}
-        maxPolarAngle={Math.PI / 1.75}
-        minPolarAngle={Math.PI / 3.2}
+        minDistance={16}
+        maxDistance={42}
+        maxPolarAngle={Math.PI / 1.85}
+        minPolarAngle={Math.PI / 2.4}
         autoRotate={!processing && !reducedMotion}
-        autoRotateSpeed={0.12}
-        target={[0, 0.5, 0]}
+        autoRotateSpeed={0.08}
+        target={[0, 0.2, 0]}
       />
       <directionalLight position={[4, 16, 22]} intensity={1.1} color="#ffeedd" />
       <pointLight position={[-6, 8, 10]} intensity={0.6} color="#8866cc" />
@@ -181,12 +181,14 @@ function SceneContent({
         />
       ))}
 
-      <TrishulDamru3D
-        phase={eyePhaseFromCosmos(phase)}
-        spinning={spinning}
-        scale={TRISHUL_SCALE}
-        reducedMotion={reducedMotion}
-      />
+      <group renderOrder={100}>
+        <TrishulDamru3D
+          phase={eyePhaseFromCosmos(phase)}
+          spinning={spinning}
+          scale={TRISHUL_SCALE}
+          reducedMotion={reducedMotion}
+        />
+      </group>
       <LightningBolt3D origin={thirdEyeOrigin} target={boltTarget} active={showBolt} />
     </>
   );
