@@ -1,0 +1,33 @@
+# Rudra declarative spec — overlays env settings (#12)
+# Copy to configs/rudra.toml and customize.
+
+[jarvis]
+persona = "jarvis"
+honorific = "sir"
+digest_schedule = "07:30"
+tts_backend = "openai"
+operators_enabled = true
+minions_routing = true
+
+[intelligence]
+default_tier = "default"
+ollama_chat_model = "llama3.2"
+
+[engine]
+default = "ollama"
+
+[agents]
+default_agent = "executive_assistant"
+max_steps = 6
+command_use_react_for_ea = true
+
+[learning]
+routing_policy = "trace_driven"
+
+[connectors]
+google = false
+mock_local = true
+
+[operators]
+monitor_projects_interval = 3600
+monitor_inbox_interval = 1800

@@ -1,0 +1,14 @@
+[skill]
+name = "research-and-summarize"
+version = "0.1.0"
+description = "Search the web and summarize findings for the owner"
+
+[[steps]]
+tool_name = "web_search"
+arguments_template = '{"query": "{query}"}'
+output_key = "search_results"
+
+[[steps]]
+tool_name = "search_memory"
+arguments_template = '{"query": "{query}"}'
+output_key = "memory_hits"
