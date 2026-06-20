@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -8,16 +9,13 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
-import { HudBackground } from "@/components/hud/HudBackground";
 import { BootSequence } from "@/components/hud/BootSequence";
 import { type Stage } from "@/components/hud/ProcessStream";
-import { SovereignView } from "@/components/tablet/SovereignView";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import {
   FIRST_BREATH_KEY,
   SUTRA_TICKER,
   agentTag,
-  coreRhythmFromState,
   hapticTap,
   resolveThemeMode,
   sutraPlaceholder,
@@ -25,7 +23,7 @@ import {
   type RudraThemeMode,
 } from "@/lib/rudra-theme";
 import { blip, damru, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
-import { StreamingThread, FirstBreathOverlay } from "@/components/hud/MalaArc";
+import { FirstBreathOverlay } from "@/components/hud/MalaArc";
 import {
   ensureMicrophoneAccess,
   primeSpeechSynthesis,
@@ -56,6 +54,11 @@ import {
   type VoiceProfile,
 } from "@/lib/api";
 import { fetchMe, isAuthenticated, logout as authLogout } from "@/lib/auth";
+
+const CosmicPlayground = dynamic(
+  () => import("@/components/cosmos/CosmicPlayground").then((m) => m.CosmicPlayground),
+  { ssr: false }
+);
 
 interface Msg {
   id: string;
@@ -108,18 +111,12 @@ export default function Jarvis() {
   const [activeRoutedAgent, setActiveRoutedAgent] = useState<string | undefined>();
   const [errorFacet, setErrorFacet] = useState<string | undefined>();
   const [firstBreath, setFirstBreath] = useState(false);
-  const [threadReleasing, setThreadReleasing] = useState(false);
   const [tickerIdx, setTickerIdx] = useState(0);
   const [streamingMsgId, setStreamingMsgId] = useState<string | null>(null);
-  const [coreRect, setCoreRect] = useState<DOMRect | null>(null);
-  const [streamRect, setStreamRect] = useState<DOMRect | null>(null);
   const [activeRealm, setActiveRealm] = useState<RealmId | null>(null);
-  const feedRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recRef = useRef<SpeechRecognitionHandle | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const coreRef = useRef<HTMLDivElement>(null);
-  const streamingMsgRef = useRef<HTMLDivElement | null>(null);
 
   const pushLog = useCallback((s: string) => setLog((p) => [...p.slice(-50), s]), []);
 
@@ -274,10 +271,6 @@ export default function Jarvis() {
     return () => clearInterval(t);
   }, [processing]);
 
-  useEffect(() => {
-    feedRef.current?.scrollTo({ top: feedRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, steps]);
-
   const stages: Stage[] = useMemo(
     () =>
       PIPELINE.map(
@@ -300,21 +293,6 @@ export default function Jarvis() {
     [themeMode, clock]
   );
   const isStreaming = useMemo(() => messages.some((m) => m.streaming), [messages]);
-  const coreRhythm = useMemo(
-    () =>
-      coreRhythmFromState(processing, isStreaming, !!errorFacet, processing && stageIdx >= 2),
-    [processing, isStreaming, errorFacet, stageIdx]
-  );
-  const malaProgress = useMemo(
-    () =>
-      processing
-        ? {
-            current: Math.min(9, Math.max(1, stageIdx + 1 + Math.min(steps.length, 2))),
-            total: 9,
-          }
-        : undefined,
-    [processing, stageIdx, steps.length]
-  );
   const activeFacetTag = useMemo(
     () => agentTag(selectedAgent ?? activeRoutedAgent),
     [selectedAgent, activeRoutedAgent]
@@ -439,8 +417,6 @@ export default function Jarvis() {
   );
 
   const stop = useCallback(() => {
-    setThreadReleasing(true);
-    setTimeout(() => setThreadReleasing(false), 400);
     abortRef.current?.abort();
     abortRef.current = null;
     stopSpeaking();
@@ -469,21 +445,6 @@ export default function Jarvis() {
     const t = setTimeout(() => setErrorFacet(undefined), 3200);
     return () => clearTimeout(t);
   }, [errorFacet]);
-
-  useEffect(() => {
-    const measure = () => {
-      if (coreRef.current) setCoreRect(coreRef.current.getBoundingClientRect());
-      if (streamingMsgRef.current) setStreamRect(streamingMsgRef.current.getBoundingClientRect());
-    };
-    measure();
-    if (!isStreaming) return;
-    const id = setInterval(measure, 120);
-    window.addEventListener("resize", measure);
-    return () => {
-      clearInterval(id);
-      window.removeEventListener("resize", measure);
-    };
-  }, [isStreaming, messages, stageIdx]);
 
   const runDigest = useCallback(async () => {
     if (processing) return;
@@ -571,88 +532,68 @@ export default function Jarvis() {
 
   if (!authReady) {
     return (
-      <main className="relative h-screen w-screen overflow-hidden text-foreground">
-        <HudBackground />
-        <div className="sovereign-stage">
-          <div className="flex h-full items-center justify-center font-hud text-sm neon">VERIFYING PRESENCE…</div>
-        </div>
+      <main className="relative h-screen w-screen overflow-hidden bg-background text-foreground">
+        <div className="flex h-full items-center justify-center font-hud text-sm neon">VERIFYING PRESENCE…</div>
       </main>
     );
   }
 
   return (
-    <main data-theme={resolvedTheme} className="relative h-screen w-screen overflow-hidden text-foreground">
+    <main data-theme={resolvedTheme} className="relative h-screen w-screen overflow-hidden">
       {booting && <BootSequence />}
       <FirstBreathOverlay show={firstBreath} onDone={() => setFirstBreath(false)} />
-      <HudBackground still={!!errorFacet} />
-      <StreamingThread
-        active={isStreaming && !threadReleasing}
-        releasing={threadReleasing}
-        coreRect={coreRect}
-        targetRect={streamRect}
-      />
-      <SovereignView
-        themeMode={themeMode}
-        onThemeCycle={() => {
-          const next: RudraThemeMode =
-            themeMode === "auto" ? "sandhya" : themeMode === "sandhya" ? "nisha" : "auto";
-          setThemeMode(next);
-          localStorage.setItem("rudra-theme-mode", next);
-        }}
-        operator={operator}
-        status={status}
-        clock={clock}
-        onLogout={async () => {
-          await authLogout();
-          router.replace("/login");
-        }}
-        muted={muted}
-        onToggleMute={() => setMuted((v) => !v)}
-        greeting={worldGreeting(clock?.getHours() ?? 12)}
-        modelName={modelName}
-        memoryCount={memories.length}
-        agentCount={agents.length}
-        successRate={successRate}
-        subsysRate={subsysRate}
-        coreRef={coreRef}
-        processing={processing}
-        coreRhythm={coreRhythm}
-        activeFacetTag={activeFacetTag}
-        selectedAgent={selectedAgent}
-        activeRoutedAgent={activeRoutedAgent}
-        errorFacet={errorFacet}
-        malaProgress={malaProgress}
-        messages={messages}
-        feedRef={feedRef}
-        streamingMsgId={streamingMsgId}
-        streamingMsgRef={streamingMsgRef}
-        input={input}
-        onInputChange={setInput}
-        onSubmit={() => void submit()}
-        onStop={stop}
-        onVoice={() => void startVoice()}
-        onToggleMode={() => setMode((m) => (m === "agents" ? "tools" : "agents"))}
-        inputRef={inputRef}
-        listening={listening}
-        voiceHint={voiceHint}
-        mode={mode}
-        placeholder={sutraPlaceholder(clock?.getHours() ?? 12, processing)}
-        actions={ACTIONS}
-        activeRealm={activeRealm}
-        onRealmChange={setActiveRealm}
-        agents={agents}
-        onSelectAgent={setSelectedAgent}
-        skills={skills}
-        jobs={jobs}
-        vitals={vitals}
-        stages={stages}
-        steps={steps}
-        showProcess={showProcess}
-        onAskProject={(name) => submit(`What should I do next in ${name}?`)}
-        tickerIdx={tickerIdx}
-        logLine={log.slice(-1)[0] ?? "awakening…"}
-        skillsCount={skills.length}
-      />
+      {!booting && (
+        <CosmicPlayground
+          themeMode={themeMode}
+          onThemeCycle={() => {
+            const next: RudraThemeMode =
+              themeMode === "auto" ? "sandhya" : themeMode === "sandhya" ? "nisha" : "auto";
+            setThemeMode(next);
+            localStorage.setItem("rudra-theme-mode", next);
+          }}
+          operator={operator}
+          status={status}
+          clock={clock}
+          onLogout={async () => {
+            await authLogout();
+            router.replace("/login");
+          }}
+          muted={muted}
+          onToggleMute={() => setMuted((v) => !v)}
+          greeting={worldGreeting(clock?.getHours() ?? 12)}
+          logLine={log.slice(-1)[0] ?? "awakening…"}
+          tickerIdx={tickerIdx}
+          processing={processing}
+          activeFacetTag={activeFacetTag}
+          selectedAgent={selectedAgent}
+          activeRoutedAgent={activeRoutedAgent}
+          errorFacet={errorFacet}
+          onSelectAgent={setSelectedAgent}
+          messages={messages}
+          streamingMsgId={streamingMsgId}
+          input={input}
+          onInputChange={setInput}
+          onSubmit={() => void submit()}
+          onStop={stop}
+          onVoice={() => void startVoice()}
+          listening={listening}
+          voiceHint={voiceHint}
+          placeholder={sutraPlaceholder(clock?.getHours() ?? 12, processing)}
+          actions={ACTIONS}
+          activeRealm={activeRealm}
+          onRealmChange={setActiveRealm}
+          agents={agents}
+          skills={skills}
+          jobs={jobs}
+          vitals={vitals}
+          stages={stages}
+          steps={steps}
+          showProcess={showProcess}
+          successRate={successRate}
+          subsysRate={subsysRate}
+          onAskProject={(name) => submit(`What should I do next in ${name}?`)}
+        />
+      )}
     </main>
   );
 }
