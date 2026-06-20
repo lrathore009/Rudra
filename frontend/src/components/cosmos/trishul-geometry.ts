@@ -180,5 +180,52 @@ export function createBeadGarland(material: THREE.Material, count = 5): THREE.Gr
     bead.position.set(Math.sin(t * Math.PI) * 0.08, -0.15 - t * 0.12, 0.06 + Math.cos(t * Math.PI) * 0.04);
     g.add(bead);
   }
+  // orange tassel
+  const tassel = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012, 0.02, 0.14, 8),
+    new THREE.MeshStandardMaterial({ color: "#ee6622", emissive: "#cc4400", emissiveIntensity: 0.4, roughness: 0.7 })
+  );
+  tassel.position.set(0.06, -0.38, 0.08);
+  g.add(tassel);
   return g;
+}
+
+/** ॐ decal for damaru — canvas texture, no external font */
+export function createOmTexture(): THREE.CanvasTexture {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  ctx.clearRect(0, 0, size, size);
+  ctx.fillStyle = "#ffdd88";
+  ctx.font = "bold 180px serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.shadowColor = "#cc8822";
+  ctx.shadowBlur = 12;
+  ctx.fillText("ॐ", size / 2, size / 2 + 8);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+export function createOmDecal(material?: THREE.Material): THREE.Mesh {
+  const tex = createOmTexture();
+  const mat =
+    material ??
+    new THREE.MeshStandardMaterial({
+      map: tex,
+      transparent: true,
+      opacity: 0.95,
+      emissive: "#cc8822",
+      emissiveIntensity: 0.35,
+      metalness: 0.2,
+      roughness: 0.4,
+      depthWrite: false,
+    });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.22), mat);
+  mesh.position.set(0.26, 0.08, 0.29);
+  mesh.rotation.y = 0.35;
+  return mesh;
 }

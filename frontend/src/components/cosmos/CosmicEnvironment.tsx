@@ -62,6 +62,7 @@ function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
       { pos: [18, -4, -16] as [number, number, number], color: "#1a5a9a", scale: 26 },
       { pos: [-6, 6, -24] as [number, number, number], color: "#c040a0", scale: 28 },
       { pos: [10, -8, -20] as [number, number, number], color: "#2244cc", scale: 18 },
+      { pos: [0, -2, -8] as [number, number, number], color: "#553311", scale: 18 },
       { pos: [0, 0, -30] as [number, number, number], color: "#4422aa", scale: 32 },
     ],
     []
@@ -186,6 +187,22 @@ function NeuralWeb({ intensity, reducedMotion }: { intensity: number; reducedMot
   );
 }
 
+function SanctumWarmGlow() {
+  return (
+    <group position={[0, -1.5, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[8, 48]} />
+        <meshBasicMaterial color="#ffaa44" transparent opacity={0.06} depthWrite={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <circleGeometry args={[14, 48]} />
+        <meshBasicMaterial color="#6644aa" transparent opacity={0.04} depthWrite={false} />
+      </mesh>
+      <pointLight color="#ffcc88" intensity={2.5} distance={28} position={[0, 2, 2]} />
+    </group>
+  );
+}
+
 export function CosmicEnvironment({
   neuralIntensity = 0.5,
   reducedMotion = false,
@@ -200,6 +217,7 @@ export function CosmicEnvironment({
       <MilkyWaySky reducedMotion={reducedMotion} />
       <Starfield reducedMotion={reducedMotion} />
       <NebulaClouds reducedMotion={reducedMotion} />
+      <SanctumWarmGlow />
       {!reducedMotion && <Meteors />}
       <NeuralWeb intensity={neuralIntensity} reducedMotion={reducedMotion} />
     </>

@@ -2,20 +2,34 @@
 
 import { useEffect, useRef } from "react";
 import {
+  Archive,
+  BookOpen,
+  Castle,
+  Cog,
   Mic,
-  Radio,
+  Radar,
   Square,
   Upload,
+  Users,
   Volume2,
   VolumeX,
   type LucideIcon,
 } from "lucide-react";
-import { SutraWordmark } from "@/components/hud/SutraWordmark";
+import { SutraWordmark, RudraTagline } from "@/components/hud/SutraWordmark";
 import { InkText } from "@/components/tablet/InkText";
-import { SUTRA_TICKER, grahaColor, themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
+import { FOOTER_TICKER_SEGMENTS, grahaColor, themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import { REALMS } from "@/components/tablet/RealmRim";
+
+const REALM_ICONS: Record<RealmId, LucideIcon> = {
+  dominions: Castle,
+  archive: Archive,
+  council: Users,
+  scriptorium: BookOpen,
+  horizon: Radar,
+  engine: Cog,
+};
 
 interface Message {
   id: string;
@@ -23,6 +37,12 @@ interface Message {
   content: string;
   agent?: string;
   streaming?: boolean;
+}
+
+function StatusPulse({ active }: { active: boolean }) {
+  return (
+    <span className={cn("cosmic-status-dot", active && "cosmic-status-dot-live")} aria-hidden />
+  );
 }
 
 export function CosmicHUD({
@@ -34,7 +54,6 @@ export function CosmicHUD({
   muted,
   onToggleMute,
   greeting,
-  logLine,
   tickerIdx,
   operator,
   messages,
@@ -54,6 +73,8 @@ export function CosmicHUD({
   activeRealm,
   onRealmChange,
   showResponse,
+  uplinkActive = true,
+  memorySynced = true,
 }: {
   themeMode: RudraThemeMode;
   onThemeCycle: () => void;
@@ -83,12 +104,15 @@ export function CosmicHUD({
   activeRealm: RealmId | null;
   onRealmChange: (r: RealmId | null) => void;
   showResponse: boolean;
+  uplinkActive?: boolean;
+  memorySynced?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
   const latestUser = [...messages].reverse().find((m) => m.role === "user");
   const streaming = messages.find((m) => m.id === streamingMsgId);
   const nominal = status.toLowerCase().includes("nominal") || status.toLowerCase().includes("online");
+  const footerSegment = FOOTER_TICKER_SEGMENTS[tickerIdx % FOOTER_TICKER_SEGMENTS.length];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -103,26 +127,25 @@ export function CosmicHUD({
 
   return (
     <div className="cosmic-hud pointer-events-none fixed inset-0 z-10 flex flex-col">
-      <header className="pointer-events-auto flex items-center justify-between px-4 py-3 sm:px-8">
-        <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-4">
+      <header className="pointer-events-auto grid grid-cols-[1fr_auto_1fr] items-start gap-2 px-4 py-3 sm:px-8">
+        <div className="flex min-w-0 flex-col gap-1">
           <SutraWordmark className="text-sm sm:text-base" />
-          <span className="hidden truncate font-terminal text-[8px] uppercase tracking-[0.22em] text-muted-foreground/70 lg:inline">
-            {greeting}
-          </span>
+          <RudraTagline className="hidden sm:block" />
+          {operator && (
+            <span className="hidden font-terminal text-[7px] uppercase tracking-[0.2em] text-muted-foreground/50 lg:block">
+              {greeting}
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-2 sm:hidden">
-          <span className={cn("cosmic-status-badge text-[8px]", nominal && "cosmic-status-badge-nominal")}>
-            <Radio className="h-2.5 w-2.5" />
-            {nominal ? "Nominal" : status}
-          </span>
-        </div>
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="flex justify-center pt-0.5">
           <span className={cn("cosmic-status-badge", nominal && "cosmic-status-badge-nominal")}>
-            <Radio className="h-3 w-3" />
+            <span className="cosmic-status-signal" aria-hidden>
+              ((o))
+            </span>
             {nominal ? "Present · Nominal" : status}
           </span>
         </div>
-        <div className="flex items-center gap-2 font-terminal text-[10px] sm:gap-3">
+        <div className="ml-auto flex items-center justify-end gap-2 font-terminal text-[10px] sm:gap-3">
           <button type="button" onClick={onThemeCycle} className="cosmic-ctl hidden sm:inline">
             {themeModeLabel(themeMode)}
           </button>
@@ -139,16 +162,16 @@ export function CosmicHUD({
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-end px-4 pb-1 sm:px-8">
-        {showResponse && (latestAssistant || latestUser || streaming) && (
-          <div className="cosmic-stream pointer-events-auto mb-3 w-full max-w-2xl text-center">
-            {latestUser && (
+        {showResponse && (processing || streaming || latestAssistant) && (latestAssistant || latestUser || streaming) && (
+          <div className="cosmic-stream pointer-events-auto mb-3 w-full max-w-3xl text-center">
+            {latestUser && processing && (
               <p className="mb-2 font-terminal text-[10px] uppercase tracking-[0.2em] text-primary/70">
                 ◇ {latestUser.content.slice(0, 120)}
                 {latestUser.content.length > 120 ? "…" : ""}
               </p>
             )}
             {(streaming || latestAssistant) && (
-              <div className="cosmic-response mx-auto max-w-xl">
+              <div className="cosmic-response mx-auto max-w-2xl">
                 {streaming ? (
                   <InkText text={streaming.content} streaming streamed />
                 ) : latestAssistant ? (
@@ -175,7 +198,7 @@ export function CosmicHUD({
         )}
 
         <form
-          className="pointer-events-auto cosmic-command-panel mb-3 flex w-full max-w-2xl items-center gap-3 px-4 py-3"
+          className="pointer-events-auto cosmic-command-panel mb-3 flex w-full max-w-4xl items-center gap-3 px-5 py-3.5"
           onSubmit={(e) => {
             e.preventDefault();
             onSubmit();
@@ -212,7 +235,6 @@ export function CosmicHUD({
           <p className="pointer-events-auto mb-2 font-terminal text-[9px] text-destructive/80">{voiceHint}</p>
         )}
 
-        {/* hidden quick actions — accessible via keyboard / future menu */}
         <div className="sr-only">
           {actions.map((a) => (
             <button key={a.label} type="button" onClick={a.run}>
@@ -222,9 +244,9 @@ export function CosmicHUD({
         </div>
       </div>
 
-      <nav className="pointer-events-auto flex flex-wrap items-end justify-center gap-2 px-4 pb-3 sm:gap-3" aria-label="Realms">
+      <nav className="pointer-events-auto flex flex-wrap items-end justify-center gap-2 px-4 pb-3 sm:gap-2.5" aria-label="Realms">
         {REALMS.map((r) => {
-          const Icon = r.icon;
+          const Icon = REALM_ICONS[r.id];
           const active = activeRealm === r.id;
           return (
             <button
@@ -242,8 +264,11 @@ export function CosmicHUD({
       </nav>
 
       <footer className="pointer-events-none flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 pb-3 font-terminal text-[7px] uppercase tracking-[0.14em] text-muted-foreground/55 sm:px-8 sm:text-[8px]">
-        <span className="truncate">
-          Encrypted uplink · Active · {SUTRA_TICKER[tickerIdx] ?? "Memory lattice synced"}
+        <span className="cosmic-footer-status truncate">
+          <StatusPulse active={uplinkActive} />
+          Encrypted uplink · {uplinkActive ? "Active" : "Offline"}
+          <StatusPulse active={memorySynced} />
+          · {footerSegment}
         </span>
         <span className="ml-auto shrink-0">Trishula OS v1.0 · Rudra Core Online</span>
       </footer>

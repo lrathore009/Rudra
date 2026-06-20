@@ -12,7 +12,7 @@ import {
 import { BootSequence } from "@/components/hud/BootSequence";
 import { type Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
-import { FIRST_BREATH_KEY, SUTRA_TICKER, grahaName, hapticTap, resolveThemeMode, sutraPlaceholder, worldGreeting, type RudraThemeMode } from "@/lib/rudra-theme";
+import { FIRST_BREATH_KEY, FOOTER_TICKER_SEGMENTS, grahaName, hapticTap, resolveThemeMode, sutraPlaceholder, worldGreeting, type RudraThemeMode } from "@/lib/rudra-theme";
 import { blip, damru, damruBeat, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
 import { analyzeNavagrahaRouting, isMajorQuery } from "@/components/cosmos/navagraha-routing";
 import { grahaByAgent, grahaById, type GrahaId } from "@/components/cosmos/navagraha-config";
@@ -148,7 +148,7 @@ export default function Jarvis() {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setTickerIdx((i) => (i + 1) % SUTRA_TICKER.length), 8000);
+    const t = setInterval(() => setTickerIdx((i) => (i + 1) % FOOTER_TICKER_SEGMENTS.length), 8000);
     return () => clearInterval(t);
   }, []);
 
@@ -609,6 +609,8 @@ export default function Jarvis() {
           successRate={successRate}
           subsysRate={subsysRate}
           onAskProject={(name) => submit(`What should I do next in ${name}?`)}
+          uplinkActive={systemsNominal}
+          memorySynced={systemsNominal}
         />
       )}
     </main>

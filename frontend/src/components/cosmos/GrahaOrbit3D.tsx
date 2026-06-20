@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, useRef, type ReactNode } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html, Line } from "@react-three/drei";
+import { Line, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { grahaColor } from "@/lib/rudra-theme";
 import { grahaPosition, type GrahaId, type Navagraha } from "./navagraha-config";
@@ -37,63 +37,134 @@ function ellipsePoints(graha: Navagraha, segments = 128): THREE.Vector3[] {
   return pts;
 }
 
-function GrahaBody({ graha }: { graha: Navagraha }) {
-  return (
-    <group rotation={[graha.axialTilt, 0, 0]}>
-      <mesh castShadow receiveShadow>
-        <sphereGeometry args={[1, 64, 64]} />
+function GrahaSurfaceExtras({ graha }: { graha: Navagraha }) {
+  if (graha.surface === "corona") {
+    return (
+      <>
+        <mesh scale={1.45}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.22} side={THREE.BackSide} />
+        </mesh>
+        <mesh scale={1.28}>
+          <sphereGeometry args={[1, 24, 24]} />
+          <meshBasicMaterial color="#ffdd88" transparent opacity={0.12} />
+        </mesh>
+      </>
+    );
+  }
+  if (graha.surface === "swirl") {
+    return (
+      <mesh scale={0.72}>
+        <sphereGeometry args={[1, 24, 24]} />
+        <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.55} />
+      </mesh>
+    );
+  }
+  if (graha.surface === "hex") {
+    return (
+      <mesh>
+        <icosahedronGeometry args={[0.92, 1]} />
         <meshPhysicalMaterial
           color={graha.appearance.color}
           emissive={graha.appearance.emissive}
-          emissiveIntensity={graha.appearance.emissiveIntensity}
-          metalness={graha.appearance.metalness}
-          roughness={graha.appearance.roughness}
-          clearcoat={graha.appearance.clearcoat ?? 0}
-          clearcoatRoughness={0.12}
+          emissiveIntensity={graha.appearance.emissiveIntensity * 0.8}
+          metalness={0.65}
+          roughness={0.35}
+          flatShading
         />
       </mesh>
-      <mesh scale={1.15}>
+    );
+  }
+  return null;
+}
+
+function TexturedGrahaSphere({ graha, map }: { graha: Navagraha; map: THREE.Texture }) {
+  return (
+    <mesh castShadow receiveShadow>
+      <sphereGeometry args={[1, 64, 64]} />
+      <meshPhysicalMaterial
+        map={map}
+        color={graha.appearance.color}
+        emissive={graha.appearance.emissive}
+        emissiveIntensity={graha.appearance.emissiveIntensity * 0.35}
+        metalness={graha.appearance.metalness}
+        roughness={graha.appearance.roughness}
+        clearcoat={graha.appearance.clearcoat ?? 0}
+        clearcoatRoughness={0.12}
+      />
+    </mesh>
+  );
+}
+
+function TexturedGrahaBody({ graha }: { graha: Navagraha }) {
+  const map = useTexture(graha.texture!);
+  map.colorSpace = THREE.SRGBColorSpace;
+  const useHex = graha.surface === "hex";
+  return (
+    <group rotation={[graha.axialTilt, 0, 0]}>
+      {useHex ? <GrahaSurfaceExtras graha={graha} /> : <TexturedGrahaSphere graha={graha} map={map} />}
+      {!useHex && <GrahaSurfaceExtras graha={graha} />}
+      <mesh scale={1.12}>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.14} side={THREE.BackSide} />
+        <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.12} side={THREE.BackSide} />
       </mesh>
-      {graha.hasRings && (
-        <mesh rotation={[-Math.PI / 2 + 0.35, 0, 0]}>
-          <ringGeometry args={[1.5, 2.2, 128]} />
-          <meshStandardMaterial
-            color="#99aabb"
-            transparent
-            opacity={0.65}
-            side={THREE.DoubleSide}
-            depthWrite={false}
-            metalness={0.8}
-            roughness={0.3}
-          />
-        </mesh>
-      )}
+      {graha.hasRings && <ShaniRings />}
     </group>
   );
 }
 
-function GrahaLabelCard({ graha, role }: { graha: Navagraha; role: string }) {
-  const accent = grahaColor(graha.name, 1);
-  const isLead = role === "lead";
+function ProceduralGrahaBody({ graha }: { graha: Navagraha }) {
+  const useHex = graha.surface === "hex";
   return (
-    <div
-      className="graha-label-card"
-      style={{
-        borderColor: accent,
-        boxShadow: isLead ? `0 0 18px ${grahaColor(graha.name, 0.45)}` : `0 0 8px ${grahaColor(graha.name, 0.15)}`,
-      }}
-    >
-      <span className="graha-label-symbol" style={{ color: accent }}>
-        {graha.symbol}
-      </span>
-      <span className="graha-label-name" style={{ color: accent }}>
-        {graha.name.toUpperCase()}
-        {isLead && " ⚡"}
-      </span>
-      <span className="graha-label-domain">{graha.domain.toUpperCase()}</span>
-    </div>
+    <group rotation={[graha.axialTilt, 0, 0]}>
+      {useHex ? (
+        <GrahaSurfaceExtras graha={graha} />
+      ) : (
+        <mesh castShadow receiveShadow>
+          <sphereGeometry args={[1, 64, 64]} />
+          <meshPhysicalMaterial
+            color={graha.appearance.color}
+            emissive={graha.appearance.emissive}
+            emissiveIntensity={graha.appearance.emissiveIntensity}
+            metalness={graha.appearance.metalness}
+            roughness={graha.appearance.roughness}
+            clearcoat={graha.appearance.clearcoat ?? 0}
+            clearcoatRoughness={0.12}
+          />
+        </mesh>
+      )}
+      {!useHex && <GrahaSurfaceExtras graha={graha} />}
+      <mesh scale={1.12}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.12} side={THREE.BackSide} />
+      </mesh>
+      {graha.hasRings && <ShaniRings />}
+    </group>
+  );
+}
+
+function GrahaBodyInner({ graha }: { graha: Navagraha }) {
+  if (graha.texture) return <TexturedGrahaBody graha={graha} />;
+  return <ProceduralGrahaBody graha={graha} />;
+}
+
+function ShaniRings() {
+  const ringMap = useTexture(`${"/textures/planets"}/2k_saturn_ring_alpha.png`);
+  ringMap.colorSpace = THREE.SRGBColorSpace;
+  return (
+    <mesh rotation={[-Math.PI / 2 + 0.35, 0, 0]}>
+      <ringGeometry args={[1.45, 2.35, 128]} />
+      <meshStandardMaterial
+        map={ringMap}
+        color="#ccddee"
+        transparent
+        opacity={0.78}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+        metalness={0.85}
+        roughness={0.25}
+      />
+    </mesh>
   );
 }
 
@@ -124,8 +195,6 @@ export function GrahaOrbit3D({
     const pos = grahaPosition(graha, angleRef.current);
     orbitRef.current.position.set(pos.x, pos.y, pos.z);
     positionsRef.current.set(graha.id, new THREE.Vector3(pos.x, pos.y, pos.z));
-
-    // Depth sort: grahas toward camera render in front of Trishula
     orbitRef.current.renderOrder = pos.z > 0.5 ? 200 : pos.z < -0.5 ? 50 : 120;
 
     if (bodyRef.current) {
@@ -133,56 +202,38 @@ export function GrahaOrbit3D({
     }
 
     let pulse = 1;
-    if (role === "lead") pulse = 1.12 + Math.sin(state.clock.elapsedTime * 3.5) * 0.05;
-    else if (role === "supporting" || role === "pulse") pulse = 1 + Math.sin(state.clock.elapsedTime * 2 + graha.angle) * 0.04;
+    if (role === "lead") pulse = 1.14 + Math.sin(state.clock.elapsedTime * 3.5) * 0.06;
+    else if (role === "supporting" || role === "pulse")
+      pulse = 1 + Math.sin(state.clock.elapsedTime * 2 + graha.angle) * 0.05;
 
     orbitRef.current.scale.setScalar(graha.size * pulse);
   });
 
   const pathOpacity =
-    role === "lead" ? 0.65 : role === "supporting" || role === "pulse" ? 0.42 : 0.28;
-
-  const labelPos: [number, number, number] = [
-    graha.labelOffsetX,
-    graha.labelOffsetY,
-    0,
-  ];
+    role === "lead" ? 0.82 : role === "supporting" || role === "pulse" ? 0.58 : 0.42;
 
   return (
     <group>
-      <Line points={pathPoints} color={graha.orbitColor} transparent opacity={pathOpacity} lineWidth={1.4} />
+      <Line points={pathPoints} color={graha.orbitColor} transparent opacity={pathOpacity * 0.45} lineWidth={4.2} />
+      <Line points={pathPoints} color={graha.orbitColor} transparent opacity={pathOpacity} lineWidth={2.2} />
       <group ref={orbitRef}>
         <group ref={bodyRef}>
-          <GrahaBody graha={graha} />
+          <GrahaBodyInner graha={graha} />
           <pointLight
             color={graha.appearance.emissive}
-            intensity={0.9 + (role === "lead" ? 1.8 : role === "supporting" ? 0.5 : 0)}
-            distance={6}
+            intensity={1 + (role === "lead" ? 2.2 : role === "supporting" ? 0.6 : 0)}
+            distance={7}
           />
           {role === "lead" && (
             <mesh>
-              <sphereGeometry args={[1.18, 32, 32]} />
-              <meshBasicMaterial color={accent} transparent opacity={0.15} side={THREE.BackSide} />
+              <sphereGeometry args={[1.22, 32, 32]} />
+              <meshBasicMaterial color={accent} transparent opacity={0.18} side={THREE.BackSide} />
             </mesh>
           )}
         </group>
-        <Html
-          position={labelPos}
-          center
-          distanceFactor={22}
-          zIndexRange={[100, 0]}
-          style={{ pointerEvents: "none" }}
-          occlude={false}
-        >
-          <GrahaLabelCard graha={graha} role={role} />
-        </Html>
       </group>
     </group>
   );
-}
-
-export function GrahaOrbitGuides() {
-  return null;
 }
 
 export function getGrahaWorldPosition(

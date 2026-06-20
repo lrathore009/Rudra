@@ -11,6 +11,7 @@
     --cosmos-violet: 262 85% 68%;
     --cosmos-magenta: 328 80% 64%;
     --cosmos-star: 210 70% 95%;
+    --cosmos-gold: 43 90% 58%;
 
     --background: 235 58% 4%;
     --foreground: 210 70% 95%;
@@ -966,46 +967,94 @@ body { background: hsl(var(--cosmos-void)); }
   color: hsl(var(--cosmos-cyan) / 0.9);
   box-shadow: 0 0 12px hsl(var(--cosmos-cyan) / 0.15);
 }
+.cosmic-status-signal {
+  font-family: monospace;
+  font-size: 8px;
+  letter-spacing: -0.05em;
+  opacity: 0.85;
+}
+.cosmic-status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  background: hsl(var(--cosmos-star) / 0.25);
+  vertical-align: middle;
+}
+.cosmic-status-dot-live {
+  background: hsl(145 70% 52%);
+  box-shadow: 0 0 6px hsl(145 70% 52% / 0.7);
+}
+.cosmic-footer-status {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
 .cosmic-realm-tile {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  min-width: 4.5rem;
-  border: 1px solid hsl(var(--cosmos-cyan) / 0.18);
-  border-radius: 6px;
-  padding: 0.45rem 0.35rem 0.35rem;
+  min-width: 4.75rem;
+  max-width: 5.5rem;
+  border: 1px solid hsl(var(--cosmos-gold) / 0.22);
+  clip-path: polygon(50% 0%, 92% 18%, 92% 82%, 50% 100%, 8% 82%, 8% 18%);
+  padding: 0.55rem 0.4rem 0.45rem;
   font-family: monospace;
-  font-size: 7px;
+  font-size: 6.5px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
+  letter-spacing: 0.05em;
+  line-height: 1.15;
   text-align: center;
   color: hsl(var(--cosmos-star) / 0.55);
-  background: hsl(var(--cosmos-deep) / 0.4);
+  background: hsl(var(--cosmos-deep) / 0.55);
   backdrop-filter: blur(6px);
 }
 .cosmic-realm-tile-active {
-  border-color: hsl(var(--cosmos-cyan) / 0.55);
-  color: hsl(var(--cosmos-cyan));
-  box-shadow: 0 0 14px hsl(var(--cosmos-cyan) / 0.2);
+  border-color: hsl(var(--cosmos-gold) / 0.55);
+  color: hsl(var(--cosmos-gold));
+  box-shadow: 0 0 14px hsl(var(--cosmos-gold) / 0.2);
 }
-/* 3D graha label cards (Html overlay) */
+/* Screen-composed graha labels (mockup quadrants) */
+.graha-screen-labels {
+  padding: 4.5rem 0.5rem 9rem;
+}
+.graha-screen-label-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
 .graha-label-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.05rem;
-  min-width: 4.2rem;
-  max-width: 6.5rem;
+  min-width: 4.5rem;
+  max-width: 7rem;
   border: 1px solid hsl(var(--cosmos-cyan) / 0.35);
-  border-radius: 3px;
-  padding: 0.18rem 0.35rem 0.22rem;
-  background: hsl(var(--cosmos-void) / 0.82);
-  backdrop-filter: blur(8px);
-  text-align: center;
+  border-radius: 2px;
+  padding: 0.22rem 0.45rem 0.26rem;
+  background: hsl(var(--cosmos-void) / 0.88);
+  backdrop-filter: blur(10px);
+  text-align: left;
   user-select: none;
-  white-space: nowrap;
+}
+.graha-label-card-lead {
+  border-width: 1.5px;
+}
+.graha-label-card-compact {
+  transform: scale(0.88);
+  transform-origin: center;
+}
+@media (max-width: 640px) {
+  .graha-screen-label-slot {
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  .graha-screen-labels {
+    padding-top: 3.5rem;
+  }
 }
 .graha-label-symbol {
   font-size: 11px;
@@ -1021,11 +1070,11 @@ body { background: hsl(var(--cosmos-void)); }
 }
 .graha-label-domain {
   font-family: monospace;
-  font-size: 5px;
-  letter-spacing: 0.05em;
-  color: hsl(var(--cosmos-star) / 0.42);
-  max-width: 6rem;
-  line-height: 1.2;
+  font-size: 5.5px;
+  letter-spacing: 0.06em;
+  color: hsl(var(--cosmos-star) / 0.5);
+  max-width: 6.5rem;
+  line-height: 1.25;
   white-space: normal;
 }
 /* Login — 3D cosmos only, dark void */

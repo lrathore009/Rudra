@@ -46,12 +46,14 @@ function SceneContent({
   supportingGrahaIds,
   pulseGrahaIds,
   errorFacet,
+  variant = "main",
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
   supportingGrahaIds: GrahaId[];
   pulseGrahaIds: GrahaId[];
   errorFacet?: string;
+  variant?: "main" | "login";
 }) {
   const reducedMotion = useReducedMotion();
   const positionsRef = useGrahaPositionsRef();
@@ -148,24 +150,25 @@ function SceneContent({
     return "idle";
   };
 
+  const isLogin = variant === "login";
+
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0.8, 26]} fov={54} />
-      <OrbitControls
-        enablePan={false}
-        enableZoom
-        minDistance={16}
-        maxDistance={42}
-        maxPolarAngle={Math.PI / 1.85}
-        minPolarAngle={Math.PI / 2.4}
-        autoRotate={!processing && !reducedMotion}
-        autoRotateSpeed={0.08}
-        target={[0, 0.2, 0]}
-      />
-      <directionalLight position={[4, 16, 22]} intensity={1.1} color="#ffeedd" />
-      <pointLight position={[-6, 8, 10]} intensity={0.6} color="#8866cc" />
-      <pointLight position={[6, 4, -8]} intensity={0.4} color="#4488ff" />
-      <ambientLight intensity={0.22} color="#2a2844" />
+      <PerspectiveCamera makeDefault position={isLogin ? [0, 0.6, 22] : [0, 0.8, 26]} fov={isLogin ? 50 : 54} />
+      {!isLogin && (
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          enableRotate={false}
+          autoRotate={false}
+          target={[0, 0.2, 0]}
+        />
+      )}
+      <directionalLight position={[4, 16, 22]} intensity={1.35} color="#ffeedd" />
+      <pointLight position={[-6, 8, 10]} intensity={0.55} color="#8866cc" />
+      <pointLight position={[6, 4, -8]} intensity={0.35} color="#4488ff" />
+      <pointLight position={[0, -2, 8]} intensity={1.8} color="#ffcc88" />
+      <ambientLight intensity={0.2} color="#2a2844" />
       <Environment preset="night" environmentIntensity={0.28} />
       <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} />
 
@@ -200,12 +203,14 @@ export function CosmicScene({
   supportingGrahaIds = [],
   pulseGrahaIds = [],
   errorFacet,
+  variant = "main",
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
   supportingGrahaIds?: GrahaId[];
   pulseGrahaIds?: GrahaId[];
   errorFacet?: string;
+  variant?: "main" | "login";
 }) {
   return (
     <Canvas
@@ -221,6 +226,7 @@ export function CosmicScene({
             supportingGrahaIds={supportingGrahaIds}
             pulseGrahaIds={pulseGrahaIds}
             errorFacet={errorFacet}
+            variant={variant}
           />
         </GrahaPositionsProvider>
       </Suspense>

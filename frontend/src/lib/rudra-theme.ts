@@ -49,12 +49,21 @@ export const FACET_COLOR: Record<string, string> = {
 };
 
 export const SUTRA_TICKER = [
+  "Memory lattice synced",
   "Rudra commands the Navagraha",
   "Nine Grahas · one Trishula",
   "Local · sealed · yours",
   "The cosmos remembers",
-  "Signal before answer",
 ];
+
+export const FOOTER_TICKER_SEGMENTS = [
+  "Memory lattice synced",
+  "Signal before answer",
+  "Encrypted counsel channel",
+  "Navagraha routing live",
+];
+
+export const RUDRA_TAGLINE = "The void holds your counsel";
 
 export function grahaName(agentType?: string): string | undefined {
   if (!agentType) return undefined;

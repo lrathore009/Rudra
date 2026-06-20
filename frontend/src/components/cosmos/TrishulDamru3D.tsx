@@ -8,6 +8,7 @@ import {
   createBeadGarland,
   createCenterProngGroup,
   createDamruGroup,
+  createOmDecal,
   createProngTube,
   createShaftGeometry,
   createShaftRings,
@@ -127,6 +128,7 @@ function SacredTrishulMesh({
   const tripundra = useMemo(() => createTripundra(mats.ash), [mats.ash]);
   const rings = useMemo(() => createShaftRings(mats.gold), [mats.gold]);
   const garland = useMemo(() => createBeadGarland(mats.bead), [mats.bead]);
+  const omDecal = useMemo(() => (typeof document !== "undefined" ? createOmDecal() : null), []);
   const thirdEye = useMemo(
     () => createThirdEye(eyeOpen, { lens: mats.eyeLens, iris: mats.eyeIris }),
     [eyeOpen, mats.eyeLens, mats.eyeIris]
@@ -140,10 +142,9 @@ function SacredTrishulMesh({
         rootRef.current.rotation.y += dt * 3.5 * motion;
         rootRef.current.position.y = Math.sin(t * 5) * 0.04;
       } else {
-        // 0.2–0.5°/s idle rotation
-        rootRef.current.rotation.y += dt * 0.006 * motion;
-        rootRef.current.position.y = Math.sin(t * 0.7) * 0.08 * motion;
-        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.035 * motion;
+        rootRef.current.rotation.y += dt * 0.002 * motion;
+        rootRef.current.position.y = Math.sin(t * 0.5) * 0.04 * motion;
+        rootRef.current.rotation.x = Math.sin(t * 0.35) * 0.018 * motion;
       }
     }
     if (damruRef.current) {
@@ -185,6 +186,7 @@ function SacredTrishulMesh({
         </mesh>
         <group ref={damruRef} position={[0, -0.38, 0.05]}>
           <primitive object={damru} />
+          {omDecal && <primitive object={omDecal} />}
         </group>
         <group position={[0, -0.55, 0.06]}>
           <primitive object={garland} />
@@ -215,7 +217,7 @@ export function TrishulDamru3D({
   reducedMotion?: boolean;
 }) {
   return (
-    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.04} floatIntensity={reducedMotion ? 0 : 0.12}>
+    <Float speed={reducedMotion ? 0 : 0.5} rotationIntensity={0} floatIntensity={reducedMotion ? 0 : 0.05}>
       <group position={[0, 0.05, 0]}>
         <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} reducedMotion={reducedMotion} />
       </group>

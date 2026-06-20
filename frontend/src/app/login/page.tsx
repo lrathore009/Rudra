@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Lock } from "lucide-react";
-import { SutraWordmark } from "@/components/hud/SutraWordmark";
+import { SutraWordmark, RudraTagline } from "@/components/hud/SutraWordmark";
 import { FIRST_BREATH_KEY } from "@/lib/rudra-theme";
 import { login } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -43,9 +43,7 @@ export default function LoginPage() {
       <div className="relative z-10 flex min-h-screen flex-col">
         <header className="flex flex-col items-center px-4 pt-10 sm:pt-14">
           <SutraWordmark className="text-xl sm:text-2xl" />
-          <p className="mt-3 font-terminal text-[9px] uppercase tracking-[0.28em] text-muted-foreground/80">
-            Cosmic uplink
-          </p>
+          <RudraTagline className="mt-2" />
         </header>
 
         <div className="flex-1" aria-hidden />

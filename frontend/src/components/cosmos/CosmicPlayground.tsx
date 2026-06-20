@@ -3,6 +3,7 @@
 import { CosmicScene } from "./CosmicScene";
 import { CosmicHUD } from "./CosmicHUD";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
+import { GrahaScreenLabels } from "./GrahaScreenLabels";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import type { RudraThemeMode } from "@/lib/rudra-theme";
@@ -62,6 +63,8 @@ export function CosmicPlayground({
   successRate,
   subsysRate,
   onAskProject,
+  uplinkActive = true,
+  memorySynced = true,
 }: {
   themeMode: RudraThemeMode;
   onThemeCycle: () => void;
@@ -105,6 +108,8 @@ export function CosmicPlayground({
   successRate: number;
   subsysRate: number;
   onAskProject: (name: string) => void;
+  uplinkActive?: boolean;
+  memorySynced?: boolean;
 }) {
   return (
     <div className="cosmic-playground relative h-screen w-screen overflow-hidden">
@@ -114,6 +119,13 @@ export function CosmicPlayground({
         supportingGrahaIds={supportingGrahaIds ?? []}
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
+      />
+
+      <GrahaScreenLabels
+        leadGrahaId={leadGrahaId}
+        supportingGrahaIds={supportingGrahaIds}
+        pulseGrahaIds={pulseGrahaIds}
+        processing={processing}
       />
 
       <CosmicHUD
@@ -144,7 +156,9 @@ export function CosmicPlayground({
         actions={actions}
         activeRealm={activeRealm}
         onRealmChange={onRealmChange}
-        showResponse
+        showResponse={processing || Boolean(streamingMsgId) || messages.some((m) => m.role === "assistant" && m.content)}
+        uplinkActive={uplinkActive}
+        memorySynced={memorySynced}
       />
 
       {activeRealm && (
