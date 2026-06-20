@@ -750,3 +750,174 @@
   .sovereign-tablet { width: min(720px, 92vw); }
 }
 
+/* ============================================================
+   TRISHULA COSMOS — cosmic sovereign theme
+   Deep-space backdrop, gold trident core, vertical third eye,
+   nine orbiting planets, lightning dispatch, breathing nebula.
+   ============================================================ */
+:root {
+  --cosmos-void: 235 60% 4%;
+  --cosmos-deep: 250 48% 8%;
+  --cosmos-cyan: 190 95% 62%;
+  --cosmos-violet: 262 85% 68%;
+  --cosmos-magenta: 328 80% 64%;
+  --cosmos-star: 210 70% 95%;
+  /* repaint the global canvas to deep space (overrides layered defaults) */
+  --background: 235 58% 4%;
+  --rudra-night: 235 60% 4%;
+  --rudra-bark-deep: 250 44% 7%;
+  --rudra-glass: 248 46% 9%;
+}
+[data-theme="sandhya"] {
+  --background: 246 52% 5%;
+  --rudra-night: 244 58% 5%;
+  --rudra-gold: 38 95% 62%;
+  --rudra-saffron: 32 98% 58%;
+}
+[data-theme="nisha"] {
+  --background: 235 62% 3%;
+  --rudra-night: 235 66% 3%;
+  --rudra-gold: 40 85% 58%;
+  --rudra-saffron: 30 88% 54%;
+}
+body { background: hsl(var(--cosmos-void)); }
+
+.sovereign-tablet {
+  background: linear-gradient(165deg, hsl(250 48% 9%) 0%, hsl(240 54% 5%) 50%, hsl(235 60% 3%) 100%);
+  box-shadow:
+    0 0 0 1px hsl(var(--cosmos-cyan) / 0.2),
+    0 0 0 8px hsl(248 50% 6% / 0.85),
+    0 0 0 10px hsl(var(--cosmos-violet) / 0.1),
+    0 40px 100px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 hsl(var(--cosmos-cyan) / 0.12);
+}
+.sovereign-bezel { border-color: hsl(var(--cosmos-cyan) / 0.14); }
+.core-socket {
+  background: radial-gradient(circle, hsl(250 45% 7% / 0.9) 0%, hsl(235 60% 3% / 0.4) 70%);
+  box-shadow:
+    inset 0 4px 14px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 hsl(var(--cosmos-cyan) / 0.08),
+    0 0 26px hsl(var(--cosmos-violet) / 0.12);
+}
+
+/* ---------- breathing nebula gas clouds ---------- */
+@keyframes nebulaBreath {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+  50% { transform: scale(1.18) translate(2%, -2%); opacity: 0.85; }
+}
+.nebula-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  mix-blend-mode: screen;
+  animation: nebulaBreath 16s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ---------- starfield twinkle + parallax drift ---------- */
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@keyframes starDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-40px); }
+}
+.star { position: absolute; border-radius: 50%; background: hsl(var(--cosmos-star)); }
+
+/* ---------- neural cosmic web ---------- */
+@keyframes neuralPulse {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.4; }
+}
+@keyframes neuralNode {
+  0%, 100% { opacity: 0.2; r: 1; }
+  50% { opacity: 0.9; r: 1.8; }
+}
+
+/* ---------- trident core motion ---------- */
+@keyframes tridentBreath {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2%) scale(1.025); }
+}
+@keyframes tridentSpinOnce {
+  0% { transform: translateY(-12%) rotate(0deg); }
+  100% { transform: translateY(-12%) rotate(360deg); }
+}
+.trident-img { transform-origin: center; will-change: transform; }
+.trident-idle { animation: tridentBreath 6s ease-in-out infinite; }
+.trident-lifted { transform: translateY(-12%); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.trident-spin { animation: tridentSpinOnce 0.9s cubic-bezier(0.45, 0, 0.2, 1) 1; }
+
+/* ---------- vertical third eye ---------- */
+.third-eye {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.third-eye-lens {
+  transform-origin: center;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+}
+
+/* ---------- lightning bolt to a planet ---------- */
+@keyframes boltFlash {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  60% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+.lightning-bolt {
+  animation: boltFlash 0.8s ease-out 1 forwards;
+  filter: drop-shadow(0 0 4px hsl(var(--cosmos-cyan))) drop-shadow(0 0 9px hsl(var(--cosmos-violet)));
+}
+
+/* ---------- planets ---------- */
+@keyframes planetFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes planetAwaken {
+  0% { transform: scale(1); filter: brightness(1); }
+  35% { transform: scale(1.45); filter: brightness(1.7); }
+  100% { transform: scale(1.12); filter: brightness(1.25); }
+}
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+.cosmos-orbit { position: absolute; inset: 0; }
+.cosmos-orbit-ring {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.12);
+}
+.planet-body {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: planetFloat 5s ease-in-out infinite;
+  will-change: transform;
+}
+.planet-awaken { animation: planetAwaken 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
+.planet-ringed::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 190%;
+  height: 56%;
+  transform: translate(-50%, -50%) rotate(-22deg);
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nebula-blob,
+  .trident-idle,
+  .trident-spin,
+  .planet-body { animation: none !important; }
+}
+

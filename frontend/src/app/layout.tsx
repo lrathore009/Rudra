@@ -17,21 +17,21 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
-  title: "RUDRA — Rudraksha Intelligence",
+  title: "RUDRA — Trishula Cosmos",
   description:
-    "Personal Intelligence OS — a living Rudraksha interface for Laxman's private command center.",
-  icons: { icon: "/rudraksha-icon.svg", apple: "/rudraksha-icon.svg" },
+    "Personal Intelligence OS — a cosmic command deck where the trishula awakens and nine planets answer.",
+  icons: { icon: "/trishula-icon.png", apple: "/trishula-icon.png" },
   openGraph: {
-    title: "RUDRA — Rudraksha Intelligence",
-    description: "Nine facets, one voice. Local-first personal intelligence for Laxman.",
-    images: [{ url: "/rudraksha-icon.svg", width: 64, height: 64, alt: "Rudraksha bead" }],
+    title: "RUDRA — Trishula Cosmos",
+    description: "Nine planets, one trident. Local-first personal intelligence for Laxman.",
+    images: [{ url: "/trishula-icon.png", width: 512, height: 512, alt: "Rudra trishula" }],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "RUDRA — Rudraksha Intelligence",
-    description: "Nine facets, one voice. Local-first personal intelligence.",
-    images: ["/rudraksha-icon.svg"],
+    title: "RUDRA — Trishula Cosmos",
+    description: "Nine planets, one trident. Local-first personal intelligence.",
+    images: ["/trishula-icon.png"],
   },
 };
 

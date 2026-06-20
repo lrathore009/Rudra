@@ -88,6 +88,35 @@ export function releaseBreath(muted = false): void {
   osc.stop(t0 + 0.5);
 }
 
+/** Damaru roll — Shiva's drum. Fires when an execution begins (the trident awakens). */
+export function damru(muted = false): void {
+  if (muted) return;
+  const c = getCtx();
+  if (!c) return;
+  if (c.state === "suspended") void c.resume();
+
+  const t0 = c.currentTime;
+  // DA-da-da · DUM-da-da — two grouped strikes, like a turning damaru.
+  const pattern = [0, 0.085, 0.165, 0.3, 0.385, 0.465];
+  pattern.forEach((dt, i) => {
+    const accent = i % 3 === 0;
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "triangle";
+    const base = accent ? 188 : 232 + (i % 2) * 46;
+    osc.frequency.setValueAtTime(base * 1.7, t0 + dt);
+    osc.frequency.exponentialRampToValueAtTime(base, t0 + dt + 0.05);
+    const peak = accent ? 0.09 : 0.05;
+    gain.gain.setValueAtTime(0.0001, t0 + dt);
+    gain.gain.exponentialRampToValueAtTime(peak, t0 + dt + 0.007);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.14);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(t0 + dt);
+    osc.stop(t0 + dt + 0.22);
+  });
+}
+
 /** Ultra-low ambient bed — muted by default via caller */
 export function setAmbient(active: boolean, streaming: boolean, muted: boolean): void {
   const c = getCtx();

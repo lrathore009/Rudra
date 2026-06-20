@@ -24,7 +24,7 @@ import {
   worldGreeting,
   type RudraThemeMode,
 } from "@/lib/rudra-theme";
-import { blip, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
+import { blip, damru, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
 import { StreamingThread, FirstBreathOverlay } from "@/components/hud/MalaArc";
 import {
   ensureMicrophoneAccess,
@@ -332,6 +332,7 @@ export default function Jarvis() {
       setStageIdx(0);
       setActiveRoutedAgent(selectedAgent);
       blip("send", muted);
+      damru(muted);
       hapticTap(10);
       pushLog(`◇ sutra · ${q.slice(0, 36)}`);
       primeSpeechSynthesis();
@@ -489,6 +490,7 @@ export default function Jarvis() {
     setProcessing(true);
     setSteps([]);
     setStageIdx(0);
+    damru(muted);
     pushLog(">> RUN morning_digest");
     try {
       const r = await runSchedulerJob("morning_digest");
@@ -506,7 +508,7 @@ export default function Jarvis() {
     } finally {
       setProcessing(false);
     }
-  }, [processing, pushLog]);
+  }, [processing, pushLog, muted]);
 
   const startVoice = useCallback(async () => {
     primeSpeechSynthesis();

@@ -53,23 +53,19 @@ export default function LoginPage() {
         }
       >
         <div className="flex flex-col items-center py-2 text-center">
-          <div className="rudra-breath mb-5 flex h-20 w-20 items-center justify-center">
-            <svg viewBox="0 0 64 64" className="h-full w-full" aria-hidden="true">
-              <ellipse cx="32" cy="34" rx="18" ry="20" fill="hsl(22 38% 18%)" stroke="hsl(var(--rudra-gold) / 0.5)" />
-              {[0, 72, 144, 216, 288].map((deg) => (
-                <line
-                  key={deg}
-                  x1="32"
-                  y1="14"
-                  x2="32"
-                  y2="54"
-                  stroke="hsl(18 35% 8% / 0.7)"
-                  strokeWidth="1.2"
-                  transform={`rotate(${deg} 32 32)`}
-                />
-              ))}
-              <ellipse cx="32" cy="32" rx="7" ry="8" fill="hsl(var(--rudra-gold-bright))" className="inner-light" />
-            </svg>
+          <div className="rudra-breath mb-5 flex h-36 w-36 items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/trident-login.png"
+              alt="Rudra trishula"
+              className="h-full w-full object-contain"
+              style={{
+                mixBlendMode: "screen",
+                WebkitMaskImage: "radial-gradient(ellipse 60% 70% at 50% 48%, #000 56%, transparent 100%)",
+                maskImage: "radial-gradient(ellipse 60% 70% at 50% 48%, #000 56%, transparent 100%)",
+                filter: "drop-shadow(0 0 16px hsl(var(--cosmos-violet) / 0.6))",
+              }}
+            />
           </div>
           <p className="font-hud text-xs tracking-[0.28em] text-amber-200/70">PRESENT YOUR KEY</p>
         </div>
