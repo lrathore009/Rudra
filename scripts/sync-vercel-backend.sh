@@ -33,13 +33,18 @@ if [ ! -f .vercel/project.json ]; then
   $NPM_VERCEL link --project rudra-kl5i --yes
 fi
 
-# Remove old value if present (ignore failure)
-$NPM_VERCEL env rm RUDRA_BACKEND_URL production --yes 2>/dev/null || true
-printf '%s' "$TUNNEL_URL" | $NPM_VERCEL env add RUDRA_BACKEND_URL production
+# Update existing vars (rm fails when missing; add fails when present).
+upsert_env() {
+  local name="$1" value="$2"
+  if $NPM_VERCEL env ls production 2>/dev/null | grep -q " $name "; then
+    printf '%s' "$value" | $NPM_VERCEL env update "$name" production --yes
+  else
+    printf '%s' "$value" | $NPM_VERCEL env add "$name" production
+  fi
+}
 
-# Also keep NEXT_PUBLIC_API_URL in sync for any client-side fallbacks
-$NPM_VERCEL env rm NEXT_PUBLIC_API_URL production --yes 2>/dev/null || true
-printf '%s' "$TUNNEL_URL" | $NPM_VERCEL env add NEXT_PUBLIC_API_URL production
+upsert_env RUDRA_BACKEND_URL "$TUNNEL_URL"
+upsert_env NEXT_PUBLIC_API_URL "$TUNNEL_URL"
 
 echo "→ Deploying frontend to production..."
 $NPM_VERCEL deploy --prod --yes
