@@ -193,12 +193,12 @@ function SacredTrishulMesh({
 
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
         <torusGeometry args={[0.55, 0.006, 8, 64]} />
-        <meshBasicMaterial color="#44ddff" transparent opacity={0.25} />
+        <meshBasicMaterial color="#ffcc66" transparent opacity={0.3} />
       </mesh>
 
-      <pointLight ref={glowRef} color="#aa66ff" intensity={1.5} distance={7} position={[0, 0.6, 0.4]} />
-      <pointLight color="#44eeff" intensity={1.8} distance={9} position={[0.5, 1, 1]} />
-      <spotLight color="#88eeff" intensity={2} angle={0.4} penumbra={0.8} position={[2, 3, 2]} castShadow />
+      <pointLight ref={glowRef} color="#ffcc66" intensity={2.5} distance={12} position={[0, 0.6, 0.4]} />
+      <pointLight color="#ffaa44" intensity={2.2} distance={14} position={[0.5, 1.2, 1]} />
+      <spotLight color="#ffddaa" intensity={2.5} angle={0.45} penumbra={0.8} position={[2, 4, 3]} castShadow />
     </group>
   );
 }
@@ -215,8 +215,8 @@ export function TrishulDamru3D({
   reducedMotion?: boolean;
 }) {
   return (
-    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.06} floatIntensity={reducedMotion ? 0 : 0.2}>
-      <group position={[0, -0.35, 0]}>
+    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.04} floatIntensity={reducedMotion ? 0 : 0.15}>
+      <group position={[0, 0.15, 0]}>
         <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} reducedMotion={reducedMotion} />
       </group>
     </Float>

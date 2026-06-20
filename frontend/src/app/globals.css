@@ -940,6 +940,91 @@ body { background: hsl(var(--cosmos-void)); }
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
+.cosmic-command-panel {
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.22);
+  border-radius: 6px;
+  background: hsl(var(--cosmos-deep) / 0.55);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 30px hsl(var(--cosmos-violet) / 0.12),
+    inset 0 1px 0 hsl(var(--cosmos-cyan) / 0.08);
+}
+.cosmic-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.2);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: hsl(var(--cosmos-star) / 0.55);
+}
+.cosmic-status-badge-nominal {
+  border-color: hsl(var(--cosmos-cyan) / 0.45);
+  color: hsl(var(--cosmos-cyan) / 0.9);
+  box-shadow: 0 0 12px hsl(var(--cosmos-cyan) / 0.15);
+}
+.cosmic-realm-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 4.5rem;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.18);
+  border-radius: 6px;
+  padding: 0.45rem 0.35rem 0.35rem;
+  font-family: monospace;
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-align: center;
+  color: hsl(var(--cosmos-star) / 0.55);
+  background: hsl(var(--cosmos-deep) / 0.4);
+  backdrop-filter: blur(6px);
+}
+.cosmic-realm-tile-active {
+  border-color: hsl(var(--cosmos-cyan) / 0.55);
+  color: hsl(var(--cosmos-cyan));
+  box-shadow: 0 0 14px hsl(var(--cosmos-cyan) / 0.2);
+}
+/* 3D graha label cards (Html overlay) */
+.graha-label-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 5.5rem;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.35);
+  border-radius: 4px;
+  padding: 0.25rem 0.45rem 0.3rem;
+  background: hsl(var(--cosmos-void) / 0.72);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  user-select: none;
+}
+.graha-label-symbol {
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 0 0 10px currentColor;
+}
+.graha-label-name {
+  font-family: monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+}
+.graha-label-domain {
+  font-family: monospace;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  color: hsl(var(--cosmos-star) / 0.45);
+  max-width: 8rem;
+  line-height: 1.25;
+}
 .cosmic-command-beam {
   border-bottom: 1px solid hsl(var(--cosmos-cyan) / 0.35);
   box-shadow: 0 4px 24px hsl(var(--cosmos-cyan) / 0.12);

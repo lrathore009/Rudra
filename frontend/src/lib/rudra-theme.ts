@@ -96,11 +96,8 @@ export function themeModeLabel(mode: RudraThemeMode): string {
 }
 
 export function sutraPlaceholder(hour: number, processing: boolean): string {
-  if (processing) return "third eye opening…";
-  if (hour >= 5 && hour < 12) return "Command Rudra — what shall we illuminate?";
-  if (hour >= 12 && hour < 17) return "Transmit your command to Rudra…";
-  if (hour >= 17 && hour < 21) return "What remains before rest?";
-  return "Close the orbit — speak to Rudra";
+  if (processing) return "Third eye opening…";
+  return "What wisdom do you seek?";
 }
 
 export function coreRhythmFromState(

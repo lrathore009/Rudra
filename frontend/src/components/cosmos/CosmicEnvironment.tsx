@@ -58,10 +58,11 @@ function Starfield({ reducedMotion }: { reducedMotion: boolean }) {
 function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
   const blobs = useMemo(
     () => [
-      { pos: [-12, 4, -18] as [number, number, number], color: "#6b3fa0", scale: 14 },
-      { pos: [16, -6, -22] as [number, number, number], color: "#1a6b8a", scale: 18 },
-      { pos: [0, 8, -28] as [number, number, number], color: "#c04090", scale: 20 },
-      { pos: [-8, -10, -15] as [number, number, number], color: "#2244aa", scale: 12 },
+      { pos: [-14, 2, -12] as [number, number, number], color: "#7b3fa8", scale: 22 },
+      { pos: [18, -4, -16] as [number, number, number], color: "#1a5a9a", scale: 26 },
+      { pos: [-6, 6, -24] as [number, number, number], color: "#c040a0", scale: 28 },
+      { pos: [10, -8, -20] as [number, number, number], color: "#2244cc", scale: 18 },
+      { pos: [0, 0, -30] as [number, number, number], color: "#4422aa", scale: 32 },
     ],
     []
   );
@@ -72,7 +73,7 @@ function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
         {blobs.map((b, i) => (
           <mesh key={i} position={b.pos}>
             <sphereGeometry args={[b.scale, 12, 12]} />
-            <meshBasicMaterial color={b.color} transparent opacity={0.07} depthWrite={false} />
+            <meshBasicMaterial color={b.color} transparent opacity={0.09} depthWrite={false} />
           </mesh>
         ))}
       </group>
@@ -85,7 +86,7 @@ function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
         <Float key={i} speed={0.4 + i * 0.1} rotationIntensity={0.1} floatIntensity={0.6}>
           <mesh position={b.pos}>
             <sphereGeometry args={[b.scale, 16, 16]} />
-            <meshBasicMaterial color={b.color} transparent opacity={0.07} depthWrite={false} />
+            <meshBasicMaterial color={b.color} transparent opacity={0.09} depthWrite={false} />
           </mesh>
         </Float>
       ))}

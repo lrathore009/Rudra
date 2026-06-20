@@ -13,22 +13,23 @@ export type GrahaId =
 
 export interface Navagraha {
   id: GrahaId;
-  /** Display name */
   name: string;
-  /** Short label for telemetry */
   tag: string;
+  /** Vedic symbol shown on label card */
+  symbol: string;
+  /** Cognitive domain subtitle */
+  domain: string;
   agentType: string;
-  /** Elliptical orbit — wide horizontal from front camera */
   orbitRadiusX: number;
   orbitRadiusZ: number;
   orbitLift: number;
+  /** Orbit path accent color */
+  orbitColor: string;
   speed: number;
   angle: number;
-  /** Sphere radius multiplier (Guru largest) */
   size: number;
   axialTilt: number;
   hasRings?: boolean;
-  /** Symbolic appearance — not photorealistic */
   appearance: {
     color: string;
     emissive: string;
@@ -39,199 +40,169 @@ export interface Navagraha {
   };
 }
 
-/** Agent ↔ Navagraha (internal routing keys unchanged) */
+/** Layout tuned for front-view “celestial machine” — wide X, shallow Z */
 export const NAVAGRAHA: Navagraha[] = [
   {
     id: "surya",
     name: "Surya",
     tag: "SUR",
+    symbol: "☉",
+    domain: "Leadership & Authority",
     agentType: "executive_assistant",
-    orbitRadiusX: 7.2,
-    orbitRadiusZ: 2.4,
-    orbitLift: 0.35,
-    speed: 0.18,
-    angle: 0,
-    size: 0.28,
+    orbitRadiusX: 10.5,
+    orbitRadiusZ: 3.2,
+    orbitLift: 2.4,
+    orbitColor: "#ffaa33",
+    speed: 0.14,
+    angle: 0.4,
+    size: 0.32,
     axialTilt: 0.1,
-    appearance: {
-      color: "#ffd066",
-      emissive: "#ff9922",
-      emissiveIntensity: 0.55,
-      metalness: 0.35,
-      roughness: 0.38,
-    },
+    appearance: { color: "#ffb840", emissive: "#ff8800", emissiveIntensity: 0.65, metalness: 0.35, roughness: 0.35 },
   },
   {
     id: "chandra",
     name: "Chandra",
     tag: "CHN",
+    symbol: "☽",
+    domain: "Mind & Emotions",
     agentType: "writing",
-    orbitRadiusX: 5.8,
-    orbitRadiusZ: 2.0,
-    orbitLift: 0.28,
-    speed: 0.22,
-    angle: 0.72,
-    size: 0.24,
+    orbitRadiusX: 9.2,
+    orbitRadiusZ: 2.8,
+    orbitLift: 2.0,
+    orbitColor: "#aaccee",
+    speed: 0.17,
+    angle: 5.6,
+    size: 0.26,
     axialTilt: 0.06,
-    appearance: {
-      color: "#e4ecf8",
-      emissive: "#99bbdd",
-      emissiveIntensity: 0.35,
-      metalness: 0.55,
-      roughness: 0.22,
-      clearcoat: 0.6,
-    },
+    appearance: { color: "#d8e4f0", emissive: "#88aacc", emissiveIntensity: 0.4, metalness: 0.5, roughness: 0.25, clearcoat: 0.5 },
   },
   {
     id: "mangal",
     name: "Mangal",
     tag: "MAN",
+    symbol: "♂",
+    domain: "Energy & Action",
     agentType: "travel",
-    orbitRadiusX: 8.4,
-    orbitRadiusZ: 2.8,
-    orbitLift: 0.4,
-    speed: 0.16,
-    angle: 1.42,
-    size: 0.22,
+    orbitRadiusX: 9.8,
+    orbitRadiusZ: 3.0,
+    orbitLift: 0.6,
+    orbitColor: "#ee4422",
+    speed: 0.15,
+    angle: 4.2,
+    size: 0.24,
     axialTilt: 0.25,
-    appearance: {
-      color: "#cc3311",
-      emissive: "#881100",
-      emissiveIntensity: 0.25,
-      metalness: 0.72,
-      roughness: 0.28,
-    },
+    appearance: { color: "#cc3311", emissive: "#991100", emissiveIntensity: 0.35, metalness: 0.7, roughness: 0.3 },
   },
   {
     id: "budha",
     name: "Budha",
     tag: "BUD",
+    symbol: "☿",
+    domain: "Intellect & Knowledge",
     agentType: "presentation",
-    orbitRadiusX: 6.4,
-    orbitRadiusZ: 2.2,
-    orbitLift: 0.22,
-    speed: 0.26,
-    angle: 2.12,
+    orbitRadiusX: 8.8,
+    orbitRadiusZ: 2.6,
+    orbitLift: -0.8,
+    orbitColor: "#44cc88",
+    speed: 0.19,
+    angle: 3.8,
     size: 0.23,
     axialTilt: 0.04,
-    appearance: {
-      color: "#33cc88",
-      emissive: "#118855",
-      emissiveIntensity: 0.4,
-      metalness: 0.4,
-      roughness: 0.35,
-    },
+    appearance: { color: "#33bb77", emissive: "#118855", emissiveIntensity: 0.45, metalness: 0.4, roughness: 0.35 },
   },
   {
     id: "guru",
     name: "Guru",
     tag: "GUR",
+    symbol: "♃",
+    domain: "Wisdom, Strategy & Prosperity",
     agentType: "research_analyst",
-    orbitRadiusX: 9.6,
-    orbitRadiusZ: 3.0,
-    orbitLift: 0.45,
-    speed: 0.12,
-    angle: 2.82,
-    size: 0.34,
+    orbitRadiusX: 11.5,
+    orbitRadiusZ: 3.5,
+    orbitLift: -1.2,
+    orbitColor: "#ddaa44",
+    speed: 0.11,
+    angle: 5.0,
+    size: 0.42,
     axialTilt: 0.08,
-    appearance: {
-      color: "#eebb55",
-      emissive: "#cc8822",
-      emissiveIntensity: 0.45,
-      metalness: 0.3,
-      roughness: 0.42,
-    },
+    appearance: { color: "#eebb55", emissive: "#cc8822", emissiveIntensity: 0.5, metalness: 0.3, roughness: 0.4 },
   },
   {
     id: "shukra",
     name: "Shukra",
     tag: "SHK",
+    symbol: "♀",
+    domain: "Love, Luxury & Experience",
     agentType: "luxury_analyst",
-    orbitRadiusX: 7.8,
-    orbitRadiusZ: 2.6,
-    orbitLift: 0.32,
-    speed: 0.15,
-    angle: 3.52,
-    size: 0.26,
+    orbitRadiusX: 10.8,
+    orbitRadiusZ: 3.3,
+    orbitLift: 2.2,
+    orbitColor: "#ff88aa",
+    speed: 0.13,
+    angle: 1.2,
+    size: 0.28,
     axialTilt: 0.78,
-    appearance: {
-      color: "#ffe8f4",
-      emissive: "#dd88aa",
-      emissiveIntensity: 0.3,
-      metalness: 0.25,
-      roughness: 0.18,
-      clearcoat: 0.85,
-    },
+    appearance: { color: "#ffc0d8", emissive: "#dd6699", emissiveIntensity: 0.4, metalness: 0.25, roughness: 0.18, clearcoat: 0.85 },
   },
   {
     id: "shani",
     name: "Shani",
     tag: "SHA",
+    symbol: "♄",
+    domain: "Discipline & Systems",
     agentType: "operations",
-    orbitRadiusX: 10.2,
-    orbitRadiusZ: 3.2,
-    orbitLift: 0.18,
+    orbitRadiusX: 10.0,
+    orbitRadiusZ: 3.0,
+    orbitLift: -1.8,
+    orbitColor: "#6688aa",
     speed: 0.1,
-    angle: 4.22,
-    size: 0.25,
+    angle: 0.0,
+    size: 0.27,
     axialTilt: 0.47,
     hasRings: true,
-    appearance: {
-      color: "#1a1a28",
-      emissive: "#223344",
-      emissiveIntensity: 0.15,
-      metalness: 0.65,
-      roughness: 0.55,
-    },
+    appearance: { color: "#2a2a38", emissive: "#334455", emissiveIntensity: 0.2, metalness: 0.65, roughness: 0.5 },
   },
   {
     id: "rahu",
     name: "Rahu",
     tag: "RAH",
+    symbol: "☊",
+    domain: "Innovation & Future",
     agentType: "concierge",
-    orbitRadiusX: 6.8,
-    orbitRadiusZ: 2.5,
-    orbitLift: 0.38,
-    speed: 0.2,
-    angle: 4.92,
-    size: 0.24,
+    orbitRadiusX: 9.5,
+    orbitRadiusZ: 2.9,
+    orbitLift: 2.6,
+    orbitColor: "#aa44ff",
+    speed: 0.16,
+    angle: 4.8,
+    size: 0.25,
     axialTilt: 0.15,
-    appearance: {
-      color: "#220033",
-      emissive: "#6622aa",
-      emissiveIntensity: 0.35,
-      metalness: 0.5,
-      roughness: 0.6,
-    },
+    appearance: { color: "#6622aa", emissive: "#9933ff", emissiveIntensity: 0.45, metalness: 0.5, roughness: 0.55 },
   },
   {
     id: "ketu",
     name: "Ketu",
     tag: "KET",
+    symbol: "☋",
+    domain: "Wisdom & Liberation",
     agentType: "knowledge_librarian",
-    orbitRadiusX: 5.2,
-    orbitRadiusZ: 1.8,
-    orbitLift: 0.25,
-    speed: 0.24,
-    angle: 5.62,
-    size: 0.22,
+    orbitRadiusX: 9.0,
+    orbitRadiusZ: 2.7,
+    orbitLift: 0.2,
+    orbitColor: "#888899",
+    speed: 0.18,
+    angle: 1.8,
+    size: 0.24,
     axialTilt: 0.12,
-    appearance: {
-      color: "#6644cc",
-      emissive: "#aa66ff",
-      emissiveIntensity: 0.5,
-      metalness: 0.35,
-      roughness: 0.4,
-    },
+    appearance: { color: "#9999aa", emissive: "#666677", emissiveIntensity: 0.35, metalness: 0.45, roughness: 0.45 },
   },
 ];
 
-/** Milky Way backdrop (Solar System Scope stars texture) */
 export const SSS_TEXTURE_BASE = "/textures/planets";
 export const SSS_STARS_MILKY_WAY = `${SSS_TEXTURE_BASE}/2k_stars_milky_way.jpg`;
 
-/** Third eye world offset from trishul root group origin */
-export const THIRD_EYE_OFFSET = { x: 0, y: 0.07, z: 0.16 } as const;
+export const THIRD_EYE_OFFSET = { x: 0, y: 0.15, z: 0.16 } as const;
+export const TRISHUL_SCALE = 2.35;
 
 export function grahaByAgent(agentType?: string): Navagraha | undefined {
   if (!agentType) return undefined;
@@ -251,20 +222,6 @@ export function grahaByTag(tag?: string): Navagraha | undefined {
 export function grahaPosition(graha: Navagraha, angle: number): { x: number; y: number; z: number } {
   const x = Math.cos(angle) * graha.orbitRadiusX;
   const z = Math.sin(angle) * graha.orbitRadiusZ;
-  const y = Math.sin(angle * 0.5 + graha.angle) * graha.orbitLift;
+  const y = graha.orbitLift + Math.sin(angle * 0.5) * 0.25;
   return { x, y, z };
-}
-
-/** Unique orbit paths for guide rings */
-export function orbitGuideRadii(): { rx: number; rz: number }[] {
-  const seen = new Set<string>();
-  const out: { rx: number; rz: number }[] = [];
-  for (const g of NAVAGRAHA) {
-    const key = `${g.orbitRadiusX}:${g.orbitRadiusZ}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      out.push({ rx: g.orbitRadiusX, rz: g.orbitRadiusZ });
-    }
-  }
-  return out.sort((a, b) => a.rx - b.rx);
 }

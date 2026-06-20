@@ -6,23 +6,23 @@
 import * as THREE from "three";
 
 export const TRIDENT_METAL = {
-  color: "#8af0ff",
-  emissive: "#1a8899",
-  emissiveIntensity: 0.75,
+  color: "#ddb844",
+  emissive: "#886622",
+  emissiveIntensity: 0.55,
   metalness: 1,
-  roughness: 0.1,
+  roughness: 0.14,
   clearcoat: 1,
-  clearcoatRoughness: 0.08,
+  clearcoatRoughness: 0.1,
 } as const;
 
 export const TRIDENT_GOLD = {
-  color: "#ffd878",
-  emissive: "#aa7722",
-  emissiveIntensity: 0.45,
+  color: "#ffcc55",
+  emissive: "#cc8822",
+  emissiveIntensity: 0.6,
   metalness: 1,
-  roughness: 0.18,
-  clearcoat: 0.9,
-  clearcoatRoughness: 0.15,
+  roughness: 0.12,
+  clearcoat: 0.95,
+  clearcoatRoughness: 0.1,
 } as const;
 
 export const DAMRU_BODY = {

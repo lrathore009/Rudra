@@ -6,8 +6,9 @@ import { OrbitControls, PerspectiveCamera, Environment } from "@react-three/drei
 import * as THREE from "three";
 import { CosmicEnvironment } from "./CosmicEnvironment";
 import { TrishulDamru3D, type TrishulPhase } from "./TrishulDamru3D";
-import { NAVAGRAHA, THIRD_EYE_OFFSET, grahaById, grahaPosition, type GrahaId } from "./navagraha-config";
-import { GrahaOrbit3D, GrahaOrbitGuides, GrahaPositionsProvider, useGrahaPositionsRef } from "./GrahaOrbit3D";
+import { RudraPlatform } from "./RudraPlatform";
+import { NAVAGRAHA, THIRD_EYE_OFFSET, TRISHUL_SCALE, grahaById, grahaPosition, type GrahaId } from "./navagraha-config";
+import { GrahaOrbit3D, GrahaPositionsProvider, useGrahaPositionsRef } from "./GrahaOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
 import { useReducedMotion } from "./use-reduced-motion";
 
@@ -60,7 +61,12 @@ function SceneContent({
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const thirdEyeOrigin = useMemo(
-    () => new THREE.Vector3(THIRD_EYE_OFFSET.x, THIRD_EYE_OFFSET.y - 0.35, THIRD_EYE_OFFSET.z),
+    () =>
+      new THREE.Vector3(
+        THIRD_EYE_OFFSET.x,
+        THIRD_EYE_OFFSET.y - 0.35 + (TRISHUL_SCALE - 1) * 0.5,
+        THIRD_EYE_OFFSET.z
+      ),
     []
   );
 
@@ -144,25 +150,27 @@ function SceneContent({
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 8, 35]} fov={48} />
+      <PerspectiveCamera makeDefault position={[0, 2, 30]} fov={52} />
       <OrbitControls
         enablePan={false}
         enableZoom
-        minDistance={12}
-        maxDistance={55}
-        maxPolarAngle={Math.PI / 1.65}
-        minPolarAngle={Math.PI / 4}
+        minDistance={18}
+        maxDistance={48}
+        maxPolarAngle={Math.PI / 1.75}
+        minPolarAngle={Math.PI / 3.2}
         autoRotate={!processing && !reducedMotion}
-        autoRotateSpeed={0.15}
-        target={[0, 0, 0]}
+        autoRotateSpeed={0.12}
+        target={[0, 0.5, 0]}
       />
-      <directionalLight position={[0, 14, 20]} intensity={0.7} color="#fff8ee" />
-      <ambientLight intensity={0.18} color="#334466" />
-      <Environment preset="night" environmentIntensity={0.2} />
+      <directionalLight position={[4, 16, 22]} intensity={1.1} color="#ffeedd" />
+      <pointLight position={[-6, 8, 10]} intensity={0.6} color="#8866cc" />
+      <pointLight position={[6, 4, -8]} intensity={0.4} color="#4488ff" />
+      <ambientLight intensity={0.22} color="#2a2844" />
+      <Environment preset="night" environmentIntensity={0.28} />
       <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} />
-      <GrahaOrbitGuides />
 
-      {/* Grahas render before trishul so positive-Z grahas occlude correctly via depth buffer */}
+      <RudraPlatform reducedMotion={reducedMotion} />
+
       {NAVAGRAHA.map((g) => (
         <GrahaOrbit3D
           key={g.id}
@@ -173,7 +181,12 @@ function SceneContent({
         />
       ))}
 
-      <TrishulDamru3D phase={eyePhaseFromCosmos(phase)} spinning={spinning} reducedMotion={reducedMotion} />
+      <TrishulDamru3D
+        phase={eyePhaseFromCosmos(phase)}
+        spinning={spinning}
+        scale={TRISHUL_SCALE}
+        reducedMotion={reducedMotion}
+      />
       <LightningBolt3D origin={thirdEyeOrigin} target={boltTarget} active={showBolt} />
     </>
   );

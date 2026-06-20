@@ -2,22 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import {
-  Activity,
-  CalendarClock,
   Mic,
   Radio,
-  Search,
-  Sparkles,
   Square,
   Upload,
   Volume2,
   VolumeX,
-  X,
   type LucideIcon,
 } from "lucide-react";
 import { SutraWordmark } from "@/components/hud/SutraWordmark";
 import { InkText } from "@/components/tablet/InkText";
-import { SUTRA_TICKER, grahaColor, grahaName, themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
+import { SUTRA_TICKER, grahaColor, themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import { REALMS } from "@/components/tablet/RealmRim";
@@ -29,13 +24,6 @@ interface Message {
   agent?: string;
   streaming?: boolean;
 }
-
-const QUICK_ACTIONS: { icon: LucideIcon; label: string }[] = [
-  { icon: Activity, label: "Brief" },
-  { icon: Search, label: "Research" },
-  { icon: CalendarClock, label: "Digest" },
-  { icon: Sparkles, label: "Skills" },
-];
 
 export function CosmicHUD({
   themeMode,
@@ -100,6 +88,7 @@ export function CosmicHUD({
   const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
   const latestUser = [...messages].reverse().find((m) => m.role === "user");
   const streaming = messages.find((m) => m.id === streamingMsgId);
+  const nominal = status.toLowerCase().includes("nominal") || status.toLowerCase().includes("online");
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -114,23 +103,26 @@ export function CosmicHUD({
 
   return (
     <div className="cosmic-hud pointer-events-none fixed inset-0 z-10 flex flex-col">
-      {/* top telemetry */}
-      <header className="pointer-events-auto flex items-center justify-between px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-3">
+      <header className="pointer-events-auto flex items-center justify-between px-4 py-3 sm:px-8">
+        <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-4">
           <SutraWordmark className="text-sm sm:text-base" />
-          <span className="hidden font-terminal text-[9px] uppercase tracking-widest text-muted-foreground/80 sm:inline">
+          <span className="hidden truncate font-terminal text-[8px] uppercase tracking-[0.22em] text-muted-foreground/70 lg:inline">
             {greeting}
+          </span>
+        </div>
+        <div className="hidden items-center gap-2 sm:flex">
+          <span className={cn("cosmic-status-badge", nominal && "cosmic-status-badge-nominal")}>
+            <Radio className="h-3 w-3" />
+            {nominal ? "Present · Nominal" : status}
           </span>
         </div>
         <div className="flex items-center gap-2 font-terminal text-[10px] sm:gap-3">
           <button type="button" onClick={onThemeCycle} className="cosmic-ctl hidden sm:inline">
             {themeModeLabel(themeMode)}
           </button>
-          <span className="flex items-center gap-1 neon-dim">
-            <Radio className="h-3 w-3" />
-            <span className="hidden sm:inline">{status}</span>
+          <span className="text-muted-foreground tabular-nums">
+            {clock ? clock.toLocaleTimeString("en-GB") : "--:--:--"}
           </span>
-          <span className="text-muted-foreground">{clock ? clock.toLocaleTimeString("en-GB") : "--:--"}</span>
           <button type="button" onClick={onLogout} className="cosmic-ctl hidden sm:inline">
             Exit
           </button>
@@ -140,10 +132,9 @@ export function CosmicHUD({
         </div>
       </header>
 
-      {/* holographic response stream */}
-      <div className="flex flex-1 flex-col items-center justify-end px-4 pb-2 sm:px-8">
+      <div className="flex flex-1 flex-col items-center justify-end px-4 pb-1 sm:px-8">
         {showResponse && (latestAssistant || latestUser || streaming) && (
-          <div className="cosmic-stream pointer-events-auto mb-4 w-full max-w-2xl text-center">
+          <div className="cosmic-stream pointer-events-auto mb-3 w-full max-w-2xl text-center">
             {latestUser && (
               <p className="mb-2 font-terminal text-[10px] uppercase tracking-[0.2em] text-primary/70">
                 ◇ {latestUser.content.slice(0, 120)}
@@ -162,48 +153,23 @@ export function CosmicHUD({
           </div>
         )}
 
-        {/* Navagraha routing telemetry — Rudra commands, not direct graha selection */}
-        <div className="pointer-events-none mb-3 flex flex-wrap items-center justify-center gap-2 font-terminal text-[9px] uppercase tracking-widest">
-          {processing && leadGrahaName ? (
-            <>
-              <span className="text-primary/80">Rudra commanding</span>
-              <span
-                className="cosmic-graha-chip cosmic-graha-chip-lead"
-                style={{ color: grahaColor(leadGrahaName, 0.95), borderColor: grahaColor(leadGrahaName, 0.5) }}
-              >
-                Lead · {leadGrahaName}
-              </span>
-              {supportingGrahaNames && supportingGrahaNames.length > 0 && (
-                <span className="text-muted-foreground/70">
-                  Support · {supportingGrahaNames.join(" · ")}
-                </span>
-              )}
-            </>
-          ) : (
-            <span className="text-muted-foreground/50">Nine Grahas orbit Rudra</span>
-          )}
-        </div>
-
-        {/* quick actions */}
-        <div className="pointer-events-auto mb-3 flex flex-wrap justify-center gap-2">
-          {actions.map((a, i) => (
-            <button
-              key={a.label}
-              type="button"
-              disabled={processing}
-              onClick={a.run}
-              className="cosmic-action"
-              title={a.label}
+        {processing && leadGrahaName && (
+          <div className="pointer-events-none mb-2 flex flex-wrap items-center justify-center gap-2 font-terminal text-[9px] uppercase tracking-widest">
+            <span className="text-primary/80">Rudra commanding</span>
+            <span
+              className="cosmic-graha-chip cosmic-graha-chip-lead"
+              style={{ color: grahaColor(leadGrahaName, 0.95), borderColor: grahaColor(leadGrahaName, 0.5) }}
             >
-              <a.icon className="h-3 w-3" />
-              <span className="hidden sm:inline">{a.label}</span>
-            </button>
-          ))}
-        </div>
+              Lead · {leadGrahaName}
+            </span>
+            {supportingGrahaNames && supportingGrahaNames.length > 0 && (
+              <span className="text-muted-foreground/70">Support · {supportingGrahaNames.join(" · ")}</span>
+            )}
+          </div>
+        )}
 
-        {/* command beam — minimal input, no box UI */}
         <form
-          className="pointer-events-auto cosmic-command-beam mb-2 flex w-full max-w-xl items-center gap-2 px-2"
+          className="pointer-events-auto cosmic-command-panel mb-3 flex w-full max-w-2xl items-center gap-3 px-4 py-3"
           onSubmit={(e) => {
             e.preventDefault();
             onSubmit();
@@ -215,7 +181,7 @@ export function CosmicHUD({
             onChange={(e) => onInputChange(e.target.value)}
             disabled={processing && !streamingMsgId}
             placeholder={placeholder}
-            className="cosmic-command-input min-w-0 flex-1 bg-transparent font-display text-sm outline-none sm:text-base"
+            className="cosmic-command-input min-w-0 flex-1 bg-transparent font-display text-sm uppercase tracking-wide outline-none sm:text-base"
             autoComplete="off"
           />
           <button
@@ -239,10 +205,18 @@ export function CosmicHUD({
         {voiceHint && (
           <p className="pointer-events-auto mb-2 font-terminal text-[9px] text-destructive/80">{voiceHint}</p>
         )}
+
+        {/* hidden quick actions — accessible via keyboard / future menu */}
+        <div className="sr-only">
+          {actions.map((a) => (
+            <button key={a.label} type="button" onClick={a.run}>
+              {a.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* realm orbit controls */}
-      <nav className="pointer-events-auto flex items-center justify-center gap-2 px-4 pb-4" aria-label="Realms">
+      <nav className="pointer-events-auto flex flex-wrap items-end justify-center gap-2 px-4 pb-3 sm:gap-3" aria-label="Realms">
         {REALMS.map((r) => {
           const Icon = r.icon;
           const active = activeRealm === r.id;
@@ -252,24 +226,21 @@ export function CosmicHUD({
               type="button"
               title={r.label}
               onClick={() => onRealmChange(active ? null : r.id)}
-              className={cn("cosmic-realm-orb", active && "cosmic-realm-orb-active")}
+              className={cn("cosmic-realm-tile", active && "cosmic-realm-tile-active")}
             >
-              <Icon className="h-3.5 w-3.5" />
-              <span className="text-[7px]">{r.short}</span>
+              <Icon className="h-4 w-4" />
+              <span>{r.cosmicLabel}</span>
             </button>
           );
         })}
       </nav>
 
-      {/* footer telemetry */}
-      <footer className="pointer-events-none flex items-center justify-between px-4 pb-3 font-terminal text-[8px] text-muted-foreground/60 sm:px-6">
-        <span className="truncate">{SUTRA_TICKER[tickerIdx]}</span>
-        <span className="mx-2 opacity-30">·</span>
-        <span className="truncate opacity-70">{logLine}</span>
-        <span className="ml-auto shrink-0 pl-2 opacity-40">{operator ?? "owner"}</span>
+      <footer className="pointer-events-none flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 pb-3 font-terminal text-[7px] uppercase tracking-[0.14em] text-muted-foreground/55 sm:px-8 sm:text-[8px]">
+        <span className="truncate">
+          Encrypted uplink · Active · {SUTRA_TICKER[tickerIdx] ?? "Memory lattice synced"}
+        </span>
+        <span className="ml-auto shrink-0">Trishula OS v1.0 · Rudra Core Online</span>
       </footer>
     </div>
   );
 }
-
-export { QUICK_ACTIONS };

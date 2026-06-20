@@ -1,11 +1,11 @@
 "use client";
 
-import { createContext, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { grahaColor } from "@/lib/rudra-theme";
-import { grahaPosition, orbitGuideRadii, type GrahaId, type Navagraha } from "./navagraha-config";
+import { NAVAGRAHA, grahaPosition, type GrahaId, type Navagraha } from "./navagraha-config";
 
 type PositionMap = Map<GrahaId, THREE.Vector3>;
 
@@ -22,6 +22,21 @@ export function useGrahaPositionsRef() {
   return ctx;
 }
 
+function ellipsePoints(graha: Navagraha, segments = 96): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = (i / segments) * Math.PI * 2;
+    pts.push(
+      new THREE.Vector3(
+        Math.cos(t) * graha.orbitRadiusX,
+        graha.orbitLift,
+        Math.sin(t) * graha.orbitRadiusZ
+      )
+    );
+  }
+  return pts;
+}
+
 function GrahaMaterial({ graha }: { graha: Navagraha }) {
   const { appearance: a } = graha;
   return (
@@ -32,34 +47,61 @@ function GrahaMaterial({ graha }: { graha: Navagraha }) {
       metalness={a.metalness}
       roughness={a.roughness}
       clearcoat={a.clearcoat ?? 0}
-      clearcoatRoughness={0.2}
+      clearcoatRoughness={0.15}
     />
   );
 }
 
 function GrahaBody({ graha }: { graha: Navagraha }) {
-  const tilt = graha.axialTilt;
   return (
-    <group rotation={[tilt, 0, 0]}>
+    <group rotation={[graha.axialTilt, 0, 0]}>
       <mesh castShadow receiveShadow>
-        <sphereGeometry args={[1, 48, 48]} />
+        <sphereGeometry args={[1, 56, 56]} />
         <GrahaMaterial graha={graha} />
+      </mesh>
+      {/* atmospheric glow */}
+      <mesh scale={1.08}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial color={graha.appearance.emissive} transparent opacity={0.08} side={THREE.BackSide} />
       </mesh>
       {graha.hasRings && (
         <mesh rotation={[-Math.PI / 2 + 0.35, 0, 0]}>
-          <ringGeometry args={[1.4, 2.0, 96]} />
+          <ringGeometry args={[1.45, 2.1, 96]} />
           <meshStandardMaterial
-            color="#334455"
+            color="#8899aa"
             transparent
-            opacity={0.55}
+            opacity={0.6}
             side={THREE.DoubleSide}
             depthWrite={false}
-            metalness={0.7}
-            roughness={0.4}
+            metalness={0.75}
+            roughness={0.35}
           />
         </mesh>
       )}
     </group>
+  );
+}
+
+function GrahaLabelCard({ graha, role }: { graha: Navagraha; role: string }) {
+  const accent = grahaColor(graha.name, 1);
+  const isLead = role === "lead";
+  return (
+    <div
+      className="graha-label-card"
+      style={{
+        borderColor: `${accent}`,
+        boxShadow: isLead ? `0 0 20px ${grahaColor(graha.name, 0.4)}` : undefined,
+      }}
+    >
+      <span className="graha-label-symbol" style={{ color: accent }}>
+        {graha.symbol}
+      </span>
+      <span className="graha-label-name" style={{ color: accent }}>
+        {graha.name.toUpperCase()}
+        {isLead && " ⚡"}
+      </span>
+      <span className="graha-label-domain">{graha.domain.toUpperCase()}</span>
+    </div>
   );
 }
 
@@ -76,101 +118,65 @@ export function GrahaOrbit3D({
 }) {
   const orbitRef = useRef<THREE.Group>(null);
   const spinRef = useRef<THREE.Group>(null);
-  const [hovered, setHovered] = useState(false);
   const angleRef = useRef(graha.angle);
   const positionsRef = useGrahaPositionsRef();
   const accent = grahaColor(graha.name, 1);
+  const pathPoints = useMemo(() => ellipsePoints(graha), [graha]);
 
   useFrame((state, dt) => {
     if (!orbitRef.current) return;
-    const speedMul = role === "lead" ? 1.6 : role === "supporting" ? 1.15 : 1;
+    const speedMul = role === "lead" ? 1.5 : role === "supporting" ? 1.12 : 1;
     const motion = reducedMotion ? 0 : 1;
-    angleRef.current += dt * graha.speed * speedMul * motion * (processing ? 1.1 : 1);
+    angleRef.current += dt * graha.speed * speedMul * motion * (processing ? 1.05 : 1);
 
     const pos = grahaPosition(graha, angleRef.current);
     orbitRef.current.position.set(pos.x, pos.y, pos.z);
-
     positionsRef.current.set(graha.id, new THREE.Vector3(pos.x, pos.y, pos.z));
 
     if (spinRef.current) {
-      spinRef.current.rotation.y += dt * (0.2 + graha.speed) * motion * (role === "lead" ? 2 : 1);
+      spinRef.current.rotation.y += dt * (0.18 + graha.speed) * motion * (role === "lead" ? 1.8 : 1);
     }
 
     let pulse = 1;
-    if (role === "lead") pulse = 1.18 + Math.sin(state.clock.elapsedTime * 4) * 0.06;
-    else if (role === "supporting" || role === "pulse") pulse = 1 + Math.sin(state.clock.elapsedTime * 2.5 + graha.angle) * 0.05;
-    else if (hovered) pulse = 1.06;
+    if (role === "lead") pulse = 1.14 + Math.sin(state.clock.elapsedTime * 3.5) * 0.05;
+    else if (role === "supporting" || role === "pulse") pulse = 1 + Math.sin(state.clock.elapsedTime * 2 + graha.angle) * 0.04;
 
-    const s = graha.size * pulse;
-    orbitRef.current.scale.setScalar(s);
+    orbitRef.current.scale.setScalar(graha.size * pulse);
   });
 
-  const showLabel = role === "lead" || role === "supporting" || hovered;
+  const pathOpacity = role === "lead" ? 0.55 : role === "supporting" || role === "pulse" ? 0.35 : 0.22;
 
   return (
-    <group ref={orbitRef}>
-      <mesh
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-        }}
-        onPointerOut={() => setHovered(false)}
-      >
-        <sphereGeometry args={[1, 24, 24]} />
-        <meshStandardMaterial visible={false} />
-      </mesh>
-
-      <group ref={spinRef}>
-        <GrahaBody graha={graha} />
-        {(role === "lead" || role === "supporting") && (
-          <pointLight
-            color={accent}
-            intensity={role === "lead" ? 2.2 : 0.7}
-            distance={role === "lead" ? 5 : 3}
-          />
-        )}
-        {role === "lead" && (
-          <mesh>
-            <sphereGeometry args={[1.12, 32, 32]} />
-            <meshBasicMaterial color={accent} transparent opacity={0.1} side={THREE.BackSide} />
-          </mesh>
-        )}
-        {(role === "supporting" || role === "pulse") && (
-          <mesh>
-            <sphereGeometry args={[1.06, 24, 24]} />
-            <meshBasicMaterial color={accent} transparent opacity={0.05} side={THREE.BackSide} />
-          </mesh>
-        )}
-      </group>
-
-      {showLabel && (
-        <Html center distanceFactor={16} style={{ pointerEvents: "none" }}>
-          <span
-            className="whitespace-nowrap font-terminal text-[10px] uppercase tracking-widest"
-            style={{ color: accent, textShadow: `0 0 14px ${accent}` }}
-          >
-            {graha.name}
-            {role === "lead" && " ⚡"}
-          </span>
+    <group>
+      <Line
+        points={pathPoints}
+        color={graha.orbitColor}
+        transparent
+        opacity={pathOpacity}
+        lineWidth={1.2}
+      />
+      <group ref={orbitRef}>
+        <group ref={spinRef}>
+          <GrahaBody graha={graha} />
+          <pointLight color={graha.appearance.emissive} intensity={0.6 + (role === "lead" ? 1.5 : 0)} distance={4} />
+          {role === "lead" && (
+            <mesh>
+              <sphereGeometry args={[1.15, 32, 32]} />
+              <meshBasicMaterial color={accent} transparent opacity={0.12} side={THREE.BackSide} />
+            </mesh>
+          )}
+        </group>
+        <Html center distanceFactor={14} zIndexRange={[0, 0]} style={{ pointerEvents: "none" }}>
+          <GrahaLabelCard graha={graha} role={role} />
         </Html>
-      )}
+      </group>
     </group>
   );
 }
 
-/** Elliptical orbit guides — wide horizontal paths */
+/** @deprecated — per-graha colored paths replace generic guides */
 export function GrahaOrbitGuides() {
-  const guides = orbitGuideRadii();
-  return (
-    <group>
-      {guides.map(({ rx, rz }, i) => (
-        <mesh key={`${rx}-${rz}`} rotation={[Math.PI / 2, 0, i * 0.12]}>
-          <torusGeometry args={[rx, 0.008, 6, 128, Math.PI * 2]} scale={[1, rz / rx, 1]} />
-          <meshBasicMaterial color="#44ccff" transparent opacity={0.04 + i * 0.005} />
-        </mesh>
-      ))}
-    </group>
-  );
+  return null;
 }
 
 export function getGrahaWorldPosition(
