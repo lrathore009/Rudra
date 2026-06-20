@@ -2,16 +2,14 @@
 
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
 import * as THREE from "three";
 import {
   createBeadGarland,
   createCenterProngGroup,
   createDamruGroup,
-  createProngTube,
   createShaftGeometry,
   createShaftRings,
-  createSideProngCurve,
+  createSideBladeGeometry,
   createThirdEye,
   createTripundra,
   DAMRU_BODY,
@@ -19,6 +17,7 @@ import {
   TRIDENT_GOLD,
   TRIDENT_METAL,
 } from "./trishul-geometry";
+import { TRISHUL_PIVOT_Y, TRISHUL_SCALE } from "./cosmos-scale";
 
 export type TrishulPhase = "idle" | "awakening" | "dispatch" | "working" | "error";
 
@@ -70,28 +69,10 @@ function useSacredMaterials() {
   }, []);
 }
 
-function ProngTips({ material }: { material: THREE.Material }) {
-  return (
-    <>
-      {([-1, 1] as const).map((side) => {
-        const c = createSideProngCurve(side);
-        const tip = c.getPoint(1);
-        const tan = c.getTangent(1).normalize();
-        const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
-        return (
-          <mesh key={side} position={tip} quaternion={quat} material={material}>
-            <coneGeometry args={[0.042, 0.2, 12]} />
-          </mesh>
-        );
-      })}
-    </>
-  );
-}
-
 function SacredTrishulMesh({
   phase,
   spinning,
-  scale = 1,
+  scale = TRISHUL_SCALE,
 }: {
   phase: TrishulPhase;
   spinning: boolean;
@@ -105,8 +86,8 @@ function SacredTrishulMesh({
   const eyeOpen = EYE_OPEN[phase];
 
   const shaftGeo = useMemo(() => createShaftGeometry(), []);
-  const leftProngGeo = useMemo(() => createProngTube(createSideProngCurve(-1), 0.05), []);
-  const rightProngGeo = useMemo(() => createProngTube(createSideProngCurve(1), 0.05), []);
+  const leftBladeGeo = useMemo(() => createSideBladeGeometry(-1), []);
+  const rightBladeGeo = useMemo(() => createSideBladeGeometry(1), []);
 
   const centerProng = useMemo(() => createCenterProngGroup(mats.metal), [mats.metal]);
   const damru = useMemo(
@@ -132,11 +113,9 @@ function SacredTrishulMesh({
     if (rootRef.current) {
       if (spinning) {
         rootRef.current.rotation.y += dt * 3.5;
-        rootRef.current.position.y = Math.sin(t * 5) * 0.04;
       } else {
         rootRef.current.rotation.y = THREE.MathUtils.lerp(rootRef.current.rotation.y, 0, 0.04);
-        rootRef.current.position.y = Math.sin(t * 0.7) * 0.08;
-        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.035;
+        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.02;
       }
     }
     if (damruRef.current) {
@@ -148,7 +127,7 @@ function SacredTrishulMesh({
       eyeRef.current.scale.y = THREE.MathUtils.lerp(eyeRef.current.scale.y, sy, 0.12);
     }
     if (glowRef.current) {
-      glowRef.current.intensity = 1.2 + eyeOpen * 4 + (spinning ? 2 : 0);
+      glowRef.current.intensity = 2 + eyeOpen * 5 + (spinning ? 3 : 0);
     }
   });
 
@@ -158,9 +137,8 @@ function SacredTrishulMesh({
 
       <group position={[0, 1.05, 0]}>
         <primitive object={centerProng} />
-        <mesh geometry={leftProngGeo} material={mats.metal} castShadow />
-        <mesh geometry={rightProngGeo} material={mats.metal} castShadow />
-        <ProngTips material={mats.metal} />
+        <mesh geometry={leftBladeGeo} material={mats.metal} castShadow />
+        <mesh geometry={rightBladeGeo} material={mats.metal} castShadow />
       </group>
 
       <primitive object={rings} />
@@ -184,12 +162,12 @@ function SacredTrishulMesh({
 
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
         <torusGeometry args={[0.55, 0.006, 8, 64]} />
-        <meshBasicMaterial color="#44ddff" transparent opacity={0.25} />
+        <meshBasicMaterial color="#44ddff" transparent opacity={0.2} />
       </mesh>
 
-      <pointLight ref={glowRef} color="#aa66ff" intensity={1.5} distance={7} position={[0, 0.6, 0.4]} />
-      <pointLight color="#44eeff" intensity={1.8} distance={9} position={[0.5, 1, 1]} />
-      <spotLight color="#88eeff" intensity={2} angle={0.4} penumbra={0.8} position={[2, 3, 2]} castShadow />
+      <pointLight ref={glowRef} color="#aa66ff" intensity={3} distance={scale * 4} position={[0, 0.6, 0.4]} />
+      <pointLight color="#44eeff" intensity={3.5} distance={scale * 5} position={[0.5, 1, 1]} />
+      <spotLight color="#88eeff" intensity={3} angle={0.45} penumbra={0.8} position={[2, 3, 2]} castShadow />
     </group>
   );
 }
@@ -197,27 +175,23 @@ function SacredTrishulMesh({
 export function TrishulDamru3D({
   phase,
   spinning,
-  scale = 1,
+  scale = TRISHUL_SCALE,
 }: {
   phase: TrishulPhase;
   spinning: boolean;
   scale?: number;
 }) {
   return (
-    <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.2}>
-      <group position={[0, -0.35, 0]}>
-        <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} />
-      </group>
-    </Float>
+    <group position={[0, TRISHUL_PIVOT_Y * scale, 0]}>
+      <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} />
+    </group>
   );
 }
 
 export function TrishulDamruPreview({ scale = 0.55 }: { scale?: number }) {
   return (
-    <Float speed={1.3} floatIntensity={0.35}>
-      <group rotation={[0.25, 0.6, 0]}>
-        <SacredTrishulMesh phase="idle" spinning={false} scale={scale} />
-      </group>
-    </Float>
+    <group rotation={[0.25, 0.6, 0]} position={[0, TRISHUL_PIVOT_Y * scale, 0]}>
+      <SacredTrishulMesh phase="idle" spinning={false} scale={scale} />
+    </group>
   );
 }

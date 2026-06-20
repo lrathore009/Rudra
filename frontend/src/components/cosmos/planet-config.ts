@@ -1,28 +1,22 @@
 /** Nine agent-planets mapped to real solar system bodies (Solar System Scope textures) */
 
 import type { SolarBody } from "./solar-textures";
+import { ORBIT_RADII, planetWorldSize } from "./cosmos-scale";
 
 export interface CosmosPlanet {
   label: string;
   agentType: string;
-  /** Real solar system body for HD texture */
   solarBody: SolarBody;
   solarName: string;
-  /** Base orbit angle in radians */
   angle: number;
-  /** Orbit radius — inner → outer, log-scaled for visibility */
   radius: number;
-  /** Orbital speed (inner planets faster) */
   speed: number;
-  /** Orbital plane tilt in radians */
   inclination: number;
-  /** Visual scale relative to Earth = 0.52 */
   size: number;
-  /** Self-rotation speed */
   spin: number;
 }
 
-/** Agent ↔ solar body alignment */
+/** Agent ↔ solar body alignment — orbits and sizes relative to Trishul scale */
 export const COSMOS_PLANETS: CosmosPlanet[] = [
   {
     label: "EA",
@@ -30,10 +24,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "earth",
     solarName: "Earth",
     angle: 0,
-    radius: 5.8,
+    radius: ORBIT_RADII.earth,
     speed: 0.28,
     inclination: 0.08,
-    size: 0.52,
+    size: planetWorldSize("earth"),
     spin: 0.35,
   },
   {
@@ -42,10 +36,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "jupiter",
     solarName: "Jupiter",
     angle: 0.9,
-    radius: 9.2,
+    radius: ORBIT_RADII.jupiter,
     speed: 0.12,
     inclination: -0.06,
-    size: 0.88,
+    size: planetWorldSize("jupiter"),
     spin: 0.55,
   },
   {
@@ -54,10 +48,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "venus",
     solarName: "Venus",
     angle: 1.8,
-    radius: 5.2,
+    radius: ORBIT_RADII.venus,
     speed: 0.32,
     inclination: 0.04,
-    size: 0.5,
+    size: planetWorldSize("venus"),
     spin: -0.08,
   },
   {
@@ -66,10 +60,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "saturn",
     solarName: "Saturn",
     angle: 2.6,
-    radius: 10.5,
+    radius: ORBIT_RADII.saturn,
     speed: 0.1,
     inclination: 0.12,
-    size: 0.74,
+    size: planetWorldSize("saturn"),
     spin: 0.48,
   },
   {
@@ -78,10 +72,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "neptune",
     solarName: "Neptune",
     angle: 3.5,
-    radius: 12.8,
+    radius: ORBIT_RADII.neptune,
     speed: 0.08,
     inclination: -0.1,
-    size: 0.56,
+    size: planetWorldSize("neptune"),
     spin: 0.42,
   },
   {
@@ -90,10 +84,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "mercury",
     solarName: "Mercury",
     angle: 4.2,
-    radius: 4.5,
+    radius: ORBIT_RADII.mercury,
     speed: 0.38,
     inclination: 0.14,
-    size: 0.38,
+    size: planetWorldSize("mercury"),
     spin: 0.12,
   },
   {
@@ -102,10 +96,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "mars",
     solarName: "Mars",
     angle: 5.0,
-    radius: 6.5,
+    radius: ORBIT_RADII.mars,
     speed: 0.22,
     inclination: -0.08,
-    size: 0.44,
+    size: planetWorldSize("mars"),
     spin: 0.38,
   },
   {
@@ -114,10 +108,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "uranus",
     solarName: "Uranus",
     angle: 5.8,
-    radius: 11.5,
+    radius: ORBIT_RADII.uranus,
     speed: 0.09,
     inclination: 0.78,
-    size: 0.58,
+    size: planetWorldSize("uranus"),
     spin: -0.35,
   },
   {
@@ -126,10 +120,10 @@ export const COSMOS_PLANETS: CosmosPlanet[] = [
     solarBody: "moon",
     solarName: "Moon",
     angle: 0.35,
-    radius: 6.2,
+    radius: ORBIT_RADII.moon,
     speed: 0.45,
     inclination: 0.18,
-    size: 0.28,
+    size: planetWorldSize("moon"),
     spin: 0.05,
   },
 ];

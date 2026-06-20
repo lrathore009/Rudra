@@ -11,6 +11,7 @@ import { COSMOS_PLANETS, planetByAgent, planetByLabel } from "./planet-config";
 import { OrbitRings, PlanetOrbit3D, getPlanetWorldPosition } from "./PlanetOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
 import { ALL_SOLAR_TEXTURE_URLS } from "./solar-textures";
+import { CAMERA } from "./cosmos-scale";
 
 function SceneContent({
   processing,
@@ -93,17 +94,17 @@ function SceneContent({
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 2, 16]} fov={55} />
+      <PerspectiveCamera makeDefault position={CAMERA.position} fov={CAMERA.fov} />
       <OrbitControls
         enablePan={false}
         enableZoom
-        minDistance={8}
-        maxDistance={28}
-        maxPolarAngle={Math.PI / 1.6}
-        minPolarAngle={Math.PI / 6}
+        minDistance={CAMERA.minDistance}
+        maxDistance={CAMERA.maxDistance}
+        maxPolarAngle={Math.PI / 1.55}
+        minPolarAngle={Math.PI / 5}
         autoRotate={!processing}
-        autoRotateSpeed={0.35}
-        target={[0, 0, 0]}
+        autoRotateSpeed={0.25}
+        target={CAMERA.target}
       />
       <directionalLight position={[5, 8, 5]} intensity={0.6} color="#aaccff" />
       <Environment preset="night" environmentIntensity={0.35} />

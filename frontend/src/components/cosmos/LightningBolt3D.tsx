@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
+import { BLADE_TIP_LOCAL_Y, TRISHUL_PIVOT_Y, TRISHUL_SCALE } from "./cosmos-scale";
 
 export function LightningBolt3D({
   target,
@@ -13,7 +14,7 @@ export function LightningBolt3D({
 }) {
   const points = useMemo(() => {
     if (!target || !active) return null;
-    const start = new THREE.Vector3(0, 0, 0);
+    const start = new THREE.Vector3(0, (BLADE_TIP_LOCAL_Y + TRISHUL_PIVOT_Y) * TRISHUL_SCALE, 0);
     const segments = 10;
     const seed = Math.random();
     const pts: THREE.Vector3[] = [];
