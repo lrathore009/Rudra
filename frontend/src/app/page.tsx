@@ -178,10 +178,10 @@ export default function Jarvis() {
 
   useEffect(() => {
     const boot = [
-      "threading the mala",
-      "nine facets aligned",
+      "aligning nine planets",
+      "trishula calibrated",
       "local vault sealed",
-      "breath calibrated",
+      "nebula breathing",
     ];
     boot.forEach((b, i) => setTimeout(() => pushLog(`◇ ${b}`), i * 200));
     (async () => {
@@ -211,7 +211,7 @@ export default function Jarvis() {
           {
             id: "w",
             role: "system",
-            content: "Rudra is present. The mala is threaded. Offer your sutra.",
+            content: "Rudra is online. Nine planets orbit. Transmit your command.",
             ts: new Date(),
           },
         ]);
@@ -235,7 +235,7 @@ export default function Jarvis() {
       "heartbeat ◇ ok",
       "memory lattice synced",
       "ollama bridge stable",
-      "vector index warm",
+      "vector index online",
       "audit ledger sealed",
       "entropy pool nominal",
       "cipher rotation ok",
@@ -334,7 +334,7 @@ export default function Jarvis() {
       blip("send", muted);
       damru(muted);
       hapticTap(10);
-      pushLog(`◇ sutra · ${q.slice(0, 36)}`);
+      pushLog(`◇ signal · ${q.slice(0, 36)}`);
       primeSpeechSynthesis();
       try {
         if (mode === "tools" && !selectedAgent) {
@@ -422,11 +422,11 @@ export default function Jarvis() {
             {
               id: crypto.randomUUID(),
               role: "system",
-              content: `Rudra could not complete that sutra. ${m}`,
+              content: `Rudra could not complete that command. ${m}`,
               ts: new Date(),
             },
           ]);
-          pushLog("◇ facet strain");
+          pushLog("◇ planet strain");
         }
       } finally {
         abortRef.current = null;
@@ -571,7 +571,7 @@ export default function Jarvis() {
 
   if (!authReady) {
     return (
-      <main className="relative h-screen w-screen overflow-hidden text-amber-50">
+      <main className="relative h-screen w-screen overflow-hidden text-foreground">
         <HudBackground />
         <div className="sovereign-stage">
           <div className="flex h-full items-center justify-center font-hud text-sm neon">VERIFYING PRESENCE…</div>
@@ -581,7 +581,7 @@ export default function Jarvis() {
   }
 
   return (
-    <main data-theme={resolvedTheme} className="relative h-screen w-screen overflow-hidden text-amber-50">
+    <main data-theme={resolvedTheme} className="relative h-screen w-screen overflow-hidden text-foreground">
       {booting && <BootSequence />}
       <FirstBreathOverlay show={firstBreath} onDone={() => setFirstBreath(false)} />
       <HudBackground still={!!errorFacet} />

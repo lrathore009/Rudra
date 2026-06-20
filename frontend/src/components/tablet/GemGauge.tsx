@@ -45,7 +45,7 @@ export function GemGauge({
           strokeDasharray={c}
           strokeDashoffset={c * (1 - v)}
           transform={`rotate(-90 ${cx} ${cy})`}
-          style={{ filter: "drop-shadow(0 0 3px hsl(var(--rudra-saffron) / 0.5))" }}
+          style={{ filter: "drop-shadow(0 0 3px hsl(var(--cosmos-violet) / 0.5))" }}
         />
         <circle
           cx={cx - 2}
@@ -54,7 +54,7 @@ export function GemGauge({
           fill="hsl(var(--rudra-gold-bright) / 0.25)"
         />
       </svg>
-      <span className="font-terminal text-[7px] uppercase tracking-wider text-amber-200/40">{label}</span>
+      <span className="font-terminal text-[7px] uppercase tracking-wider text-muted-foreground/80">{label}</span>
     </div>
   );
 }

@@ -52,8 +52,8 @@ export function RealmRim({
         );
       })}
       {activeFacet && (
-        <span className="realm-facet-hint font-terminal text-[8px] text-amber-200/35">
-          facet · {activeFacet}
+        <span className="realm-facet-hint font-terminal text-[8px] text-muted-foreground/70">
+          planet · {activeFacet}
         </span>
       )}
     </nav>

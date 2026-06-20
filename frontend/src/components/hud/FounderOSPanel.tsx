@@ -44,8 +44,8 @@ export function FounderOSPanel({ onAskProject }: Props) {
             className={cn(
               "flex-1 border px-1 py-0.5 font-terminal text-[8px] uppercase",
               priorityFilter === p
-                ? "border-amber-400/50 bg-amber-500/10 text-amber-100"
-                : "border-amber-400/15 text-amber-300/45"
+                ? "border-primary/50 bg-primary/10 text-foreground"
+                : "border-primary/15 text-muted-foreground/90"
             )}
           >
             {p === null ? "All" : `P${p}`}
@@ -53,7 +53,7 @@ export function FounderOSPanel({ onAskProject }: Props) {
         ))}
       </div>
 
-      {loading && <p className="font-terminal text-[10px] text-amber-300/40">Loading portfolio…</p>}
+      {loading && <p className="font-terminal text-[10px] text-muted-foreground/80">Loading portfolio…</p>}
 
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
         {projects.map((project) => (
@@ -62,7 +62,7 @@ export function FounderOSPanel({ onAskProject }: Props) {
       </div>
 
       {dashboard && (
-        <p className="font-terminal text-[8px] text-amber-300/35">
+        <p className="font-terminal text-[8px] text-muted-foreground/70">
           {dashboard.blocked_count} blocked · {dashboard.stale_count} stale
         </p>
       )}
@@ -78,19 +78,19 @@ function ProjectCardView({
   onAsk?: (name: string) => void;
 }) {
   return (
-    <div className="border border-amber-400/15 bg-black/25 p-2">
+    <div className="border border-primary/15 bg-background/50 p-2">
       <div className="mb-1 flex items-center gap-2">
-        <Briefcase className="h-3 w-3 text-amber-400/60" />
-        <span className="truncate font-terminal text-[11px] text-amber-100">{project.name}</span>
-        <span className="ml-auto font-terminal text-[8px] text-amber-300/40">P{project.priority}</span>
+        <Briefcase className="h-3 w-3 text-primary/60" />
+        <span className="truncate font-terminal text-[11px] text-foreground">{project.name}</span>
+        <span className="ml-auto font-terminal text-[8px] text-muted-foreground/80">P{project.priority}</span>
       </div>
-      <div className="mb-1 h-1.5 overflow-hidden rounded bg-stone-950/60">
+      <div className="mb-1 h-1.5 overflow-hidden rounded bg-secondary/80">
         <div
-          className="h-full bg-amber-500/70 transition-all"
+          className="h-full bg-primary/70 transition-all"
           style={{ width: `${Math.min(100, project.progress_percent)}%` }}
         />
       </div>
-      <p className="truncate font-terminal text-[9px] text-amber-200/55">
+      <p className="truncate font-terminal text-[9px] text-muted-foreground">
         Next: {project.next_action ?? "—"}
       </p>
       {project.blockers && (
@@ -100,7 +100,7 @@ function ProjectCardView({
         <button
           type="button"
           onClick={() => onAsk(project.name)}
-          className="mt-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-amber-300/50 hover:text-amber-200"
+          className="mt-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-muted-foreground/90 hover:text-foreground"
         >
           Ask Rudra <ChevronRight className="h-3 w-3" />
         </button>

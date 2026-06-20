@@ -28,6 +28,7 @@ import { GemGauge } from "@/components/tablet/GemGauge";
 import {
   AGENT_TAG,
   SUTRA_TICKER,
+  themeModeLabel,
   facetColor,
   type CoreRhythm,
   type RudraThemeMode,
@@ -150,13 +151,13 @@ export function SovereignView({
           <SutraWordmark />
           <div className="flex items-center gap-2 sm:gap-3 font-terminal text-[10px]">
             <button type="button" onClick={onThemeCycle} className="tablet-ctl hidden sm:inline">
-              {themeMode === "auto" ? "AUTO" : themeMode === "sandhya" ? "SANDHYA" : "NISHA"}
+              {themeModeLabel(themeMode)}
             </button>
             <span className="flex items-center gap-1 neon-dim">
               <Radio className="h-3 w-3" />
               <span className="hidden sm:inline">{status}</span>
             </span>
-            <span className="text-amber-200/50">{clock ? clock.toLocaleTimeString("en-GB") : "--:--"}</span>
+            <span className="text-muted-foreground">{clock ? clock.toLocaleTimeString("en-GB") : "--:--"}</span>
             <button type="button" onClick={onLogout} className="tablet-ctl hidden sm:inline">
               Exit
             </button>
@@ -277,10 +278,10 @@ export function SovereignView({
                 onClick={() => onSelectAgent(undefined)}
                 className={cn(
                   "agent-accent relative w-full rounded px-2 py-1.5 text-left font-terminal text-[11px]",
-                  !selectedAgent ? "bg-amber-500/10 neon" : "text-amber-200/55"
+                  !selectedAgent ? "bg-primary/10 neon" : "text-muted-foreground"
                 )}
               >
-                <Brain className="mr-1 inline h-3 w-3" /> Autoroute · all facets
+                <Brain className="mr-1 inline h-3 w-3" /> Autoroute · all planets
               </button>
               {agents.map((a) => (
                 <button
@@ -289,7 +290,7 @@ export function SovereignView({
                   onClick={() => onSelectAgent(a.type)}
                   className={cn(
                     "agent-accent relative flex w-full items-center gap-2 rounded px-2 py-1.5 text-left font-terminal text-[11px]",
-                    selectedAgent === a.type ? "bg-amber-500/10 neon" : "text-amber-200/55"
+                    selectedAgent === a.type ? "bg-primary/10 neon" : "text-muted-foreground"
                   )}
                 >
                   <span
@@ -307,9 +308,9 @@ export function SovereignView({
               ))}
             </div>
             {skills.length > 0 && (
-              <div className="mt-3 space-y-1 border-t border-amber-500/10 pt-2">
+              <div className="mt-3 space-y-1 border-t border-primary/10 pt-2">
                 {skills.map((s) => (
-                  <p key={s.name} className="font-terminal text-[9px] text-amber-200/50">
+                  <p key={s.name} className="font-terminal text-[9px] text-muted-foreground">
                     <span className="neon-amber">{s.name}</span> — {s.description}
                   </p>
                 ))}
@@ -338,7 +339,7 @@ export function SovereignView({
               {showProcess ? (
                 <ProcessStream stages={stages} steps={steps} processing={processing} />
               ) : (
-                <p className="font-terminal text-[10px] text-amber-200/40">Awaiting decree…</p>
+                <p className="font-terminal text-[10px] text-muted-foreground/80">Awaiting signal…</p>
               )}
             </RealmSection>
             <RealmSection title="Realms pulse">
@@ -355,18 +356,18 @@ export function SovereignView({
                         background: v.ok ? "hsl(var(--rudra-leaf))" : "hsl(var(--rudra-ember) / 0.6)",
                       }}
                     />
-                    <span className="text-amber-100/70">{v.service}</span>
-                    <span className="ml-auto text-amber-200/40">{v.ok ? "online" : "down"}</span>
+                    <span className="text-foreground/85">{v.service}</span>
+                    <span className="ml-auto text-muted-foreground/80">{v.ok ? "online" : "down"}</span>
                   </div>
                 ))}
               </div>
             </RealmSection>
             <RealmSection title="Autonomous rites">
               {jobs.length === 0 ? (
-                <p className="font-terminal text-[10px] text-amber-200/40">None scheduled</p>
+                <p className="font-terminal text-[10px] text-muted-foreground/80">None scheduled</p>
               ) : (
                 jobs.map((j) => (
-                  <p key={j.id} className="font-terminal text-[10px] text-amber-200/55">
+                  <p key={j.id} className="font-terminal text-[10px] text-muted-foreground">
                     <CalendarClock className="mr-1 inline h-3 w-3" />
                     {j.name}
                   </p>

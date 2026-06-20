@@ -39,6 +39,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        cosmos: {
+          void: "hsl(var(--cosmos-void))",
+          deep: "hsl(var(--cosmos-deep))",
+          cyan: "hsl(var(--cosmos-cyan))",
+          violet: "hsl(var(--cosmos-violet))",
+          magenta: "hsl(var(--cosmos-magenta))",
+          star: "hsl(var(--cosmos-star))",
+        },
         rudra: {
           gold: "hsl(var(--rudra-gold))",
           "gold-dim": "hsl(var(--rudra-gold-dim))",
@@ -52,6 +60,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        hud: ["var(--font-space)", "Space Grotesk", "system-ui", "sans-serif"],
         terminal: ['"SF Mono"', '"Fira Code"', "Consolas", "monospace"],
         display: ["Inter", "system-ui", "sans-serif"],
       },

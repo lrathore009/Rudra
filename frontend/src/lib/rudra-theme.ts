@@ -1,4 +1,4 @@
-/** Rudraksha theme — shared tokens, facet colors, copy helpers */
+/** Trishula Cosmos theme — shared tokens, facet colors, copy helpers */
 
 export type RudraThemeMode = "sandhya" | "nisha" | "auto";
 export type CoreRhythm = "idle" | "enriching" | "streaming" | "error";
@@ -15,25 +15,25 @@ export const AGENT_TAG: Record<string, string> = {
   operations: "OP",
 };
 
-/** Muted facet accent hues — internal UI only, never in chat voice */
+/** Planet facet accent hues — internal UI only, never in chat voice */
 export const FACET_COLOR: Record<string, string> = {
-  EA: "38 92% 58%",
-  RA: "210 45% 52%",
-  CG: "165 40% 45%",
-  LX: "340 35% 48%",
-  TR: "200 50% 50%",
-  KL: "85 35% 42%",
-  WR: "25 55% 50%",
-  PR: "270 30% 55%",
-  OP: "145 40% 40%",
+  EA: "190 95% 62%",
+  RA: "210 55% 58%",
+  CG: "165 45% 50%",
+  LX: "328 55% 58%",
+  TR: "200 60% 55%",
+  KL: "85 40% 48%",
+  WR: "25 60% 55%",
+  PR: "270 45% 62%",
+  OP: "145 45% 46%",
 };
 
 export const SUTRA_TICKER = [
-  "Nine facets, one voice",
+  "Nine planets, one trident",
   "Local · sealed · yours",
-  "The mala remembers",
-  "Contemplation before answer",
-  "Sacred link · encrypted",
+  "The cosmos remembers",
+  "Signal before answer",
+  "Encrypted uplink · active",
 ];
 
 export function agentTag(agentType?: string): string | undefined {
@@ -42,13 +42,13 @@ export function agentTag(agentType?: string): string | undefined {
 }
 
 export function facetHue(tag?: string): string {
-  if (!tag) return "hsl(var(--rudra-gold))";
+  if (!tag) return "hsl(var(--cosmos-cyan))";
   const c = FACET_COLOR[tag];
-  return c ? `hsl(${c})` : "hsl(var(--rudra-gold))";
+  return c ? `hsl(${c})` : "hsl(var(--cosmos-cyan))";
 }
 
 export function facetColor(tag?: string, alpha = 1): string {
-  if (!tag || !FACET_COLOR[tag]) return `hsl(var(--rudra-gold) / ${alpha})`;
+  if (!tag || !FACET_COLOR[tag]) return `hsl(var(--cosmos-cyan) / ${alpha})`;
   return `hsl(${FACET_COLOR[tag]} / ${alpha})`;
 }
 
@@ -58,12 +58,19 @@ export function resolveThemeMode(mode: RudraThemeMode, hour: number): "sandhya" 
   return hour >= 6 && hour < 18 ? "sandhya" : "nisha";
 }
 
+/** Display label for theme cycle (internal keys stay sandhya/nisha for localStorage) */
+export function themeModeLabel(mode: RudraThemeMode): string {
+  if (mode === "auto") return "AUTO";
+  if (mode === "sandhya") return "NEBULA";
+  return "VOID";
+}
+
 export function sutraPlaceholder(hour: number, processing: boolean): string {
-  if (processing) return "contemplating…";
+  if (processing) return "third eye opening…";
   if (hour >= 5 && hour < 12) return "What shall we illuminate today?";
-  if (hour >= 12 && hour < 17) return "Offer your sutra…";
+  if (hour >= 12 && hour < 17) return "Transmit your command…";
   if (hour >= 17 && hour < 21) return "What remains before rest?";
-  return "Close the day — what remains?";
+  return "Close the orbit — what remains?";
 }
 
 export function coreRhythmFromState(
@@ -86,10 +93,10 @@ export function hapticTap(pattern: number | number[] = 8): void {
 }
 
 export function worldGreeting(hour: number): string {
-  if (hour >= 5 && hour < 12) return "The day awaits your word";
-  if (hour >= 12 && hour < 17) return "The dominions are listening";
-  if (hour >= 17 && hour < 21) return "Sandhya — command before rest";
-  return "The night holds your counsel";
+  if (hour >= 5 && hour < 12) return "The dawn sector awaits your signal";
+  if (hour >= 12 && hour < 17) return "All nine planets are listening";
+  if (hour >= 17 && hour < 21) return "Nebula phase — command before rest";
+  return "The void holds your counsel";
 }
 
 export const FIRST_BREATH_KEY = "rudra-first-breath";

@@ -19,7 +19,7 @@ export function Panel({
       )}
     >
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
-        <span className="font-terminal text-xs uppercase tracking-widest text-rudra-gold">
+        <span className="font-terminal text-xs uppercase tracking-widest text-primary">
           {title}
         </span>
         {action}

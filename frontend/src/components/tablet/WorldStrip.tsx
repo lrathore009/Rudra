@@ -24,8 +24,8 @@ export function WorldStrip({
   return (
     <section className="world-strip bark-texture">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="font-hud text-[11px] tracking-[0.12em] text-amber-100/90">{greeting}</p>
-        <p className="font-terminal text-[9px] text-amber-200/45">
+        <p className="font-hud text-[11px] tracking-[0.12em] text-foreground/90">{greeting}</p>
+        <p className="font-terminal text-[9px] text-muted-foreground/90">
           {operator ? `${operator} · ` : ""}
           {status.toLowerCase()} · {modelName}
         </p>
@@ -34,9 +34,9 @@ export function WorldStrip({
         <GemGauge value={successRate} label="realm" size={34} />
         <GemGauge value={subsysRate} label="pulse" size={34} />
       </div>
-      <div className="hidden w-full flex-wrap gap-2 border-t border-amber-500/10 pt-2 sm:flex">
+      <div className="hidden w-full flex-wrap gap-2 border-t border-primary/10 pt-2 sm:flex">
         <span className="realm-chip">{memoryCount} memories</span>
-        <span className="realm-chip">{agentCount} facets</span>
+        <span className="realm-chip">{agentCount} planets</span>
       </div>
     </section>
   );

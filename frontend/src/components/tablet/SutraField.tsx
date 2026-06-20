@@ -46,7 +46,7 @@ export function SutraField({
         className="sutra-mode-pill"
         title="Facet routing vs autonomous tools"
       >
-        {mode === "agents" ? "◇ facets" : "◇ tools"}
+        {mode === "agents" ? "◇ planets" : "◇ tools"}
       </button>
       <input
         ref={inputRef}
@@ -58,14 +58,14 @@ export function SutraField({
         autoFocus
       />
       {voiceHint && (
-        <span className="hidden max-w-[140px] truncate font-terminal text-[8px] text-amber-300/80 sm:inline">
+        <span className="hidden max-w-[140px] truncate font-terminal text-[8px] text-primary/80 sm:inline">
           {voiceHint}
         </span>
       )}
       <button
         type="button"
         onClick={onVoice}
-        title="Speak decree"
+        title="Voice command"
         className={cn("sutra-icon-btn", listening && "sutra-voice-active")}
       >
         {listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -75,7 +75,7 @@ export function SutraField({
           <Square className="h-3.5 w-3.5 fill-current" />
         </button>
       ) : (
-        <button type="submit" disabled={!value.trim()} className="sutra-seal" title="Issue decree">
+        <button type="submit" disabled={!value.trim()} className="sutra-seal" title="Transmit command">
           <Stamp className="h-4 w-4" />
         </button>
       )}

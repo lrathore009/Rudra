@@ -31,7 +31,7 @@ export function DecreeScroll({
   return (
     <section className="decree-scroll bark-texture min-h-0 flex-1">
       <header className="decree-scroll-header">
-        <span className="font-hud text-[10px] tracking-[0.14em] text-amber-200/55">Decree & answer</span>
+        <span className="font-hud text-[10px] tracking-[0.14em] text-muted-foreground">Signal & response</span>
       </header>
       <div ref={feedRef} className="decree-scroll-body">
         {messages.map((m) => (
@@ -48,8 +48,8 @@ export function DecreeScroll({
           >
             {m.role === "user" && (
               <div className="decree-user">
-                <span className="decree-user-label">Your decree</span>
-                <p className="font-display text-[14px] leading-relaxed text-amber-50">{m.content}</p>
+                <span className="decree-user-label">Your command</span>
+                <p className="font-display text-[14px] leading-relaxed text-foreground">{m.content}</p>
               </div>
             )}
             {m.role === "assistant" && (
@@ -59,7 +59,7 @@ export function DecreeScroll({
                     type="button"
                     title="Replay voice"
                     onClick={() => onReplayVoice(m.content, m.agentType!)}
-                    className="absolute right-2 top-2 rounded border border-amber-400/15 p-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+                    className="absolute right-2 top-2 rounded border border-primary/15 p-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
                   >
                     <Volume2 className="h-3 w-3" />
                   </button>
@@ -68,12 +68,12 @@ export function DecreeScroll({
               </div>
             )}
             {m.role === "system" && (
-              <p className="font-terminal text-[11px] text-amber-200/50">{m.content}</p>
+              <p className="font-terminal text-[11px] text-muted-foreground">{m.content}</p>
             )}
           </div>
         ))}
         {processing && messages.every((m) => !m.streaming) && (
-          <p className="font-terminal text-[11px] text-amber-200/40">◇ Rudra contemplates…</p>
+          <p className="font-terminal text-[11px] text-muted-foreground/80">◇ Rudra processing…</p>
         )}
       </div>
     </section>

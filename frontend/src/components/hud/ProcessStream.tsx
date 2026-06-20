@@ -58,26 +58,26 @@ export function ProcessStream({
               ) : s.state === "active" ? (
                 <Loader2 className="neon h-3 w-3 animate-spin" />
               ) : (
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-500/25" />
+                <span className="h-1.5 w-1.5 rounded-full bg-primary/25" />
               )}
             </span>
             <span
               className={
                 s.state === "pending"
-                  ? "text-amber-200/35"
+                  ? "text-muted-foreground/70"
                   : s.state === "active"
                     ? "neon"
-                    : "text-amber-200/70"
+                    : "text-muted-foreground"
               }
             >
               {s.label}
             </span>
             {s.state === "active" && (
-              <span className="ml-auto h-1 w-16 overflow-hidden rounded-full bg-amber-500/10">
+              <span className="ml-auto h-1 w-16 overflow-hidden rounded-full bg-primary/10">
                 <span
                   className="block h-full w-1/2 rounded-full"
                   style={{
-                    background: "hsl(var(--rudra-gold))",
+                    background: "hsl(var(--cosmos-cyan))",
                     animation: "barScan 1.1s linear infinite",
                   }}
                 />
@@ -88,7 +88,7 @@ export function ProcessStream({
       </div>
 
       {steps.length > 0 && (
-        <div className="space-y-2.5 border-t border-amber-500/10 pt-2.5">
+        <div className="space-y-2.5 border-t border-primary/10 pt-2.5">
           {steps.map((st, i) => {
             const Icon = toolIcon(st.tool);
             return (
@@ -97,7 +97,7 @@ export function ProcessStream({
                   <Sparkles className="h-3 w-3" /> INSIGHT · {i + 1}
                 </div>
                 {st.thought && (
-                  <p className="ml-4 font-terminal text-[11px] leading-snug text-amber-100/65">
+                  <p className="ml-4 font-terminal text-[11px] leading-snug text-foreground/80">
                     {st.thought}
                   </p>
                 )}
@@ -109,11 +109,11 @@ export function ProcessStream({
                     />
                     <div className="min-w-0">
                       <span className="font-terminal text-[10px] neon-amber">{st.tool}</span>
-                      <span className="ml-1 font-terminal text-[10px] text-amber-200/40">
+                      <span className="ml-1 font-terminal text-[10px] text-muted-foreground/80">
                         {JSON.stringify(st.args)}
                       </span>
                       {st.observation && (
-                        <p className="font-terminal text-[10px] leading-snug text-amber-100/55">
+                        <p className="font-terminal text-[10px] leading-snug text-foreground/75">
                           ↳ {st.observation.slice(0, 200)}
                         </p>
                       )}
@@ -127,8 +127,8 @@ export function ProcessStream({
       )}
 
       {processing && steps.length === 0 && (
-        <p className="blip font-terminal text-[10px] text-amber-200/40">
-          ◇ contemplation in motion…
+        <p className="blip font-terminal text-[10px] text-muted-foreground/80">
+          ◇ signal in motion…
         </p>
       )}
     </div>

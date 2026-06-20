@@ -14,14 +14,14 @@ export function InkText({
 }) {
   if (streamed) {
     return (
-      <span className="ink-text font-display text-[15px] leading-[1.65] text-amber-50/92">
+      <span className="ink-text font-display text-[15px] leading-[1.65] text-foreground/95">
         {text}
         {streaming && <span className="ink-cursor" aria-hidden="true" />}
       </span>
     );
   }
   return (
-    <span className="ink-text font-display text-[15px] leading-[1.65] text-amber-50/92">
+    <span className="ink-text font-display text-[15px] leading-[1.65] text-foreground/95">
       <Typewriter text={text} />
     </span>
   );

@@ -30,13 +30,13 @@ export function HudPanel({
       style={float ? { animationDelay: `${floatDelay}s` } : undefined}
     >
       {title && (
-        <header className="hud-underline flex shrink-0 items-center justify-between border-b border-amber-500/15 px-3 py-2">
+        <header className="hud-underline flex shrink-0 items-center justify-between border-b border-primary/15 px-3 py-2">
           <div className="flex items-center gap-2">
             <MalaBeadIcon key={dataPulse} pulse className="h-3.5 w-3.5" />
             <h2
               className={cn(
                 "font-hud text-[10px]",
-                accent === "saffron" ? "neon-amber" : "neon-dim"
+                accent === "saffron" ? "neon-violet" : "neon-dim"
               )}
             >
               {title}

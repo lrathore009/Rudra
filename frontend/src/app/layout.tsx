@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cinzel, Inter } from "next/font/google";
+import { Cinzel, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -12,6 +12,13 @@ const cinzel = Cinzel({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space",
   display: "swap",
 });
 
@@ -41,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${cinzel.variable} ${inter.variable}`}>
+    <html lang="en" className={`dark ${cinzel.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-display">{children}</body>
     </html>
   );

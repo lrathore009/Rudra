@@ -33,7 +33,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-amber-100">
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <HudBackground />
 
       <SovereignTablet
@@ -41,13 +41,13 @@ export default function LoginPage() {
         header={
           <>
             <SutraWordmark className="text-sm" />
-            <span className="font-terminal text-[9px] uppercase tracking-widest text-amber-200/45">
-              Sacred uplink
+            <span className="font-terminal text-[9px] uppercase tracking-widest text-muted-foreground/90">
+              Cosmic uplink
             </span>
           </>
         }
         footer={
-          <span className="font-terminal text-[8px] text-amber-200/35">
+          <span className="font-terminal text-[8px] text-muted-foreground/70">
             OWNER_USERNAME / OWNER_PASSWORD in backend .env
           </span>
         }
@@ -67,12 +67,12 @@ export default function LoginPage() {
               }}
             />
           </div>
-          <p className="font-hud text-xs tracking-[0.28em] text-amber-200/70">PRESENT YOUR KEY</p>
+          <p className="font-hud text-xs tracking-[0.28em] text-muted-foreground">PRESENT YOUR KEY</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4 px-1">
           <label className="block">
-            <span className="mb-1.5 block font-terminal text-[9px] uppercase tracking-wider text-amber-200/45">
+            <span className="mb-1.5 block font-terminal text-[9px] uppercase tracking-wider text-muted-foreground/90">
               Operator
             </span>
             <input
@@ -80,22 +80,22 @@ export default function LoginPage() {
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-amber-500/25 bg-black/50 px-3 py-2.5 font-terminal text-sm text-amber-100 outline-none focus:border-amber-400/60"
+              className="w-full border border-primary/25 bg-background/80 px-3 py-2.5 font-terminal text-sm text-foreground outline-none focus:border-primary/60"
             />
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block font-terminal text-[9px] uppercase tracking-wider text-amber-200/45">
+            <span className="mb-1.5 block font-terminal text-[9px] uppercase tracking-wider text-muted-foreground/90">
               Access Key
             </span>
             <div className="relative">
-              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-400/40" />
+              <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/40" />
               <input
                 type="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-amber-500/25 bg-black/50 py-2.5 pl-10 pr-3 font-terminal text-sm text-amber-100 outline-none focus:border-amber-400/60"
+                className="w-full border border-primary/25 bg-background/80 py-2.5 pl-10 pr-3 font-terminal text-sm text-foreground outline-none focus:border-primary/60"
                 placeholder="Enter key"
               />
             </div>
@@ -111,11 +111,11 @@ export default function LoginPage() {
             type="submit"
             disabled={loading || !password}
             className={cn(
-              "w-full border border-amber-400/50 bg-stone-950/40 py-3 font-hud text-sm tracking-[0.22em] text-amber-100",
-              "transition hover:bg-stone-900/50 disabled:cursor-not-allowed disabled:opacity-40"
+              "w-full border border-primary/50 bg-secondary/90 py-3 font-hud text-sm tracking-[0.22em] text-foreground",
+              "transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
             )}
           >
-            {loading ? "AWAKENING…" : "ENTER SANCTUM"}
+            {loading ? "AWAKENING…" : "ENTER COSMOS"}
           </button>
         </form>
       </SovereignTablet>

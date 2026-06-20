@@ -26,7 +26,7 @@ export function RealmDrawer({
         <header className="realm-drawer-header">
           <div>
             <p className="font-hud text-sm tracking-[0.12em] neon-dim">{title ?? meta?.label}</p>
-            <p className="font-terminal text-[9px] text-amber-200/40">Turn the tablet · another face</p>
+            <p className="font-terminal text-[9px] text-muted-foreground/80">Turn the tablet · another face</p>
           </div>
           <button type="button" onClick={onClose} className="realm-drawer-close">
             <X className="h-4 w-4" />

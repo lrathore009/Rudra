@@ -73,8 +73,8 @@ export function SpecialistHubPanel() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <p className="font-terminal text-[8px] uppercase tracking-wider text-amber-200/35">
-        Nine facets · silent counsel
+      <p className="font-terminal text-[8px] uppercase tracking-wider text-muted-foreground/70">
+        Nine planets · silent counsel
       </p>
       <div className="flex flex-wrap gap-1">
         {TABS.map((t) => (
@@ -85,8 +85,8 @@ export function SpecialistHubPanel() {
             title={t.label}
             className={`border px-1.5 py-0.5 font-terminal text-[8px] uppercase ${
               tab === t.id
-                ? "border-amber-400/50 text-amber-100"
-                : "border-amber-400/15 text-amber-200/45"
+                ? "border-primary/50 text-foreground"
+                : "border-primary/15 text-muted-foreground/90"
             }`}
             style={
               tab === t.id
@@ -115,13 +115,13 @@ export function SpecialistHubPanel() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Unified search…"
-            className="min-w-0 flex-1 rounded border border-amber-400/20 bg-stone-950/30 px-2 py-0.5 font-terminal text-[10px] text-amber-50 outline-none"
+            className="min-w-0 flex-1 rounded border border-primary/20 bg-secondary/80 px-2 py-0.5 font-terminal text-[10px] text-foreground outline-none"
           />
         </form>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto font-terminal text-[9px] text-amber-200/55">
-        {loading && <p className="text-amber-200/35">Loading…</p>}
+      <div className="min-h-0 flex-1 overflow-y-auto font-terminal text-[9px] text-muted-foreground">
+        {loading && <p className="text-muted-foreground/70">Loading…</p>}
         {tab === "kl" &&
           hits.map((h, i) => (
             <p key={i} className="mb-1">
@@ -168,7 +168,7 @@ export function SpecialistHubPanel() {
       {tab === "cg" && (
         <button
           type="button"
-          className="border border-amber-400/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-amber-200/60"
+          className="border border-primary/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-muted-foreground"
           onClick={() =>
             void createConciergeRequest("Quick request", "Logged from HUD").then(() => refresh())
           }
@@ -179,7 +179,7 @@ export function SpecialistHubPanel() {
       {tab === "tr" && (
         <button
           type="button"
-          className="border border-amber-400/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-amber-200/60"
+          className="border border-primary/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-muted-foreground"
           onClick={() =>
             void createTrip("HUD trip", ["Tokyo", "Dubai"]).then(() => refresh())
           }
@@ -190,7 +190,7 @@ export function SpecialistHubPanel() {
       {tab === "pr" && (
         <button
           type="button"
-          className="border border-amber-400/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-amber-200/60"
+          className="border border-primary/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-muted-foreground"
           onClick={() =>
             void buildDeck("HUD deck", "Rudra OS overview").then(() => refresh())
           }

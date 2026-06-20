@@ -86,7 +86,7 @@ export function DailyBriefingPanel() {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       <div className="flex items-center justify-between gap-1">
-        <span className="font-terminal text-[9px] uppercase text-amber-300/45">
+        <span className="font-terminal text-[9px] uppercase text-muted-foreground/90">
           {connectedCount > 0 ? `${connectedCount} sources live` : "Command stack offline"}
         </span>
         <div className="flex gap-1">
@@ -94,7 +94,7 @@ export function DailyBriefingPanel() {
             type="button"
             onClick={() => void runSync()}
             disabled={syncing}
-            className="border border-amber-400/25 px-1.5 py-0.5 font-terminal text-[8px] uppercase text-amber-200/60 hover:bg-amber-500/10"
+            className="border border-primary/25 px-1.5 py-0.5 font-terminal text-[8px] uppercase text-muted-foreground hover:bg-primary/10"
             title="Sync all tiers"
           >
             <RefreshCw className={`inline h-2.5 w-2.5 ${syncing ? "animate-spin" : ""}`} />
@@ -103,7 +103,7 @@ export function DailyBriefingPanel() {
             <button
               type="button"
               onClick={() => void connectStack()}
-              className="border border-amber-400/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-amber-200/60 hover:bg-amber-500/10"
+              className="border border-primary/25 px-2 py-0.5 font-terminal text-[8px] uppercase text-muted-foreground hover:bg-primary/10"
             >
               <Plug className="inline h-2.5 w-2.5" /> Connect
             </button>
@@ -112,16 +112,16 @@ export function DailyBriefingPanel() {
       </div>
 
       {loading ? (
-        <p className="font-terminal text-[10px] text-amber-300/40">Loading executive intel…</p>
+        <p className="font-terminal text-[10px] text-muted-foreground/80">Loading executive intel…</p>
       ) : (
         <>
           <section>
-            <p className="mb-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-amber-300/40">
+            <p className="mb-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-muted-foreground/80">
               <Calendar className="h-3 w-3" /> Meetings · {events.length}
             </p>
             <div className="space-y-0.5">
               {events.slice(0, 3).map((ev, idx) => (
-                <p key={idx} className="truncate font-terminal text-[9px] text-amber-200/60">
+                <p key={idx} className="truncate font-terminal text-[9px] text-muted-foreground">
                   {ev.starts_at} · {ev.title}
                 </p>
               ))}
@@ -129,12 +129,12 @@ export function DailyBriefingPanel() {
           </section>
 
           <section>
-            <p className="mb-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-amber-300/40">
+            <p className="mb-1 flex items-center gap-1 font-terminal text-[8px] uppercase text-muted-foreground/80">
               <Mail className="h-3 w-3" /> Inbox · {commitmentCount} commitments
             </p>
             <div className="space-y-0.5">
               {emails.filter((e) => e.needs_attention).slice(0, 3).map((mail, idx) => (
-                <p key={idx} className="truncate font-terminal text-[9px] text-amber-200/70">
+                <p key={idx} className="truncate font-terminal text-[9px] text-muted-foreground">
                   {mail.subject}
                 </p>
               ))}
@@ -143,7 +143,7 @@ export function DailyBriefingPanel() {
 
           {integrations.length > 0 && (
             <section>
-              <p className="mb-1 font-terminal text-[8px] uppercase text-amber-300/40">Connect order</p>
+              <p className="mb-1 font-terminal text-[8px] uppercase text-muted-foreground/80">Connect order</p>
               <div className="flex flex-wrap gap-1">
                 {integrations.slice(0, 6).map((i) => (
                   <span
@@ -151,7 +151,7 @@ export function DailyBriefingPanel() {
                     className={`font-terminal text-[7px] uppercase px-1 py-0.5 border ${
                       i.connected
                         ? "border-emerald-400/40 text-emerald-200/70"
-                        : "border-amber-400/15 text-amber-300/35"
+                        : "border-primary/15 text-muted-foreground/70"
                     }`}
                   >
                     {i.provider}
@@ -167,26 +167,26 @@ export function DailyBriefingPanel() {
         <button
           type="button"
           onClick={() => void runBriefing()}
-          className="flex flex-1 items-center justify-center gap-1 border border-amber-400/30 py-1 font-terminal text-[9px] uppercase tracking-wider text-amber-200/70 hover:bg-amber-500/10"
+          className="flex flex-1 items-center justify-center gap-1 border border-primary/30 py-1 font-terminal text-[9px] uppercase tracking-wider text-muted-foreground hover:bg-primary/10"
         >
           <Sparkles className="h-3 w-3" /> Brief
         </button>
         <button
           type="button"
           onClick={() => void runSpokenBriefing()}
-          className="flex flex-1 items-center justify-center gap-1 border border-amber-400/30 py-1 font-terminal text-[9px] uppercase tracking-wider text-amber-200/70 hover:bg-amber-400/10"
+          className="flex flex-1 items-center justify-center gap-1 border border-primary/30 py-1 font-terminal text-[9px] uppercase tracking-wider text-muted-foreground hover:bg-primary/10"
         >
           <Sparkles className="h-3 w-3" /> Speak
         </button>
       </div>
 
       {briefing && (
-        <pre className="max-h-28 overflow-y-auto whitespace-pre-wrap font-terminal text-[9px] leading-relaxed text-amber-200/60">
+        <pre className="max-h-28 overflow-y-auto whitespace-pre-wrap font-terminal text-[9px] leading-relaxed text-muted-foreground">
           {briefing.content}
         </pre>
       )}
       {spokenText && (
-        <pre className="max-h-28 overflow-y-auto whitespace-pre-wrap font-terminal text-[9px] leading-relaxed text-amber-200/70">
+        <pre className="max-h-28 overflow-y-auto whitespace-pre-wrap font-terminal text-[9px] leading-relaxed text-muted-foreground">
           {spokenText}
         </pre>
       )}

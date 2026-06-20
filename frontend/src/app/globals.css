@@ -4,51 +4,57 @@
 
 @layer base {
   :root {
-    /* Rudraksha palette — warm night, bark, saffron gold */
-    --background: 24 28% 4%;
-    --foreground: 38 35% 92%;
-    --card: 22 32% 7%;
-    --card-foreground: 38 35% 92%;
-    --popover: 22 32% 7%;
-    --popover-foreground: 38 35% 92%;
-    --primary: 38 92% 58%;
-    --primary-foreground: 24 28% 6%;
-    --secondary: 22 22% 12%;
-    --secondary-foreground: 38 28% 82%;
-    --muted: 22 18% 14%;
-    --muted-foreground: 32 18% 58%;
-    --accent: 32 55% 18%;
-    --accent-foreground: 38 90% 68%;
+    /* Trishula Cosmos — deep void, cyan trident, violet nebula */
+    --cosmos-void: 235 60% 4%;
+    --cosmos-deep: 250 48% 8%;
+    --cosmos-cyan: 190 95% 62%;
+    --cosmos-violet: 262 85% 68%;
+    --cosmos-magenta: 328 80% 64%;
+    --cosmos-star: 210 70% 95%;
+
+    --background: 235 58% 4%;
+    --foreground: 210 70% 95%;
+    --card: 248 46% 9%;
+    --card-foreground: 210 70% 95%;
+    --popover: 248 46% 9%;
+    --popover-foreground: 210 70% 95%;
+    --primary: 190 95% 62%;
+    --primary-foreground: 235 60% 4%;
+    --secondary: 250 44% 10%;
+    --secondary-foreground: 210 45% 82%;
+    --muted: 250 38% 12%;
+    --muted-foreground: 210 35% 58%;
+    --accent: 262 55% 18%;
+    --accent-foreground: 262 85% 78%;
     --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 98%;
-    --border: 28 38% 18%;
-    --input: 28 38% 16%;
-    --ring: 38 92% 58%;
+    --border: 262 40% 22%;
+    --input: 250 38% 14%;
+    --ring: 190 95% 62%;
     --radius: 0.625rem;
 
-    /* Rudra tokens */
-    --rudra-gold: 38 92% 58%;
-    --rudra-gold-bright: 42 100% 72%;
-    --rudra-gold-dim: 32 55% 42%;
-    --rudra-saffron: 28 95% 55%;
-    --rudra-bark: 22 38% 22%;
-    --rudra-bark-deep: 20 42% 12%;
-    --rudra-ivory: 38 35% 92%;
-    --rudra-ember: 18 85% 52%;
-    --rudra-leaf: 145 55% 42%;
-    --rudra-night: 24 28% 4%;
-    --rudra-glass: 22 32% 8%;
+    /* Rudra tokens — remapped to cosmos (keeps existing class names working) */
+    --rudra-gold: 190 95% 62%;
+    --rudra-gold-bright: 190 100% 75%;
+    --rudra-gold-dim: 262 45% 42%;
+    --rudra-saffron: 262 85% 68%;
+    --rudra-bark: 250 40% 14%;
+    --rudra-bark-deep: 250 44% 7%;
+    --rudra-ivory: 210 70% 95%;
+    --rudra-ember: 328 80% 64%;
+    --rudra-leaf: 165 55% 48%;
+    --rudra-night: 235 60% 4%;
+    --rudra-glass: 248 46% 9%;
 
-    /* Legacy HUD aliases → gold (keeps inline hsl(var(--hud-*)) working) */
-    --hud-cyan: var(--rudra-gold);
+    --hud-cyan: var(--cosmos-cyan);
     --hud-cyan-bright: var(--rudra-gold-bright);
-    --hud-amber: var(--rudra-saffron);
+    --hud-amber: var(--cosmos-violet);
     --hud-green: var(--rudra-leaf);
     --hud-red: 0 72% 52%;
     --hud-grid: var(--rudra-gold-dim);
     --hud-glass: var(--rudra-glass);
 
-    --rudra-panel: 22 32% 7%;
+    --rudra-panel: 248 46% 9%;
     --rudra-terminal: var(--rudra-leaf);
   }
 }
@@ -65,8 +71,8 @@
 
 /* ---------- typography ---------- */
 .font-hud {
-  font-family: var(--font-cinzel), "Cinzel", "Georgia", serif;
-  letter-spacing: 0.14em;
+  font-family: var(--font-space), "Space Grotesk", var(--font-cinzel), system-ui, sans-serif;
+  letter-spacing: 0.12em;
 }
 .font-terminal {
   font-family: "SF Mono", "JetBrains Mono", "Fira Code", Consolas, monospace;
@@ -87,12 +93,13 @@
   color: hsl(var(--rudra-gold) / 0.88);
   text-shadow: 0 0 6px hsl(var(--rudra-gold) / 0.35);
 }
-.neon-amber {
-  color: hsl(var(--rudra-saffron));
-  text-shadow: 0 0 8px hsl(var(--rudra-saffron) / 0.65);
+.neon-amber,
+.neon-violet {
+  color: hsl(var(--cosmos-violet));
+  text-shadow: 0 0 8px hsl(var(--cosmos-violet) / 0.65);
 }
 
-/* ---------- glass panels — sutra frame ---------- */
+/* ---------- glass panels — cosmic frame ---------- */
 .glass {
   position: relative;
   background: linear-gradient(
@@ -128,7 +135,7 @@
 .brackets::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
 .brackets::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 
-/* ---------- backdrop — warm temple night ---------- */
+/* ---------- backdrop — deep space grid ---------- */
 .hud-grid {
   background-image:
     linear-gradient(hsl(var(--rudra-gold-dim) / 0.06) 1px, transparent 1px),
@@ -304,18 +311,18 @@
   .scanlines::after { opacity: 0.12; }
 }
 
-/* ---------- theme modes ---------- */
+/* ---------- theme modes (nebula / void) ---------- */
 [data-theme="sandhya"] {
-  --rudra-night: 28 32% 6%;
-  --rudra-gold: 36 95% 62%;
-  --rudra-saffron: 32 98% 58%;
-  --background: 28 30% 5%;
+  --background: 246 52% 5%;
+  --rudra-night: 244 58% 5%;
+  --rudra-gold: 190 95% 64%;
+  --rudra-saffron: 262 88% 70%;
 }
 [data-theme="nisha"] {
-  --rudra-night: 22 28% 3%;
-  --rudra-gold: 38 80% 52%;
-  --rudra-saffron: 28 85% 48%;
-  --background: 22 26% 3%;
+  --background: 235 62% 3%;
+  --rudra-night: 235 66% 3%;
+  --rudra-gold: 190 88% 58%;
+  --rudra-saffron: 262 82% 62%;
 }
 
 /* ---------- bark texture on glass ---------- */
@@ -379,7 +386,7 @@
 }
 .first-breath-overlay { animation: firstBreathIn 0.3s ease; }
 
-/* ---------- knowledge mala ---------- */
+/* ---------- knowledge graph constellation thread ---------- */
 .mala-thread {
   position: relative;
   padding-left: 0.75rem;
@@ -406,9 +413,9 @@
   height: 9px;
   transform: translateY(-50%);
   border-radius: 50%;
-  background: hsl(22 38% 18%);
-  border: 1px solid hsl(var(--rudra-gold) / 0.45);
-  box-shadow: 0 0 4px hsl(var(--rudra-saffron) / 0.25);
+  background: hsl(var(--cosmos-deep));
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.45);
+  box-shadow: 0 0 6px hsl(var(--cosmos-violet) / 0.3);
 }
 
 /* ---------- sovereign tablet P1–P6 ---------- */
@@ -425,7 +432,7 @@
   pointer-events: none;
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse 48% 42% at 50% 44%, transparent 0%, hsl(var(--rudra-night) / 0.55) 72%, #050403 100%);
+  background: radial-gradient(ellipse 48% 42% at 50% 44%, transparent 0%, hsl(var(--rudra-night) / 0.55) 72%, hsl(235 62% 2%) 100%);
 }
 .sovereign-tablet {
   position: relative;
@@ -435,13 +442,13 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: 28px;
-  background: linear-gradient(165deg, hsl(24 28% 8%) 0%, hsl(20 32% 5%) 48%, hsl(18 28% 4%) 100%);
+  background: linear-gradient(165deg, hsl(250 48% 9%) 0%, hsl(240 54% 5%) 50%, hsl(235 60% 3%) 100%);
   box-shadow:
-    0 0 0 1px hsl(var(--rudra-gold) / 0.22),
-    0 0 0 8px hsl(var(--rudra-bark-deep) / 0.85),
-    0 0 0 10px hsl(var(--rudra-gold) / 0.08),
-    0 40px 100px -20px rgba(0, 0, 0, 0.75),
-    inset 0 1px 0 hsl(var(--rudra-gold) / 0.12);
+    0 0 0 1px hsl(var(--cosmos-cyan) / 0.2),
+    0 0 0 8px hsl(248 50% 6% / 0.85),
+    0 0 0 10px hsl(var(--cosmos-violet) / 0.1),
+    0 40px 100px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 hsl(var(--cosmos-cyan) / 0.12);
 }
 .sovereign-bezel {
   pointer-events: none;
@@ -536,11 +543,11 @@
 .core-socket {
   border-radius: 999px;
   padding: 0.45rem;
-  background: radial-gradient(circle, hsl(var(--rudra-bark-deep) / 0.9) 0%, hsl(var(--rudra-night) / 0.4) 70%);
+  background: radial-gradient(circle, hsl(250 45% 7% / 0.9) 0%, hsl(235 60% 3% / 0.4) 70%);
   box-shadow:
-    inset 0 4px 14px rgba(0, 0, 0, 0.55),
-    inset 0 -1px 0 hsl(var(--rudra-gold) / 0.08),
-    0 0 20px hsl(var(--rudra-saffron) / 0.08);
+    inset 0 4px 14px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 hsl(var(--cosmos-cyan) / 0.08),
+    0 0 26px hsl(var(--cosmos-violet) / 0.12);
 }
 .decree-scroll {
   display: flex;
@@ -670,8 +677,8 @@
   justify-content: center;
   border-radius: 999px;
   border: 1px solid hsl(var(--rudra-gold) / 0.22);
-  background: hsl(22 38% 12%);
-  color: hsl(var(--rudra-gold) / 0.7);
+  background: hsl(var(--cosmos-deep));
+  color: hsl(var(--cosmos-cyan) / 0.7);
 }
 .realm-bead-active .realm-bead-icon {
   border-color: hsl(var(--rudra-saffron) / 0.55);
@@ -705,7 +712,7 @@
   transform: translateX(-50%);
   border-radius: 20px 20px 0 0;
   border: 1px solid hsl(var(--rudra-gold) / 0.2);
-  background: linear-gradient(180deg, hsl(24 28% 9%), hsl(20 30% 5%));
+  background: linear-gradient(180deg, hsl(250 48% 9%), hsl(235 60% 4%));
   box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
   animation: drawerRise 0.28s ease-out;
 }
@@ -750,54 +757,13 @@
   .sovereign-tablet { width: min(720px, 92vw); }
 }
 
-/* ============================================================
-   TRISHULA COSMOS — cosmic sovereign theme
-   Deep-space backdrop, gold trident core, vertical third eye,
-   nine orbiting planets, lightning dispatch, breathing nebula.
-   ============================================================ */
-:root {
-  --cosmos-void: 235 60% 4%;
-  --cosmos-deep: 250 48% 8%;
-  --cosmos-cyan: 190 95% 62%;
-  --cosmos-violet: 262 85% 68%;
-  --cosmos-magenta: 328 80% 64%;
-  --cosmos-star: 210 70% 95%;
-  /* repaint the global canvas to deep space (overrides layered defaults) */
-  --background: 235 58% 4%;
-  --rudra-night: 235 60% 4%;
-  --rudra-bark-deep: 250 44% 7%;
-  --rudra-glass: 248 46% 9%;
-}
-[data-theme="sandhya"] {
-  --background: 246 52% 5%;
-  --rudra-night: 244 58% 5%;
-  --rudra-gold: 38 95% 62%;
-  --rudra-saffron: 32 98% 58%;
-}
-[data-theme="nisha"] {
-  --background: 235 62% 3%;
-  --rudra-night: 235 66% 3%;
-  --rudra-gold: 40 85% 58%;
-  --rudra-saffron: 30 88% 54%;
-}
 body { background: hsl(var(--cosmos-void)); }
-
-.sovereign-tablet {
-  background: linear-gradient(165deg, hsl(250 48% 9%) 0%, hsl(240 54% 5%) 50%, hsl(235 60% 3%) 100%);
-  box-shadow:
-    0 0 0 1px hsl(var(--cosmos-cyan) / 0.2),
-    0 0 0 8px hsl(248 50% 6% / 0.85),
-    0 0 0 10px hsl(var(--cosmos-violet) / 0.1),
-    0 40px 100px -20px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 hsl(var(--cosmos-cyan) / 0.12);
-}
 .sovereign-bezel { border-color: hsl(var(--cosmos-cyan) / 0.14); }
-.core-socket {
-  background: radial-gradient(circle, hsl(250 45% 7% / 0.9) 0%, hsl(235 60% 3% / 0.4) 70%);
+
+.panel-glow {
   box-shadow:
-    inset 0 4px 14px rgba(0, 0, 0, 0.6),
-    inset 0 -1px 0 hsl(var(--cosmos-cyan) / 0.08),
-    0 0 26px hsl(var(--cosmos-violet) / 0.12);
+    0 0 24px hsl(var(--cosmos-cyan) / 0.08),
+    inset 0 1px 0 hsl(var(--cosmos-cyan) / 0.06);
 }
 
 /* ---------- breathing nebula gas clouds ---------- */
