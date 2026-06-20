@@ -24,8 +24,8 @@ A privacy-first, **local-first, $0** personal AI OS (think a private JARVIS):
   fallback (Gemini → OpenAI → Anthropic) if API keys are added.
 - **Cost:** $0. Nothing leaves the machine unless you add cloud keys or a tunnel.
 
-**Primary repo:** https://github.com/rathore1701/Rudra-OS.git (`main`)  
-**Production frontend:** https://rudra-os-ashen.vercel.app
+**Primary repo:** https://github.com/lrathore009/Rudra (`main`)  
+**Production frontend:** https://rudra-kl5i.vercel.app
 
 ---
 
@@ -188,7 +188,7 @@ tar --exclude='Rudra M4/Rudra M4/backend/.venv' \
 
 **Alternative (cleaner): use Git.** Code is on GitHub:
 ```bash
-git clone https://github.com/rathore1701/Rudra-OS.git
+git clone https://github.com/lrathore009/Rudra.git
 ```
 Send `.env` separately (secure channel) since it's gitignored.
 

@@ -32,7 +32,7 @@ are implemented and covered by **124 passing tests**.
 | Health checks | ✅ Working | `/api/v1/health/services` deep check |
 | DevOps scripts | ✅ Working | `start.sh` / `stop.sh` / `healthcheck.sh` / `package-handoff.sh` |
 | Tests | ✅ 124 passing | `backend/tests/` |
-| Vercel production | ✅ Live | https://rudra-os-ashen.vercel.app |
+| Vercel production | ✅ Live | https://rudra-kl5i.vercel.app (Trishula Cosmos) |
 
 ## Live infrastructure (last check)
 

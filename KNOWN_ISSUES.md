@@ -12,7 +12,8 @@ large-scale feature expansion.
 2. **Secrets live in `.env`.** Rotate `RUDRA_SECRET_KEY`, `RUDRA_ENCRYPTION_KEY`,
    and `OWNER_PASSWORD` when handing off to a new developer machine.
 3. **Rate limiting** exists on auth routes; review before high-traffic exposure.
-4. **CORS** allows `*.vercel.app` via regex. Add custom domains to
+4. **CORS** allows `*.vercel.app` via regex. Canonical frontend:
+   https://rudra-kl5i.vercel.app. Add custom domains to
    `CORS_ALLOW_ORIGINS` if needed.
 
 ## Deployment / Tunnel

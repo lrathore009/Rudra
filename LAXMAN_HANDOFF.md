@@ -21,9 +21,8 @@ A **privacy-first, local-first, $0** personal AI command center:
 | AI | Ollama local (`llama3.2` + `nomic-embed-text`); optional cloud fallback |
 | Deploy | Frontend on **Vercel**; backend stays local via **Cloudflare tunnel** |
 
-**Production URL:** https://rudra-os-ashen.vercel.app  
-**Git (primary):** https://github.com/rathore1701/Rudra-OS.git (`main`)  
-**Git (upstream):** https://github.com/lrathore009/Rudra.git
+**Production URL:** https://rudra-kl5i.vercel.app  
+**Git (canonical):** https://github.com/lrathore009/Rudra (`main`)
 
 ---
 
@@ -116,7 +115,7 @@ backend/rudra/
 ### Option A — Git clone (recommended)
 
 ```bash
-git clone https://github.com/rathore1701/Rudra-OS.git
+git clone https://github.com/lrathore009/Rudra.git
 cd Rudra-OS
 cp .env.example .env          # then edit secrets (see §7)
 ./scripts/start.sh
@@ -158,12 +157,13 @@ Backend **never** goes to Vercel — only the Next.js frontend.
 ./scripts/start-tunnel.sh
 # URL saved to .run/tunnel-url.txt
 
-# 3. Set Vercel env (one-time per tunnel URL change)
+# 3. Set Vercel env on project **rudra-kl5i** (one-time per tunnel URL change)
 #    NEXT_PUBLIC_API_URL = <tunnel URL, no trailing slash>
+#    NEXT_PUBLIC_APP_URL = https://rudra-kl5i.vercel.app
 
-# 4. Deploy
-cd frontend && vercel --prod
-# Or: git push origin main (auto-deploy if Vercel hooked to GitHub)
+# 4. Deploy — push to main (auto-deploy) or Vercel dashboard → Redeploy
+git push origin main
+# Live: https://rudra-kl5i.vercel.app
 ```
 
 Details: `DEPLOYMENT_GUIDE.md`
@@ -231,8 +231,7 @@ If all pass, you are ready to ship features. Use Claude Code / Cursor with
 
 ## 11. Contact / repo workflow
 
-- **Push to:** `origin` → `rathore1701/Rudra-OS` (deployment branch)
-- **Upstream:** `lrathore009/Rudra` (original repo; optional sync)
+- **Push to:** `origin` → `lrathore009/Rudra` (`main` — triggers Vercel deploy to **rudra-kl5i**)
 - **Vercel project:** `rudra-os` under `rathorevikram0620-5183s-projects`
 
 Questions about product direction → ask Vikram before large UI rewrites.

@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://rudra-kl5i.vercel.app"),
   title: "RUDRA — Trishula Cosmos",
   description:
     "Personal Intelligence OS — a cosmic command deck where the trishula awakens and nine planets answer.",

@@ -55,9 +55,30 @@ Stop the tunnel:
 
 ## 3. Vercel deployment
 
-The repo is already connected to Vercel with **Root Directory = `frontend`**.
-Every push to `main` triggers a deploy. To deploy manually: push to `main`, or
-in the Vercel dashboard click **Redeploy**.
+**Canonical production URL (Trishula Cosmos theme):**  
+https://rudra-kl5i.vercel.app  
+Login: https://rudra-kl5i.vercel.app/login
+
+The repo **https://github.com/lrathore009/Rudra** is connected to Vercel with
+**Root Directory = `frontend`**. Every push to `main` triggers a deploy. To
+deploy manually: push to `main`, or in the Vercel dashboard click **Redeploy**.
+
+### Consolidate to one Vercel project (recommended)
+
+Three Vercel projects were previously hooked to the same repo (`rudra`,
+`rudra-1efy`, `rudra-kl5i`). Only **`rudra-kl5i`** serves the current theme.
+To avoid triple deploys and stale URLs:
+
+1. Open [Vercel dashboard](https://vercel.com/laxman-singh-rathore-s-projects) → project **`rudra-kl5i`**.
+2. **Settings → Domains** — add your preferred hostname:
+   - Keep `rudra-kl5i.vercel.app` (default), or
+   - Move **`rudra-os-ashen.vercel.app`** here if you still use that link (remove it from the old project first).
+3. **Settings → Environment Variables** — set `NEXT_PUBLIC_API_URL` (tunnel URL) and optionally:
+   - `NEXT_PUBLIC_APP_URL` = `https://rudra-kl5i.vercel.app` (for Open Graph / metadata).
+4. **Redeploy** `rudra-kl5i` after env changes.
+5. On projects **`rudra`** and **`rudra-1efy`** (and any duplicate): **Settings → Git → Disconnect** (or delete the project if unused).
+
+> **Do not use** https://rudra-os-ashen.vercel.app unless you re-point that domain to `rudra-kl5i` — it may still show an older build.
 
 Build settings (auto-detected, for reference):
 - Framework: **Next.js**
@@ -72,6 +93,7 @@ Build settings (auto-detected, for reference):
 | Name | Value | Environments |
 |---|---|---|
 | `NEXT_PUBLIC_API_URL` | the tunnel URL from step 2, e.g. `https://<random>.trycloudflare.com` | Production, Preview, Development |
+| `NEXT_PUBLIC_APP_URL` | `https://rudra-kl5i.vercel.app` (canonical frontend URL) | Production |
 
 Steps:
 1. Run `./scripts/start-tunnel.sh` and copy the **Public API** URL.

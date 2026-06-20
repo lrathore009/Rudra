@@ -11,6 +11,8 @@ streaming decree dialogue).
 
 > **Handing off to a developer?** Start with [`LAXMAN_HANDOFF.md`](LAXMAN_HANDOFF.md).
 
+**Production (Vercel):** https://rudra-kl5i.vercel.app — see [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE.md) for tunnel + env setup.
+
 ## Founder OS capabilities
 
 | Module | Description |
