@@ -1074,7 +1074,9 @@ body { background: hsl(var(--cosmos-void)); }
 .graha-screen-label-slot {
   position: absolute;
   transform: translate(-50%, -50%);
-  pointer-events: none;
+}
+.rudra-cosmic-shell {
+  isolation: isolate;
 }
 .graha-label-card {
   display: flex;
@@ -1093,6 +1095,10 @@ body { background: hsl(var(--cosmos-void)); }
 }
 .graha-label-card-lead {
   border-width: 1.5px;
+}
+.graha-label-card-selected {
+  border-width: 1.5px;
+  background: hsl(var(--cosmos-deep) / 0.92);
 }
 .graha-label-card-compact {
   transform: scale(0.88);

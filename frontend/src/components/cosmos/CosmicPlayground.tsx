@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { CosmicScene } from "./CosmicScene";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
 import { CosmicViewControls } from "./CosmicViewControls";
+import { RudraCosmicShell } from "./shell";
 import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
@@ -112,9 +113,6 @@ export function CosmicPlayground({
   uplinkActive?: boolean;
   memorySynced?: boolean;
 }) {
-  const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
-  const showCounsel =
-    processing || Boolean(streamingMsgId) || Boolean(latestAssistant?.content);
   const navRef = useRef<CosmicNavHandle | null>(null);
 
   return (
@@ -127,45 +125,51 @@ export function CosmicPlayground({
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
         streamingActive={Boolean(streamingMsgId)}
-        ui={{
-          themeMode,
-          onThemeCycle,
-          status,
-          clock,
-          onLogout,
-          muted,
-          onToggleMute,
-          tickerIdx,
-          input,
-          onInputChange,
-          onSubmit,
-          onStop,
-          onVoice,
-          listening,
-          processing,
-          placeholder,
-          voiceHint,
-          leadGrahaName,
-          supportingGrahaNames,
-          activeRealm,
-          onRealmChange,
-          uplinkActive,
-          memorySynced,
-          leadGrahaId,
-          supportingGrahaIds,
-          pulseGrahaIds,
-          counselText: latestAssistant?.content ?? "",
-          showCounsel,
-        }}
+      />
+
+      <RudraCosmicShell
+        themeMode={themeMode}
+        onThemeCycle={onThemeCycle}
+        operator={operator}
+        status={status}
+        clock={clock}
+        onLogout={onLogout}
+        muted={muted}
+        onToggleMute={onToggleMute}
+        greeting={greeting}
+        tickerIdx={tickerIdx}
+        processing={processing}
+        leadGrahaId={leadGrahaId}
+        supportingGrahaIds={supportingGrahaIds}
+        pulseGrahaIds={pulseGrahaIds}
+        leadGrahaName={leadGrahaName}
+        supportingGrahaNames={supportingGrahaNames}
+        onSelectAgent={onSelectAgent}
+        messages={messages}
+        streamingMsgId={streamingMsgId}
+        input={input}
+        onInputChange={onInputChange}
+        onSubmit={onSubmit}
+        onStop={onStop}
+        onVoice={onVoice}
+        listening={listening}
+        voiceHint={voiceHint}
+        placeholder={placeholder}
+        actions={actions}
+        activeRealm={activeRealm}
+        onRealmChange={onRealmChange}
+        uplinkActive={uplinkActive}
+        memorySynced={memorySynced}
+        agents={agents}
+        skills={skills}
+        jobs={jobs}
+        vitals={vitals}
+        stages={stages}
+        steps={steps}
+        showProcess={showProcess}
       />
 
       <CosmicViewControls navRef={navRef} />
-
-      {voiceHint && (
-        <p className="pointer-events-none absolute bottom-28 left-0 right-0 z-20 text-center font-terminal text-[9px] text-destructive/80">
-          {voiceHint}
-        </p>
-      )}
 
       <div className="sr-only">
         {actions.map((a) => (
