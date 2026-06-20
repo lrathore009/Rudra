@@ -1,5 +1,5 @@
 /**
- * API client — browser uses same-origin proxy (/api/rudra → backend via next.config rewrites).
+ * API client — browser uses same-origin proxy (/api/rudra → backend via app/api/rudra route).
  * Avoids CORS and mixed-content when the UI is on Vercel HTTPS and the backend is local/tunneled.
  */
 import { authHeaders } from "./auth";

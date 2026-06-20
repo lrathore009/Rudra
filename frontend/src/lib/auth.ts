@@ -65,9 +65,12 @@ export async function login(username: string, password: string): Promise<LoginRe
     let detail = "Invalid credentials";
     try {
       const body = await res.json();
-      if (body?.detail) detail = body.detail;
+      if (body?.detail) detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
     } catch {
-      /* ignore */
+      if (res.status === 502 || res.status === 503 || res.status === 530) {
+        detail =
+          "Rudra backend unreachable. Ensure your Mac is running start.sh + start-tunnel.sh and Vercel RUDRA_BACKEND_URL is current.";
+      }
     }
     throw new Error(detail);
   }

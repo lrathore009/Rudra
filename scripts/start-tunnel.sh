@@ -25,6 +25,19 @@ err() { printf "\033[1;31m✗ %s\033[0m\n" "$1"; }
 
 command -v cloudflared >/dev/null 2>&1 || { err "cloudflared not installed. Run: brew install cloudflared"; exit 1; }
 
+# Only one quick tunnel at a time (metrics port + connector conflicts).
+if [ -f "$RUN_DIR/cloudflared.pid" ]; then
+  old_pid="$(cat "$RUN_DIR/cloudflared.pid" 2>/dev/null || true)"
+  if [ -n "$old_pid" ] && kill -0 "$old_pid" >/dev/null 2>&1; then
+    say "Stopping previous cloudflared (pid $old_pid)..."
+    kill "$old_pid" >/dev/null 2>&1 || true
+    sleep 1
+  fi
+  rm -f "$RUN_DIR/cloudflared.pid"
+fi
+pkill -f 'cloudflared tunnel --no-autoupdate --url' >/dev/null 2>&1 || true
+sleep 1
+
 # Warn (don't block) if the backend isn't up yet.
 if ! curl -fsS "http://localhost:${PORT}/api/v1/health" >/dev/null 2>&1; then
   say "Backend not detected on :${PORT} yet — start it first with ./scripts/start.sh"
@@ -32,8 +45,9 @@ fi
 
 say "Starting Cloudflare Quick Tunnel → http://localhost:${PORT} ..."
 : > "$LOG"
-nohup cloudflared tunnel --no-autoupdate --url "http://localhost:${PORT}" \
-  > "$LOG" 2>&1 &
+METRICS_PORT="${CLOUDFLARED_METRICS_PORT:-0}"
+nohup cloudflared tunnel --no-autoupdate --metrics "127.0.0.1:${METRICS_PORT}" \
+  --url "http://localhost:${PORT}" > "$LOG" 2>&1 &
 echo $! > "$RUN_DIR/cloudflared.pid"
 
 # Wait for the public URL to appear in the log (up to ~30s).
@@ -49,9 +63,9 @@ if [ -z "$PUBLIC_URL" ]; then
   exit 1
 fi
 
-# Verify the tunnel actually reaches the backend before saving.
+# Verify the tunnel actually reaches the backend (up to ~60s — CF edge can be slow).
 HEALTH_OK=false
-for _ in $(seq 1 15); do
+for _ in $(seq 1 60); do
   if curl -fsS "${PUBLIC_URL}/api/v1/health" >/dev/null 2>&1; then
     HEALTH_OK=true
     break
@@ -60,8 +74,9 @@ for _ in $(seq 1 15); do
 done
 
 if [ "$HEALTH_OK" != true ]; then
-  err "Tunnel URL obtained but backend health check failed. Is uvicorn running on :${PORT}?"
-  err "URL was: $PUBLIC_URL"
+  err "Tunnel URL obtained but backend health check failed after 60s."
+  err "URL: $PUBLIC_URL — cloudflared may still be starting; check $LOG"
+  err "If backend is up, wait 30s and run: curl ${PUBLIC_URL}/api/v1/health"
   exit 1
 fi
 
@@ -73,5 +88,5 @@ echo "   Health:      $PUBLIC_URL/api/v1/health"
 echo "   URL saved:   $URL_FILE"
 echo "   Logs:        $LOG"
 echo ""
-echo "Next: set NEXT_PUBLIC_API_URL=$PUBLIC_URL in Vercel → Settings → Environment"
+echo "Next: ./scripts/sync-vercel-backend.sh   (or set RUDRA_BACKEND_URL=$PUBLIC_URL in Vercel)"
 echo "Stop: ./scripts/stop.sh --tunnel   (or kill \$(cat $RUN_DIR/cloudflared.pid))"

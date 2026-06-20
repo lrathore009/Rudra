@@ -12,7 +12,10 @@ const nextConfig = {
   output: "standalone",
   // Prevent Next from picking ~/package-lock.json as the workspace root (breaks Tailwind/CSS in dev).
   outputFileTracingRoot: path.join(__dirname, ".."),
+  // Proxy handled at runtime by src/app/api/rudra/[...path]/route.ts (reads env per request).
+  // Rewrites below are dev fallback only when the route handler is unavailable.
   async rewrites() {
+    if (process.env.VERCEL) return [];
     return [
       {
         source: "/api/rudra/:path*",
