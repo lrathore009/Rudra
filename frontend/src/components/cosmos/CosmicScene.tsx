@@ -1,14 +1,16 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera, Environment, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { CosmicEnvironment } from "./CosmicEnvironment";
+import { CentralSun } from "./CentralSun";
 import { TrishulDamru3D, type TrishulPhase } from "./TrishulDamru3D";
 import { COSMOS_PLANETS, planetByAgent, planetByLabel } from "./planet-config";
-import { OrbitRings, PlanetOrbit3D } from "./PlanetOrbit3D";
+import { OrbitRings, PlanetOrbit3D, getPlanetWorldPosition } from "./PlanetOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
+import { ALL_SOLAR_TEXTURE_URLS } from "./solar-textures";
 
 function SceneContent({
   processing,
@@ -30,6 +32,10 @@ function SceneContent({
   const [awoken, setAwoken] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const timeRef = useRef(0);
+
+  // Preload all solar textures once for the scene
+  useTexture(ALL_SOLAR_TEXTURE_URLS);
 
   const routedTag = activeFacet ?? planetByAgent(activeAgentType)?.label;
 
@@ -60,14 +66,7 @@ function SceneContent({
           setSpinning(true);
           const p = planetByLabel(routedTag);
           if (p) {
-            const a = p.angle;
-            setBoltTarget(
-              new THREE.Vector3(
-                Math.cos(a) * p.radius,
-                Math.sin(a * 0.7 + p.inclination) * p.inclination * 4,
-                Math.sin(a) * p.radius
-              )
-            );
+            setBoltTarget(getPlanetWorldPosition(p, timeRef.current));
             setAwoken(routedTag);
           }
           timers.current.push(
@@ -88,6 +87,10 @@ function SceneContent({
 
   const showBolt = phase === "dispatch" && boltTarget !== null;
 
+  useFrame((_, dt) => {
+    timeRef.current += dt;
+  });
+
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 2, 16]} fov={55} />
@@ -103,7 +106,9 @@ function SceneContent({
         target={[0, 0, 0]}
       />
       <directionalLight position={[5, 8, 5]} intensity={0.6} color="#aaccff" />
+      <Environment preset="night" environmentIntensity={0.35} />
       <CosmicEnvironment />
+      <CentralSun />
       <OrbitRings />
       <TrishulDamru3D phase={phase} spinning={spinning} />
       <LightningBolt3D target={boltTarget} active={showBolt} />

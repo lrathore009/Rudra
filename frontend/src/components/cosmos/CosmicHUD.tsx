@@ -22,6 +22,7 @@ import { AGENT_TAG, SUTRA_TICKER, facetColor, themeModeLabel, type RudraThemeMod
 import { cn } from "@/lib/utils";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import { REALMS } from "@/components/tablet/RealmRim";
+import { planetByAgent } from "./planet-config";
 
 interface Message {
   id: string;
@@ -178,11 +179,12 @@ export function CosmicHUD({
           </button>
           {agents.slice(0, 9).map((a) => {
             const tag = AGENT_TAG[a.type];
+            const solar = planetByAgent(a.type);
             return (
               <button
                 key={a.type}
                 type="button"
-                title={a.name}
+                title={solar ? `${a.name} · ${solar.solarName}` : a.name}
                 onClick={() => onSelectAgent(selectedAgent === a.type ? undefined : a.type)}
                 className={cn("cosmic-planet-pill", selectedAgent === a.type && "cosmic-planet-pill-active")}
                 style={
@@ -195,7 +197,8 @@ export function CosmicHUD({
                     : undefined
                 }
               >
-                {tag}
+                <span>{tag}</span>
+                {solar && <span className="ml-0.5 hidden text-[7px] opacity-60 sm:inline">{solar.solarName}</span>}
               </button>
             );
           })}
@@ -288,7 +291,15 @@ export function CosmicHUD({
         <span className="truncate">{SUTRA_TICKER[tickerIdx]}</span>
         <span className="mx-2 opacity-30">·</span>
         <span className="truncate opacity-70">{logLine}</span>
-        <span className="ml-auto shrink-0 pl-2 opacity-50">{operator ?? "owner"}</span>
+        <a
+          href="https://www.solarsystemscope.com/textures/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pointer-events-auto ml-auto shrink-0 pl-2 opacity-40 hover:opacity-70"
+        >
+          SSS textures
+        </a>
+        <span className="shrink-0 pl-2 opacity-50">{operator ?? "owner"}</span>
       </footer>
     </div>
   );

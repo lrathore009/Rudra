@@ -1,9 +1,24 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
+import {
+  createBeadGarland,
+  createCenterProngGroup,
+  createDamruGroup,
+  createProngTube,
+  createShaftGeometry,
+  createShaftRings,
+  createSideProngCurve,
+  createThirdEye,
+  createTripundra,
+  DAMRU_BODY,
+  DAMRU_SKIN,
+  TRIDENT_GOLD,
+  TRIDENT_METAL,
+} from "./trishul-geometry";
 
 export type TrishulPhase = "idle" | "awakening" | "dispatch" | "working" | "error";
 
@@ -15,76 +30,166 @@ const EYE_OPEN: Record<TrishulPhase, number> = {
   error: 0,
 };
 
-function Prong({ rotation }: { rotation: [number, number, number] }) {
+function useSacredMaterials() {
+  return useMemo(() => {
+    const metal = new THREE.MeshPhysicalMaterial(TRIDENT_METAL);
+    const gold = new THREE.MeshPhysicalMaterial(TRIDENT_GOLD);
+    const damruBody = new THREE.MeshPhysicalMaterial(DAMRU_BODY);
+    const damruSkin = new THREE.MeshPhysicalMaterial(DAMRU_SKIN);
+    const bead = new THREE.MeshPhysicalMaterial({
+      color: "#3d2810",
+      emissive: "#aa6622",
+      emissiveIntensity: 0.25,
+      metalness: 0.3,
+      roughness: 0.55,
+    });
+    const ash = new THREE.MeshStandardMaterial({
+      color: "#ffffff",
+      emissive: "#ccccff",
+      emissiveIntensity: 0.5,
+      transparent: true,
+      opacity: 0.85,
+    });
+    const eyeLens = new THREE.MeshPhysicalMaterial({
+      color: "#ffffff",
+      emissive: "#cc88ff",
+      emissiveIntensity: 0.6,
+      metalness: 0.2,
+      roughness: 0.05,
+      transmission: 0.4,
+      thickness: 0.5,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const eyeIris = new THREE.MeshStandardMaterial({
+      color: "#8844ff",
+      emissive: "#aa44ff",
+      emissiveIntensity: 1.2,
+    });
+    return { metal, gold, damruBody, damruSkin, bead, ash, eyeLens, eyeIris };
+  }, []);
+}
+
+function ProngTips({ material }: { material: THREE.Material }) {
   return (
-    <group rotation={rotation}>
-      <mesh position={[0, 1.35, 0]}>
-        <coneGeometry args={[0.14, 1.1, 8]} />
-        <meshStandardMaterial
-          color="#c8f8ff"
-          emissive="#22ddff"
-          emissiveIntensity={1.2}
-          metalness={0.95}
-          roughness={0.15}
-        />
-      </mesh>
-      <mesh position={[0, 0.75, 0]}>
-        <cylinderGeometry args={[0.06, 0.09, 0.5, 8]} />
-        <meshStandardMaterial color="#88ccdd" emissive="#1188aa" emissiveIntensity={0.6} metalness={0.9} roughness={0.2} />
-      </mesh>
-    </group>
+    <>
+      {([-1, 1] as const).map((side) => {
+        const c = createSideProngCurve(side);
+        const tip = c.getPoint(1);
+        const tan = c.getTangent(1).normalize();
+        const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
+        return (
+          <mesh key={side} position={tip} quaternion={quat} material={material}>
+            <coneGeometry args={[0.042, 0.2, 12]} />
+          </mesh>
+        );
+      })}
+    </>
   );
 }
 
-function Damru3D({ spinning }: { spinning: boolean }) {
-  const ref = useRef<THREE.Group>(null);
-  useFrame((_, dt) => {
-    if (ref.current && spinning) ref.current.rotation.y += dt * 8;
-    else if (ref.current) ref.current.rotation.y += dt * 0.3;
+function SacredTrishulMesh({
+  phase,
+  spinning,
+  scale = 1,
+}: {
+  phase: TrishulPhase;
+  spinning: boolean;
+  scale?: number;
+}) {
+  const rootRef = useRef<THREE.Group>(null);
+  const damruRef = useRef<THREE.Group>(null);
+  const eyeRef = useRef<THREE.Group>(null);
+  const glowRef = useRef<THREE.PointLight>(null);
+  const mats = useSacredMaterials();
+  const eyeOpen = EYE_OPEN[phase];
+
+  const shaftGeo = useMemo(() => createShaftGeometry(), []);
+  const leftProngGeo = useMemo(() => createProngTube(createSideProngCurve(-1), 0.05), []);
+  const rightProngGeo = useMemo(() => createProngTube(createSideProngCurve(1), 0.05), []);
+
+  const centerProng = useMemo(() => createCenterProngGroup(mats.metal), [mats.metal]);
+  const damru = useMemo(
+    () =>
+      createDamruGroup({
+        body: mats.damruBody,
+        skin: mats.damruSkin,
+        gold: mats.gold,
+        bead: mats.bead,
+      }),
+    [mats]
+  );
+  const tripundra = useMemo(() => createTripundra(mats.ash), [mats.ash]);
+  const rings = useMemo(() => createShaftRings(mats.gold), [mats.gold]);
+  const garland = useMemo(() => createBeadGarland(mats.bead), [mats.bead]);
+  const thirdEye = useMemo(
+    () => createThirdEye(eyeOpen, { lens: mats.eyeLens, iris: mats.eyeIris }),
+    [eyeOpen, mats.eyeLens, mats.eyeIris]
+  );
+
+  useFrame((state, dt) => {
+    const t = state.clock.elapsedTime;
+    if (rootRef.current) {
+      if (spinning) {
+        rootRef.current.rotation.y += dt * 3.5;
+        rootRef.current.position.y = Math.sin(t * 5) * 0.04;
+      } else {
+        rootRef.current.rotation.y = THREE.MathUtils.lerp(rootRef.current.rotation.y, 0, 0.04);
+        rootRef.current.position.y = Math.sin(t * 0.7) * 0.08;
+        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.035;
+      }
+    }
+    if (damruRef.current) {
+      damruRef.current.rotation.y += spinning ? dt * 10 : dt * 0.35;
+      damruRef.current.rotation.z = Math.sin(t * 2) * 0.08;
+    }
+    if (eyeRef.current) {
+      const sy = 0.04 + eyeOpen * 0.5;
+      eyeRef.current.scale.y = THREE.MathUtils.lerp(eyeRef.current.scale.y, sy, 0.12);
+    }
+    if (glowRef.current) {
+      glowRef.current.intensity = 1.2 + eyeOpen * 4 + (spinning ? 2 : 0);
+    }
   });
 
   return (
-    <group ref={ref} position={[0.55, -0.15, 0.35]} rotation={[0.4, 0.5, 0.3]}>
-      <mesh rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[0.22, 0.35, 12]} />
-        <meshStandardMaterial color="#d4a040" emissive="#aa6620" emissiveIntensity={0.5} metalness={0.7} roughness={0.35} />
-      </mesh>
-      <mesh position={[0, 0.32, 0]}>
-        <coneGeometry args={[0.22, 0.35, 12]} />
-        <meshStandardMaterial color="#e8b850" emissive="#cc8830" emissiveIntensity={0.6} metalness={0.7} roughness={0.35} />
-      </mesh>
-      <mesh>
-        <cylinderGeometry args={[0.06, 0.06, 0.12, 8]} />
-        <meshStandardMaterial color="#886622" metalness={0.8} roughness={0.4} />
-      </mesh>
-      {/* strings */}
-      {[0, 1, 2].map((i) => (
-        <mesh key={i} position={[Math.cos(i * 2.1) * 0.12, 0.5 + i * 0.08, Math.sin(i * 2.1) * 0.12]}>
-          <sphereGeometry args={[0.025, 6, 6]} />
-          <meshStandardMaterial color="#ffeeaa" emissive="#ffcc44" emissiveIntensity={0.8} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
+    <group ref={rootRef} scale={scale}>
+      <mesh geometry={shaftGeo} material={mats.metal} castShadow receiveShadow />
 
-function ThirdEye3D({ openness }: { openness: number }) {
-  const scaleY = 0.05 + openness * 0.55;
-  return (
-    <group position={[0, 0.55, 0.22]}>
-      <mesh scale={[0.18, scaleY, 0.04]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          emissive="#aa44ff"
-          emissiveIntensity={0.4 + openness * 2}
-          transparent
-          opacity={0.85}
-        />
+      <group position={[0, 1.05, 0]}>
+        <primitive object={centerProng} />
+        <mesh geometry={leftProngGeo} material={mats.metal} castShadow />
+        <mesh geometry={rightProngGeo} material={mats.metal} castShadow />
+        <ProngTips material={mats.metal} />
+      </group>
+
+      <primitive object={rings} />
+      <primitive object={tripundra} />
+
+      <group ref={eyeRef} position={[0, 0.42, 0.16]}>
+        <primitive object={thirdEye} />
+      </group>
+
+      <group position={[0, 0.05, 0.08]}>
+        <mesh material={mats.gold} position={[0, 0.18, 0]}>
+          <cylinderGeometry args={[0.008, 0.008, 0.35, 8]} />
+        </mesh>
+        <group ref={damruRef} position={[0, -0.38, 0.05]}>
+          <primitive object={damru} />
+        </group>
+        <group position={[0, -0.55, 0.06]}>
+          <primitive object={garland} />
+        </group>
+      </group>
+
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
+        <torusGeometry args={[0.55, 0.006, 8, 64]} />
+        <meshBasicMaterial color="#44ddff" transparent opacity={0.25} />
       </mesh>
-      {openness > 0.2 && (
-        <pointLight color="#cc66ff" intensity={openness * 3} distance={4} />
-      )}
+
+      <pointLight ref={glowRef} color="#aa66ff" intensity={1.5} distance={7} position={[0, 0.6, 0.4]} />
+      <pointLight color="#44eeff" intensity={1.8} distance={9} position={[0.5, 1, 1]} />
+      <spotLight color="#88eeff" intensity={2} angle={0.4} penumbra={0.8} position={[2, 3, 2]} castShadow />
     </group>
   );
 }
@@ -92,52 +197,26 @@ function ThirdEye3D({ openness }: { openness: number }) {
 export function TrishulDamru3D({
   phase,
   spinning,
+  scale = 1,
 }: {
   phase: TrishulPhase;
   spinning: boolean;
+  scale?: number;
 }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const eyeOpen = EYE_OPEN[phase];
-
-  useFrame((state, dt) => {
-    if (!groupRef.current) return;
-    const t = state.clock.elapsedTime;
-    if (spinning) {
-      groupRef.current.rotation.y += dt * 4;
-      groupRef.current.position.y = -0.5 + Math.sin(t * 6) * 0.05;
-    } else {
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, 0.05);
-      groupRef.current.position.y = -0.5 + Math.sin(t * 0.8) * 0.12;
-      groupRef.current.rotation.x = Math.sin(t * 0.5) * 0.04;
-    }
-  });
-
   return (
-    <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.25}>
-      <group ref={groupRef} position={[0, -0.5, 0]}>
-        {/* central shaft */}
-        <mesh>
-          <cylinderGeometry args={[0.1, 0.14, 2.2, 10]} />
-          <meshStandardMaterial
-            color="#a0eeff"
-            emissive="#22ccff"
-            emissiveIntensity={0.9}
-            metalness={0.92}
-            roughness={0.18}
-          />
-        </mesh>
-        {/* cross guard */}
-        <mesh position={[0, 0.2, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.05, 0.05, 0.9, 8]} />
-          <meshStandardMaterial color="#66bbcc" emissive="#118899" emissiveIntensity={0.5} metalness={0.85} roughness={0.25} />
-        </mesh>
-        <Prong rotation={[0.25, 0, 0]} />
-        <Prong rotation={[0.25, (2 * Math.PI) / 3, 0]} />
-        <Prong rotation={[0.25, (4 * Math.PI) / 3, 0]} />
-        <ThirdEye3D openness={eyeOpen} />
-        <Damru3D spinning={spinning || phase === "dispatch"} />
-        <pointLight color="#44eeff" intensity={1.5} distance={8} position={[0, 0.5, 1]} />
-        <pointLight color="#aa44ff" intensity={0.8} distance={6} position={[0, 1, -0.5]} />
+    <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.2}>
+      <group position={[0, -0.35, 0]}>
+        <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} />
+      </group>
+    </Float>
+  );
+}
+
+export function TrishulDamruPreview({ scale = 0.55 }: { scale?: number }) {
+  return (
+    <Float speed={1.3} floatIntensity={0.35}>
+      <group rotation={[0.25, 0.6, 0]}>
+        <SacredTrishulMesh phase="idle" spinning={false} scale={scale} />
       </group>
     </Float>
   );

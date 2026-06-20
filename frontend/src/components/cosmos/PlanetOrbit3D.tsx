@@ -6,57 +6,7 @@ import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { facetColor } from "@/lib/rudra-theme";
 import type { CosmosPlanet } from "./planet-config";
-
-function planetColor(label: string): string {
-  return facetColor(label, 1);
-}
-
-function PlanetSurface({ kind, color }: { kind: CosmosPlanet["kind"]; color: string }) {
-  if (kind === "ringed") {
-    return (
-      <>
-        <mesh>
-          <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.35} roughness={0.6} metalness={0.2} />
-        </mesh>
-        <mesh rotation={[1.2, 0.3, 0.5]}>
-          <torusGeometry args={[1.35, 0.04, 8, 64]} />
-          <meshStandardMaterial color="#ccccff" emissive="#8888ff" emissiveIntensity={0.4} transparent opacity={0.7} />
-        </mesh>
-      </>
-    );
-  }
-  if (kind === "cloud") {
-    return (
-      <mesh>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial color="#eef8ff" emissive={color} emissiveIntensity={0.25} roughness={0.9} metalness={0.05} />
-      </mesh>
-    );
-  }
-  if (kind === "data") {
-    return (
-      <mesh>
-        <icosahedronGeometry args={[1, 2]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} wireframe wireframeLinewidth={1} />
-      </mesh>
-    );
-  }
-  if (kind === "facet") {
-    return (
-      <mesh>
-        <octahedronGeometry args={[1, 1]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.45} flatShading />
-      </mesh>
-    );
-  }
-  return (
-    <mesh>
-      <sphereGeometry args={[1, 24, 24]} />
-      <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.3} roughness={0.55} metalness={0.15} />
-    </mesh>
-  );
-}
+import { TexturedPlanetBody } from "./PlanetMesh";
 
 export function PlanetOrbit3D({
   planet,
@@ -72,24 +22,28 @@ export function PlanetOrbit3D({
   onSelect: (agentType: string) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const spinRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const color = planetColor(planet.label);
+  const accent = facetColor(planet.label, 1);
   const angleRef = useRef(planet.angle);
 
   useFrame((state, dt) => {
     if (!ref.current) return;
-    angleRef.current += dt * planet.speed * (active ? 1.4 : 1);
+    angleRef.current += dt * planet.speed * (active ? 1.25 : 1);
     const a = angleRef.current;
     const x = Math.cos(a) * planet.radius;
     const z = Math.sin(a) * planet.radius;
-    const y = Math.sin(a * 0.7 + planet.inclination) * planet.inclination * 4;
+    const y = Math.sin(a * 0.65 + planet.inclination) * planet.inclination * 3.5;
     ref.current.position.set(x, y, z);
-    ref.current.rotation.y += dt * 0.5;
 
-    const pulse = awakened ? 1.35 : selected || hovered ? 1.15 : 1;
-    const s = planet.size * pulse * (1 + Math.sin(state.clock.elapsedTime * 2 + planet.angle) * 0.04);
+    if (spinRef.current) spinRef.current.rotation.y += dt * planet.spin;
+
+    const pulse = awakened ? 1.28 : selected || hovered ? 1.12 : 1;
+    const s = planet.size * pulse * (1 + Math.sin(state.clock.elapsedTime * 2 + planet.angle) * 0.025);
     ref.current.scale.setScalar(s);
   });
+
+  const highlighted = selected || hovered || awakened;
 
   return (
     <group ref={ref}>
@@ -111,49 +65,50 @@ export function PlanetOrbit3D({
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial visible={false} />
       </mesh>
-      <group>
-        <PlanetSurface kind={planet.kind} color={color} />
-        {(active || selected || hovered) && (
-          <pointLight color={color} intensity={selected ? 2 : 1} distance={3} />
-        )}
+
+      <group ref={spinRef}>
+        <TexturedPlanetBody body={planet.solarBody} accent={accent} highlighted={highlighted} />
+        {highlighted && <pointLight color={accent} intensity={awakened ? 2.5 : 1.2} distance={4} />}
       </group>
+
       {(hovered || selected || awakened) && (
-        <Html center distanceFactor={12} style={{ pointerEvents: "none" }}>
-          <span
-            className="whitespace-nowrap font-terminal text-[10px] uppercase tracking-widest"
-            style={{
-              color,
-              textShadow: `0 0 12px ${color}`,
-            }}
-          >
-            {planet.label}
-            {awakened && " ⚡"}
-          </span>
+        <Html center distanceFactor={14} style={{ pointerEvents: "none" }}>
+          <div className="text-center">
+            <span
+              className="block whitespace-nowrap font-hud text-[10px] uppercase tracking-widest"
+              style={{ color: accent, textShadow: `0 0 14px ${accent}` }}
+            >
+              {planet.label}
+              {awakened && " ⚡"}
+            </span>
+            <span className="block font-terminal text-[8px] text-white/70">{planet.solarName}</span>
+          </div>
         </Html>
       )}
     </group>
   );
 }
 
+/** Orbital path rings — inner → outer solar distances */
 export function OrbitRings() {
+  const radii = [4.5, 5.2, 5.8, 6.2, 6.5, 9.2, 10.5, 11.5, 12.8];
   return (
     <group>
-      {[5, 6.5, 7.5].map((r, i) => (
-        <mesh key={i} rotation={[Math.PI / 2 + i * 0.15, 0, i * 0.4]}>
-          <torusGeometry args={[r, 0.015, 8, 128]} />
-          <meshBasicMaterial color="#44ddff" transparent opacity={0.08} />
+      {radii.map((r, i) => (
+        <mesh key={r} rotation={[Math.PI / 2 + i * 0.02, 0, i * 0.15]}>
+          <torusGeometry args={[r, 0.012, 8, 160]} />
+          <meshBasicMaterial color="#55ccff" transparent opacity={0.07} />
         </mesh>
       ))}
     </group>
   );
 }
 
-/** World position of a planet for lightning targeting */
-export function usePlanetPosition(planet: CosmosPlanet, time: number): THREE.Vector3 {
+export function getPlanetWorldPosition(planet: CosmosPlanet, time: number): THREE.Vector3 {
   const a = planet.angle + time * planet.speed;
   return new THREE.Vector3(
     Math.cos(a) * planet.radius,
-    Math.sin(a * 0.7 + planet.inclination) * planet.inclination * 4,
+    Math.sin(a * 0.65 + planet.inclination) * planet.inclination * 3.5,
     Math.sin(a) * planet.radius
   );
 }
