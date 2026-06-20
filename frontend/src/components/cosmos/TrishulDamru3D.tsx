@@ -20,13 +20,16 @@ import {
   TRIDENT_METAL,
 } from "./trishul-geometry";
 
-export type TrishulPhase = "idle" | "awakening" | "dispatch" | "working" | "error";
+export type TrishulPhase = "idle" | "login" | "query" | "analysis" | "dispatch" | "working" | "completed" | "error";
 
 const EYE_OPEN: Record<TrishulPhase, number> = {
   idle: 0.05,
-  awakening: 0.42,
+  login: 0.4,
+  query: 0.4,
+  analysis: 0.6,
   dispatch: 0.62,
-  working: 0.06,
+  working: 0.25,
+  completed: 0.05,
   error: 0,
 };
 
@@ -92,10 +95,12 @@ function SacredTrishulMesh({
   phase,
   spinning,
   scale = 1,
+  reducedMotion = false,
 }: {
   phase: TrishulPhase;
   spinning: boolean;
   scale?: number;
+  reducedMotion?: boolean;
 }) {
   const rootRef = useRef<THREE.Group>(null);
   const damruRef = useRef<THREE.Group>(null);
@@ -129,26 +134,30 @@ function SacredTrishulMesh({
 
   useFrame((state, dt) => {
     const t = state.clock.elapsedTime;
+    const motion = reducedMotion ? 0 : 1;
     if (rootRef.current) {
       if (spinning) {
-        rootRef.current.rotation.y += dt * 3.5;
+        rootRef.current.rotation.y += dt * 3.5 * motion;
         rootRef.current.position.y = Math.sin(t * 5) * 0.04;
       } else {
-        rootRef.current.rotation.y = THREE.MathUtils.lerp(rootRef.current.rotation.y, 0, 0.04);
-        rootRef.current.position.y = Math.sin(t * 0.7) * 0.08;
-        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.035;
+        // 0.2–0.5°/s idle rotation
+        rootRef.current.rotation.y += dt * 0.006 * motion;
+        rootRef.current.position.y = Math.sin(t * 0.7) * 0.08 * motion;
+        rootRef.current.rotation.x = Math.sin(t * 0.45) * 0.035 * motion;
       }
     }
     if (damruRef.current) {
-      damruRef.current.rotation.y += spinning ? dt * 10 : dt * 0.35;
-      damruRef.current.rotation.z = Math.sin(t * 2) * 0.08;
+      damruRef.current.rotation.y += (spinning ? dt * 10 : dt * 0.35) * motion;
+      damruRef.current.rotation.z = Math.sin(t * 2) * 0.08 * motion;
     }
     if (eyeRef.current) {
-      const sy = 0.04 + eyeOpen * 0.5;
-      eyeRef.current.scale.y = THREE.MathUtils.lerp(eyeRef.current.scale.y, sy, 0.12);
+      const targetOpen = EYE_OPEN[phase];
+      const sy = 0.04 + targetOpen * 0.5;
+      eyeRef.current.scale.y = THREE.MathUtils.lerp(eyeRef.current.scale.y, sy, phase === "working" ? 0.04 : 0.12);
     }
     if (glowRef.current) {
-      glowRef.current.intensity = 1.2 + eyeOpen * 4 + (spinning ? 2 : 0);
+      const base = phase === "analysis" ? 3 : phase === "query" ? 2 : 1.2;
+      glowRef.current.intensity = base + eyeOpen * 4 + (spinning ? 2 : 0);
     }
   });
 
@@ -198,15 +207,17 @@ export function TrishulDamru3D({
   phase,
   spinning,
   scale = 1,
+  reducedMotion = false,
 }: {
   phase: TrishulPhase;
   spinning: boolean;
   scale?: number;
+  reducedMotion?: boolean;
 }) {
   return (
-    <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.2}>
+    <Float speed={reducedMotion ? 0 : 1.1} rotationIntensity={reducedMotion ? 0 : 0.06} floatIntensity={reducedMotion ? 0 : 0.2}>
       <group position={[0, -0.35, 0]}>
-        <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} />
+        <SacredTrishulMesh phase={phase} spinning={spinning} scale={scale} reducedMotion={reducedMotion} />
       </group>
     </Float>
   );
@@ -216,7 +227,7 @@ export function TrishulDamruPreview({ scale = 0.55 }: { scale?: number }) {
   return (
     <Float speed={1.3} floatIntensity={0.35}>
       <group rotation={[0.25, 0.6, 0]}>
-        <SacredTrishulMesh phase="idle" spinning={false} scale={scale} />
+        <SacredTrishulMesh phase="login" spinning={false} scale={scale} />
       </group>
     </Float>
   );

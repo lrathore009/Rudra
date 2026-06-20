@@ -979,6 +979,16 @@ body { background: hsl(var(--cosmos-void)); }
   border-color: hsl(var(--cosmos-magenta) / 0.5);
   color: hsl(var(--cosmos-magenta));
 }
+.cosmic-graha-chip {
+  border-radius: 999px;
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.35);
+  padding: 0.15rem 0.55rem;
+  background: hsl(var(--cosmos-deep) / 0.5);
+  backdrop-filter: blur(6px);
+}
+.cosmic-graha-chip-lead {
+  box-shadow: 0 0 14px hsl(var(--cosmos-cyan) / 0.25);
+}
 .cosmic-planet-pill {
   display: inline-flex;
   align-items: center;

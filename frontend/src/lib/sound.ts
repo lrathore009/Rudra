@@ -88,7 +88,29 @@ export function releaseBreath(muted = false): void {
   osc.stop(t0 + 0.5);
 }
 
-/** Damaru roll — Shiva's drum. Fires when an execution begins (the trident awakens). */
+/** Single subtle damaru beat — minor queries */
+export function damruBeat(muted = false): void {
+  if (muted) return;
+  const c = getCtx();
+  if (!c) return;
+  if (c.state === "suspended") void c.resume();
+
+  const t0 = c.currentTime;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(320, t0);
+  osc.frequency.exponentialRampToValueAtTime(188, t0 + 0.06);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.07, t0 + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+  osc.connect(gain);
+  gain.connect(c.destination);
+  osc.start(t0);
+  osc.stop(t0 + 0.2);
+}
+
+/** Damaru roll — full roll for major queries (research, strategy, planning) */
 export function damru(muted = false): void {
   if (muted) return;
   const c = getCtx();

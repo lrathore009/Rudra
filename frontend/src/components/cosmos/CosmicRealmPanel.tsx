@@ -9,7 +9,7 @@ import { DocumentBrainPanel } from "@/components/hud/DocumentBrainPanel";
 import { FounderOSPanel } from "@/components/hud/FounderOSPanel";
 import { KnowledgeGraphPanel } from "@/components/hud/KnowledgeGraphPanel";
 import { GemGauge } from "@/components/tablet/GemGauge";
-import { AGENT_TAG, facetColor } from "@/lib/rudra-theme";
+import { grahaColor, grahaName } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import { REALMS } from "@/components/tablet/RealmRim";
@@ -93,7 +93,7 @@ export function CosmicRealmPanel({
           </>
         )}
         {realm === "council" && (
-          <Section title="The nine planets">
+          <Section title="The Navagraha">
             <div className="space-y-1">
               <button
                 type="button"
@@ -103,9 +103,11 @@ export function CosmicRealmPanel({
                   !selectedAgent ? "bg-primary/10 neon" : "text-muted-foreground"
                 )}
               >
-                <Brain className="mr-1 inline h-3 w-3" /> Autoroute · all planets
+                <Brain className="mr-1 inline h-3 w-3" /> Autoroute · Rudra decides
               </button>
-              {agents.map((a) => (
+              {agents.map((a) => {
+                const graha = grahaName(a.type);
+                return (
                 <button
                   key={a.type}
                   type="button"
@@ -116,18 +118,18 @@ export function CosmicRealmPanel({
                   )}
                 >
                   <span
-                    className="flex h-4 w-5 items-center justify-center rounded border text-[8px] font-bold"
+                    className="flex h-4 min-w-5 items-center justify-center rounded border px-0.5 text-[8px] font-bold"
                     style={{
-                      color: facetColor(AGENT_TAG[a.type], 0.95),
-                      borderColor: facetColor(AGENT_TAG[a.type], 0.4),
-                      background: facetColor(AGENT_TAG[a.type], 0.12),
+                      color: grahaColor(graha, 0.95),
+                      borderColor: grahaColor(graha, 0.4),
+                      background: grahaColor(graha, 0.12),
                     }}
                   >
-                    {AGENT_TAG[a.type]}
+                    {graha?.slice(0, 3).toUpperCase()}
                   </span>
-                  <span className="truncate">{a.name}</span>
+                  <span className="truncate">{graha ?? a.name}</span>
                 </button>
-              ))}
+              );})}
             </div>
             {skills.length > 0 && (
               <div className="mt-3 space-y-1 border-t border-primary/10 pt-2">

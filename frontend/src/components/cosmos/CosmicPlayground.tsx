@@ -7,6 +7,7 @@ import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import type { RudraThemeMode } from "@/lib/rudra-theme";
 import type { ActStep, AgentInfo, SchedulerJob, ServiceHealth, SkillInfo } from "@/lib/api";
+import type { GrahaId } from "./navagraha-config";
 import type { LucideIcon } from "lucide-react";
 
 interface Message {
@@ -31,9 +32,11 @@ export function CosmicPlayground({
   logLine,
   tickerIdx,
   processing,
-  activeFacetTag,
-  selectedAgent,
-  activeRoutedAgent,
+  leadGrahaId,
+  supportingGrahaIds,
+  pulseGrahaIds,
+  leadGrahaName,
+  supportingGrahaNames,
   errorFacet,
   onSelectAgent,
   messages,
@@ -72,9 +75,11 @@ export function CosmicPlayground({
   logLine: string;
   tickerIdx: number;
   processing: boolean;
-  activeFacetTag?: string;
-  selectedAgent?: string;
-  activeRoutedAgent?: string;
+  leadGrahaId?: GrahaId;
+  supportingGrahaIds?: GrahaId[];
+  pulseGrahaIds?: GrahaId[];
+  leadGrahaName?: string;
+  supportingGrahaNames?: string[];
   errorFacet?: string;
   onSelectAgent: (type?: string) => void;
   messages: Message[];
@@ -101,19 +106,14 @@ export function CosmicPlayground({
   subsysRate: number;
   onAskProject: (name: string) => void;
 }) {
-  const handlePlanetSelect = (agentType: string) => {
-    onSelectAgent(selectedAgent === agentType ? undefined : agentType);
-  };
-
   return (
     <div className="cosmic-playground relative h-screen w-screen overflow-hidden">
       <CosmicScene
         processing={processing}
-        activeAgentType={activeRoutedAgent ?? selectedAgent}
-        activeFacet={activeFacetTag}
+        leadGrahaId={leadGrahaId}
+        supportingGrahaIds={supportingGrahaIds ?? []}
+        pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
-        selectedAgent={selectedAgent}
-        onSelectAgent={handlePlanetSelect}
       />
 
       <CosmicHUD
@@ -139,10 +139,8 @@ export function CosmicPlayground({
         processing={processing}
         placeholder={placeholder}
         voiceHint={voiceHint}
-        selectedAgent={selectedAgent}
-        activeFacetTag={activeFacetTag}
-        onSelectAgent={onSelectAgent}
-        agents={agents}
+        leadGrahaName={leadGrahaName}
+        supportingGrahaNames={supportingGrahaNames}
         actions={actions}
         activeRealm={activeRealm}
         onRealmChange={onRealmChange}
@@ -162,7 +160,7 @@ export function CosmicPlayground({
               realm={activeRealm}
               onClose={() => onRealmChange(null)}
               agents={agents}
-              selectedAgent={selectedAgent}
+              selectedAgent={undefined}
               onSelectAgent={onSelectAgent}
               skills={skills}
               showProcess={showProcess}

@@ -12,17 +12,10 @@ import {
 import { BootSequence } from "@/components/hud/BootSequence";
 import { type Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
-import {
-  FIRST_BREATH_KEY,
-  SUTRA_TICKER,
-  agentTag,
-  hapticTap,
-  resolveThemeMode,
-  sutraPlaceholder,
-  worldGreeting,
-  type RudraThemeMode,
-} from "@/lib/rudra-theme";
-import { blip, damru, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
+import { FIRST_BREATH_KEY, SUTRA_TICKER, grahaName, hapticTap, resolveThemeMode, sutraPlaceholder, worldGreeting, type RudraThemeMode } from "@/lib/rudra-theme";
+import { blip, damru, damruBeat, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
+import { analyzeNavagrahaRouting, isMajorQuery } from "@/components/cosmos/navagraha-routing";
+import { grahaByAgent, grahaById, type GrahaId } from "@/components/cosmos/navagraha-config";
 import { FirstBreathOverlay } from "@/components/hud/MalaArc";
 import {
   ensureMicrophoneAccess,
@@ -109,6 +102,9 @@ export default function Jarvis() {
   const [voiceHint, setVoiceHint] = useState<string | null>(null);
   const [themeMode, setThemeMode] = useState<RudraThemeMode>("auto");
   const [activeRoutedAgent, setActiveRoutedAgent] = useState<string | undefined>();
+  const [leadGrahaId, setLeadGrahaId] = useState<GrahaId | undefined>();
+  const [supportingGrahaIds, setSupportingGrahaIds] = useState<GrahaId[]>([]);
+  const [pulseGrahaIds, setPulseGrahaIds] = useState<GrahaId[]>([]);
   const [errorFacet, setErrorFacet] = useState<string | undefined>();
   const [firstBreath, setFirstBreath] = useState(false);
   const [tickerIdx, setTickerIdx] = useState(0);
@@ -294,8 +290,15 @@ export default function Jarvis() {
   );
   const isStreaming = useMemo(() => messages.some((m) => m.streaming), [messages]);
   const activeFacetTag = useMemo(
-    () => agentTag(selectedAgent ?? activeRoutedAgent),
+    () => grahaName(selectedAgent ?? activeRoutedAgent),
     [selectedAgent, activeRoutedAgent]
+  );
+
+  const leadGrahaName = useMemo(() => grahaById(leadGrahaId)?.name, [leadGrahaId]);
+
+  const supportingGrahaNames = useMemo(
+    () => supportingGrahaIds.map((id) => grahaById(id)?.name).filter(Boolean) as string[],
+    [supportingGrahaIds]
   );
 
   const submit = useCallback(
@@ -308,9 +311,16 @@ export default function Jarvis() {
       setRoutingAnalysis([]);
       setProcessing(true);
       setStageIdx(0);
-      setActiveRoutedAgent(selectedAgent);
+      setActiveRoutedAgent(undefined);
+
+      const routing = analyzeNavagrahaRouting(q);
+      setLeadGrahaId(routing.lead.id);
+      setSupportingGrahaIds(routing.supporting.map((g) => g.id));
+      setPulseGrahaIds([routing.lead.id, ...routing.supporting.map((g) => g.id)]);
+
       blip("send", muted);
-      damru(muted);
+      if (isMajorQuery(q)) damru(muted);
+      else damruBeat(muted);
       hapticTap(10);
       pushLog(`◇ signal · ${q.slice(0, 36)}`);
       primeSpeechSynthesis();
@@ -356,6 +366,11 @@ export default function Jarvis() {
             onMeta: (meta) => {
               routedType = meta.agent_type;
               setActiveRoutedAgent(meta.agent_type);
+              const confirmed = grahaByAgent(meta.agent_type);
+              if (confirmed) {
+                setLeadGrahaId(confirmed.id);
+                setPulseGrahaIds((prev) => [...new Set([confirmed.id, ...prev])]);
+              }
               facetChime(muted);
               setMessages((p) =>
                 p.map((x) => (x.id === msgId ? { ...x, agentType: meta.agent_type } : x))
@@ -394,7 +409,7 @@ export default function Jarvis() {
           pushLog("◇ breath released");
         } else {
           const m = e instanceof Error && e.message ? e.message : "Backend unreachable on :8000";
-          setErrorFacet(agentTag(activeRoutedAgent ?? selectedAgent));
+          setErrorFacet(grahaName(activeRoutedAgent ?? selectedAgent));
           setMessages((p) => [
             ...p,
             {
@@ -564,9 +579,11 @@ export default function Jarvis() {
           logLine={log.slice(-1)[0] ?? "awakening…"}
           tickerIdx={tickerIdx}
           processing={processing}
-          activeFacetTag={activeFacetTag}
-          selectedAgent={selectedAgent}
-          activeRoutedAgent={activeRoutedAgent}
+          leadGrahaId={leadGrahaId}
+          supportingGrahaIds={supportingGrahaIds}
+          pulseGrahaIds={pulseGrahaIds}
+          leadGrahaName={leadGrahaName}
+          supportingGrahaNames={supportingGrahaNames}
           errorFacet={errorFacet}
           onSelectAgent={setSelectedAgent}
           messages={messages}

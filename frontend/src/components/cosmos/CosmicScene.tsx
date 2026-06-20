@@ -1,43 +1,68 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Environment, useTexture } from "@react-three/drei";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { CosmicEnvironment } from "./CosmicEnvironment";
-import { CentralSun } from "./CentralSun";
 import { TrishulDamru3D, type TrishulPhase } from "./TrishulDamru3D";
-import { COSMOS_PLANETS, planetByAgent, planetByLabel } from "./planet-config";
-import { OrbitRings, PlanetOrbit3D, getPlanetWorldPosition } from "./PlanetOrbit3D";
+import { NAVAGRAHA, THIRD_EYE_OFFSET, grahaById, grahaPosition, type GrahaId } from "./navagraha-config";
+import { GrahaOrbit3D, GrahaOrbitGuides, GrahaPositionsProvider, useGrahaPositionsRef } from "./GrahaOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
-import { ALL_SOLAR_TEXTURE_URLS } from "./solar-textures";
+import { useReducedMotion } from "./use-reduced-motion";
+
+export type CosmosPhase =
+  | "idle"
+  | "query"
+  | "analysis"
+  | "dispatch"
+  | "working"
+  | "completed"
+  | "error";
+
+function eyePhaseFromCosmos(phase: CosmosPhase): TrishulPhase {
+  switch (phase) {
+    case "query":
+      return "query";
+    case "analysis":
+      return "analysis";
+    case "dispatch":
+      return "dispatch";
+    case "working":
+      return "working";
+    case "completed":
+      return "completed";
+    case "error":
+      return "error";
+    default:
+      return "idle";
+  }
+}
 
 function SceneContent({
   processing,
-  activeAgentType,
-  activeFacet,
+  leadGrahaId,
+  supportingGrahaIds,
+  pulseGrahaIds,
   errorFacet,
-  selectedAgent,
-  onSelectAgent,
 }: {
   processing: boolean;
-  activeAgentType?: string;
-  activeFacet?: string;
+  leadGrahaId?: GrahaId;
+  supportingGrahaIds: GrahaId[];
+  pulseGrahaIds: GrahaId[];
   errorFacet?: string;
-  selectedAgent?: string;
-  onSelectAgent: (type: string) => void;
 }) {
-  const [phase, setPhase] = useState<TrishulPhase>("idle");
+  const reducedMotion = useReducedMotion();
+  const positionsRef = useGrahaPositionsRef();
+  const [phase, setPhase] = useState<CosmosPhase>("idle");
   const [boltTarget, setBoltTarget] = useState<THREE.Vector3 | null>(null);
-  const [awoken, setAwoken] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const timeRef = useRef(0);
 
-  // Preload all solar textures once for the scene
-  useTexture(ALL_SOLAR_TEXTURE_URLS);
-
-  const routedTag = activeFacet ?? planetByAgent(activeAgentType)?.label;
+  const thirdEyeOrigin = useMemo(
+    () => new THREE.Vector3(THIRD_EYE_OFFSET.x, THIRD_EYE_OFFSET.y - 0.35, THIRD_EYE_OFFSET.z),
+    []
+  );
 
   useEffect(() => {
     timers.current.forEach(clearTimeout);
@@ -51,111 +76,138 @@ function SceneContent({
     }
 
     if (!processing) {
-      setPhase("idle");
-      setSpinning(false);
-      setBoltTarget(null);
-      setAwoken(null);
+      if (phase !== "idle" && phase !== "completed") {
+        setPhase("completed");
+        timers.current.push(
+          setTimeout(() => {
+            setPhase("idle");
+            setSpinning(false);
+            setBoltTarget(null);
+          }, 600)
+        );
+      } else {
+        setPhase("idle");
+        setSpinning(false);
+        setBoltTarget(null);
+      }
       return;
     }
 
-    setPhase("awakening");
+    setPhase("query");
     timers.current.push(
       setTimeout(() => {
-        if (routedTag) {
-          setPhase("dispatch");
-          setSpinning(true);
-          const p = planetByLabel(routedTag);
-          if (p) {
-            setBoltTarget(getPlanetWorldPosition(p, timeRef.current));
-            setAwoken(routedTag);
-          }
-          timers.current.push(
-            setTimeout(() => {
+        setPhase("analysis");
+        timers.current.push(
+          setTimeout(() => {
+            if (leadGrahaId) {
+              setPhase("dispatch");
+              setSpinning(true);
+              const g = grahaById(leadGrahaId);
+              const pos = positionsRef.current.get(leadGrahaId);
+              const fallback = g ? grahaPosition(g, g.angle) : null;
+              if (pos || fallback) {
+                setBoltTarget(
+                  pos?.clone() ?? new THREE.Vector3(fallback!.x, fallback!.y, fallback!.z)
+                );
+              }
+              timers.current.push(
+                setTimeout(() => {
+                  setPhase("working");
+                  setSpinning(false);
+                  setBoltTarget(null);
+                }, 2800)
+              );
+            } else {
               setPhase("working");
-              setSpinning(false);
-              setBoltTarget(null);
-            }, 900)
-          );
-        } else {
-          setPhase("working");
-        }
-      }, 400)
+            }
+          }, 700)
+        );
+      }, 350)
     );
 
     return () => timers.current.forEach(clearTimeout);
-  }, [processing, routedTag, errorFacet]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processing, leadGrahaId, errorFacet]);
+
+  const neuralIntensity =
+    phase === "analysis" ? 1.8 : phase === "query" ? 1.2 : phase === "dispatch" ? 1.4 : processing ? 0.9 : 0.5;
 
   const showBolt = phase === "dispatch" && boltTarget !== null;
 
-  useFrame((_, dt) => {
-    timeRef.current += dt;
-  });
+  const grahaRole = (id: GrahaId): "idle" | "lead" | "supporting" | "pulse" => {
+    if (leadGrahaId === id && (phase === "dispatch" || phase === "working")) return "lead";
+    if (supportingGrahaIds.includes(id) && (phase === "analysis" || phase === "dispatch" || phase === "working"))
+      return "supporting";
+    if (pulseGrahaIds.includes(id) && (phase === "analysis" || phase === "query")) return "pulse";
+    return "idle";
+  };
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 2, 16]} fov={55} />
+      <PerspectiveCamera makeDefault position={[0, 8, 35]} fov={48} />
       <OrbitControls
         enablePan={false}
         enableZoom
-        minDistance={8}
-        maxDistance={28}
-        maxPolarAngle={Math.PI / 1.6}
-        minPolarAngle={Math.PI / 6}
-        autoRotate={!processing}
-        autoRotateSpeed={0.35}
+        minDistance={12}
+        maxDistance={55}
+        maxPolarAngle={Math.PI / 1.65}
+        minPolarAngle={Math.PI / 4}
+        autoRotate={!processing && !reducedMotion}
+        autoRotateSpeed={0.15}
         target={[0, 0, 0]}
       />
-      <directionalLight position={[5, 8, 5]} intensity={0.6} color="#aaccff" />
-      <Environment preset="night" environmentIntensity={0.35} />
-      <CosmicEnvironment />
-      <CentralSun />
-      <OrbitRings />
-      <TrishulDamru3D phase={phase} spinning={spinning} />
-      <LightningBolt3D target={boltTarget} active={showBolt} />
-      {COSMOS_PLANETS.map((p) => (
-        <PlanetOrbit3D
-          key={p.label}
-          planet={p}
-          active={processing}
-          selected={selectedAgent === p.agentType}
-          awakened={awoken === p.label}
-          onSelect={onSelectAgent}
+      <directionalLight position={[0, 14, 20]} intensity={0.7} color="#fff8ee" />
+      <ambientLight intensity={0.18} color="#334466" />
+      <Environment preset="night" environmentIntensity={0.2} />
+      <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} />
+      <GrahaOrbitGuides />
+
+      {/* Grahas render before trishul so positive-Z grahas occlude correctly via depth buffer */}
+      {NAVAGRAHA.map((g) => (
+        <GrahaOrbit3D
+          key={g.id}
+          graha={g}
+          role={grahaRole(g.id)}
+          processing={processing}
+          reducedMotion={reducedMotion}
         />
       ))}
+
+      <TrishulDamru3D phase={eyePhaseFromCosmos(phase)} spinning={spinning} reducedMotion={reducedMotion} />
+      <LightningBolt3D origin={thirdEyeOrigin} target={boltTarget} active={showBolt} />
     </>
   );
 }
 
 export function CosmicScene({
   processing,
-  activeAgentType,
-  activeFacet,
+  leadGrahaId,
+  supportingGrahaIds = [],
+  pulseGrahaIds = [],
   errorFacet,
-  selectedAgent,
-  onSelectAgent,
 }: {
   processing: boolean;
-  activeAgentType?: string;
-  activeFacet?: string;
+  leadGrahaId?: GrahaId;
+  supportingGrahaIds?: GrahaId[];
+  pulseGrahaIds?: GrahaId[];
   errorFacet?: string;
-  selectedAgent?: string;
-  onSelectAgent: (type: string) => void;
 }) {
   return (
     <Canvas
       className="cosmic-canvas"
       gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-      dpr={[1, 2]}
+      dpr={[1, 1.75]}
     >
       <Suspense fallback={null}>
-        <SceneContent
-          processing={processing}
-          activeAgentType={activeAgentType}
-          activeFacet={activeFacet}
-          errorFacet={errorFacet}
-          selectedAgent={selectedAgent}
-          onSelectAgent={onSelectAgent}
-        />
+        <GrahaPositionsProvider>
+          <SceneContent
+            processing={processing}
+            leadGrahaId={leadGrahaId}
+            supportingGrahaIds={supportingGrahaIds}
+            pulseGrahaIds={pulseGrahaIds}
+            errorFacet={errorFacet}
+          />
+        </GrahaPositionsProvider>
       </Suspense>
     </Canvas>
   );

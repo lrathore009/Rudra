@@ -2,14 +2,31 @@
 
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Float, Line, useTexture } from "@react-three/drei";
 import * as THREE from "three";
-import { Float, Line } from "@react-three/drei";
+import { SSS_STARS_MILKY_WAY } from "./navagraha-config";
 
-const STAR_COUNT = 4000;
+const STAR_COUNT = 2500;
 const METEOR_COUNT = 48;
 const NEURAL_NODES = 36;
 
-function Starfield() {
+function MilkyWaySky({ reducedMotion }: { reducedMotion: boolean }) {
+  const map = useTexture(SSS_STARS_MILKY_WAY);
+  map.colorSpace = THREE.SRGBColorSpace;
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((_, dt) => {
+    if (ref.current && !reducedMotion) ref.current.rotation.y += dt * 0.004;
+  });
+
+  return (
+    <mesh ref={ref} scale={[-1, 1, 1]}>
+      <sphereGeometry args={[140, 64, 64]} />
+      <meshBasicMaterial map={map} side={THREE.BackSide} depthWrite={false} />
+    </mesh>
+  );
+}
+function Starfield({ reducedMotion }: { reducedMotion: boolean }) {
   const ref = useRef<THREE.Points>(null);
   const positions = useMemo(() => {
     const arr = new Float32Array(STAR_COUNT * 3);
@@ -25,7 +42,7 @@ function Starfield() {
   }, []);
 
   useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.008;
+    if (ref.current && !reducedMotion) ref.current.rotation.y += dt * 0.008;
   });
 
   return (
@@ -38,7 +55,7 @@ function Starfield() {
   );
 }
 
-function NebulaClouds() {
+function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
   const blobs = useMemo(
     () => [
       { pos: [-12, 4, -18] as [number, number, number], color: "#6b3fa0", scale: 14 },
@@ -48,6 +65,19 @@ function NebulaClouds() {
     ],
     []
   );
+
+  if (reducedMotion) {
+    return (
+      <group>
+        {blobs.map((b, i) => (
+          <mesh key={i} position={b.pos}>
+            <sphereGeometry args={[b.scale, 12, 12]} />
+            <meshBasicMaterial color={b.color} transparent opacity={0.07} depthWrite={false} />
+          </mesh>
+        ))}
+      </group>
+    );
+  }
 
   return (
     <group>
@@ -106,7 +136,7 @@ function Meteors() {
   );
 }
 
-function NeuralWeb() {
+function NeuralWeb({ intensity, reducedMotion }: { intensity: number; reducedMotion: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const nodes = useMemo(() => {
     return Array.from({ length: NEURAL_NODES }, () => ({
@@ -132,34 +162,45 @@ function NeuralWeb() {
   }, [nodes]);
 
   useFrame((state) => {
-    if (groupRef.current) groupRef.current.rotation.y = state.clock.elapsedTime * 0.015;
+    if (groupRef.current && !reducedMotion) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.015;
+    }
   });
+
+  const lineOpacity = 0.04 + intensity * 0.04;
+  const nodeOpacity = 0.15 + intensity * 0.12;
 
   return (
     <group ref={groupRef}>
       {lines.map(([a, b], i) => (
-        <Line key={i} points={[a, b]} color="#44ddff" transparent opacity={0.06} />
+        <Line key={i} points={[a, b]} color="#44ddff" transparent opacity={lineOpacity} />
       ))}
       {nodes.map((n, i) => (
         <mesh key={i} position={n.pos}>
-          <sphereGeometry args={[0.06, 6, 6]} />
-          <meshBasicMaterial color="#aa66ff" transparent opacity={0.25} />
+          <sphereGeometry args={[0.06 + intensity * 0.02, 6, 6]} />
+          <meshBasicMaterial color="#aa66ff" transparent opacity={nodeOpacity} />
         </mesh>
       ))}
     </group>
   );
 }
 
-export function CosmicEnvironment() {
+export function CosmicEnvironment({
+  neuralIntensity = 0.5,
+  reducedMotion = false,
+}: {
+  neuralIntensity?: number;
+  reducedMotion?: boolean;
+}) {
   return (
     <>
-      <color attach="background" args={["#030510"]} />
-      <fog attach="fog" args={["#030510", 28, 95]} />
-      <ambientLight intensity={0.15} />
-      <Starfield />
-      <NebulaClouds />
-      <Meteors />
-      <NeuralWeb />
+      <color attach="background" args={["#020208"]} />
+      <fog attach="fog" args={["#020208", 40, 130]} />
+      <MilkyWaySky reducedMotion={reducedMotion} />
+      <Starfield reducedMotion={reducedMotion} />
+      <NebulaClouds reducedMotion={reducedMotion} />
+      {!reducedMotion && <Meteors />}
+      <NeuralWeb intensity={neuralIntensity} reducedMotion={reducedMotion} />
     </>
   );
 }
