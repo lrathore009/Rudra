@@ -35,6 +35,8 @@ stop_pid frontend
 # Tunnel: stop on --tunnel or --all (cloudflared is otherwise left running).
 if [ "${1:-}" = "--tunnel" ] || [ "${1:-}" = "--all" ]; then
   stop_pid cloudflared
+  pkill -f 'cloudflared tunnel run' >/dev/null 2>&1 || true
+  pkill -f 'cloudflared tunnel --no-autoupdate --url' >/dev/null 2>&1 || true
   rm -f "$RUN_DIR/tunnel-url.txt"
 fi
 

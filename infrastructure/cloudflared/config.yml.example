@@ -1,0 +1,10 @@
+# Cloudflare Named Tunnel — copy to config.yml after setup-named-tunnel.sh
+# Credentials live in ~/.cloudflared/<tunnel-id>.json (never commit).
+
+tunnel: rudra
+credentials-file: /Users/YOU/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  - hostname: api.yourdomain.com
+    service: http://localhost:8000
+  - service: http_status:404

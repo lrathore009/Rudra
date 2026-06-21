@@ -4,12 +4,19 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 URL_FILE="$ROOT/.run/tunnel-url.txt"
 
-if [ ! -f "$URL_FILE" ]; then
-  echo "No tunnel URL found. Run: ./scripts/start-tunnel.sh"
-  exit 1
+TUNNEL_URL=""
+if [ -f "$URL_FILE" ]; then
+  TUNNEL_URL="$(tr -d '[:space:]' < "$URL_FILE")"
+elif [ -f "$ROOT/.env" ]; then
+  # Named tunnel: stable URL persisted in .env by setup-named-tunnel.sh
+  TUNNEL_URL="$(grep -E '^RUDRA_PUBLIC_API_URL=' "$ROOT/.env" 2>/dev/null | cut -d= -f2- | tr -d '[:space:]' || true)"
 fi
 
-TUNNEL_URL="$(tr -d '[:space:]' < "$URL_FILE")"
+if [ -z "$TUNNEL_URL" ]; then
+  echo "No tunnel URL found. Run: ./scripts/start-tunnel.sh"
+  echo "  or (stable): ./scripts/setup-named-tunnel.sh api.yourdomain.com && ./scripts/start-named-tunnel.sh"
+  exit 1
+fi
 if ! curl -fsS "${TUNNEL_URL}/api/v1/health" >/dev/null 2>&1; then
   echo "Tunnel URL not healthy: $TUNNEL_URL"
   echo "Run: ./scripts/start.sh && ./scripts/start-tunnel.sh"

@@ -155,19 +155,37 @@ curl "$(cat .run/tunnel-url.txt)/api/v1/health"
   exposed.
 - Do not commit `.run/tunnel-url.txt` or `logs/` (already gitignored).
 
-## Stable URL (named tunnel) — optional upgrade
+## Stable URL (named tunnel) — recommended for production
 
-Quick tunnels are great for testing but change on restart. For a permanent URL
-(requires a free Cloudflare account + a domain on Cloudflare):
+Quick tunnels (`*.trycloudflare.com`) are ephemeral and sometimes fail DNS
+registration (NXDOMAIN). For a **permanent** API URL use a **named tunnel** with
+your own domain on Cloudflare DNS.
+
+### Prerequisites
+
+1. [Free Cloudflare account](https://dash.cloudflare.com/sign-up)
+2. A domain on Cloudflare DNS — register in [Cloudflare Registrar](https://dash.cloudflare.com/?to=/:account/domains/register) or transfer/add an existing domain
+3. Pick a hostname, e.g. `api.yourdomain.com`
+
+### One-time setup
 
 ```bash
-cloudflared tunnel login
-cloudflared tunnel create rudra
-# Map a hostname (e.g. api.yourdomain.com) to the tunnel:
-cloudflared tunnel route dns rudra api.yourdomain.com
-# Run it (ingress → http://localhost:8000):
-cloudflared tunnel run --url http://localhost:8000 rudra
+./scripts/setup-named-tunnel.sh api.yourdomain.com
 ```
 
-Then set `NEXT_PUBLIC_API_URL=https://api.yourdomain.com` in Vercel once — no
-more per-restart updates.
+This logs in to Cloudflare (browser), creates tunnel `rudra`, routes DNS, and
+writes `infrastructure/cloudflared/config.yml`.
+
+### Start + sync Vercel (once)
+
+```bash
+./scripts/start.sh                    # backend on :8000
+./scripts/start-named-tunnel.sh       # stable HTTPS URL
+./scripts/sync-vercel-backend.sh      # push URL to Vercel + prod deploy
+```
+
+After that, `NEXT_PUBLIC_API_URL` stays fixed — no updates when you restart the
+tunnel. Keep `cloudflared` and the backend running on your Mac while using
+production.
+
+Stop: `./scripts/stop.sh --tunnel`

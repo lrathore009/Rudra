@@ -27,6 +27,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# ---- Cloudflare named tunnel (local credentials) ----
+infrastructure/cloudflared/config.yml
+infrastructure/cloudflared/*.json
+
 # ---- Runtime / data / logs ----
 logs/
 *.log
