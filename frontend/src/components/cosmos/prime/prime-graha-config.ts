@@ -12,7 +12,7 @@ export interface PrimeGrahaPanel {
 }
 
 export const PRIME_DEFAULT_COUNSEL =
-  "Be still. Command not the answer, but the silence before it. Nine planets orbit. The Trishul holds the still point. Ask, and the counsel will arise from the void.";
+  "Be still. Command not the answer, but the silence before it. Ask, and counsel will arise from the void.";
 
 export const PRIME_GRAHA_PANELS: PrimeGrahaPanel[] = [
   {

@@ -1,11 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { CosmicScene } from "./CosmicScene";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
 import { RudraPrimeShell } from "./prime";
 import { PrimeBackground } from "./prime/PrimeBackground";
-import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
 import type { ActStep, AgentInfo, SchedulerJob, ServiceHealth, SkillInfo } from "@/lib/api";
@@ -33,11 +30,7 @@ export function CosmicPlayground({
   tickerIdx,
   processing,
   leadGrahaId,
-  supportingGrahaIds,
-  pulseGrahaIds,
   leadGrahaName,
-  supportingGrahaNames,
-  errorFacet,
   onSelectAgent,
   messages,
   streamingMsgId,
@@ -77,11 +70,7 @@ export function CosmicPlayground({
   tickerIdx: number;
   processing: boolean;
   leadGrahaId?: GrahaId;
-  supportingGrahaIds?: GrahaId[];
-  pulseGrahaIds?: GrahaId[];
   leadGrahaName?: string;
-  supportingGrahaNames?: string[];
-  errorFacet?: string;
   onSelectAgent: (type?: string) => void;
   messages: Message[];
   streamingMsgId: string | null;
@@ -110,20 +99,9 @@ export function CosmicPlayground({
   memorySynced?: boolean;
   onQuickSubmit?: (query: string) => void;
 }) {
-  const navRef = useRef<CosmicNavHandle | null>(null);
-
   return (
     <div className="cosmic-playground prime-stage relative h-screen w-screen overflow-hidden">
       <PrimeBackground />
-
-      <CosmicScene
-        navRef={navRef}
-        processing={processing}
-        leadGrahaId={leadGrahaId}
-        supportingGrahaIds={supportingGrahaIds ?? []}
-        pulseGrahaIds={pulseGrahaIds ?? []}
-        errorFacet={errorFacet}
-      />
 
       <RudraPrimeShell
         operator={operator}

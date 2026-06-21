@@ -567,11 +567,7 @@ export default function Jarvis() {
           tickerIdx={tickerIdx}
           processing={processing}
           leadGrahaId={leadGrahaId}
-          supportingGrahaIds={supportingGrahaIds}
-          pulseGrahaIds={pulseGrahaIds}
           leadGrahaName={leadGrahaName}
-          supportingGrahaNames={supportingGrahaNames}
-          errorFacet={errorFacet}
           onSelectAgent={setSelectedAgent}
           messages={messages}
           streamingMsgId={streamingMsgId}

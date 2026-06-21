@@ -22,7 +22,7 @@
   font-family: var(--font-orbitron), "Orbitron", sans-serif;
 }
 
-/* ── Full-screen Prime background (matches preview nebula + grid + orbits) ── */
+/* ── Full-screen Prime background (nebula + hex grid) ── */
 .prime-stage {
   background: #08051a;
 }
@@ -36,9 +36,7 @@
 }
 
 .prime-stage .cosmic-canvas {
-  position: absolute !important;
-  inset: 0;
-  z-index: 1;
+  display: none;
 }
 
 .prime-grid-overlay {
