@@ -64,9 +64,9 @@ export function CosmicRealmPanel({
       <header className="mb-3 flex items-start justify-between border-b border-primary/15 pb-2">
         <div>
           <p className="font-hud text-xs tracking-[0.14em] neon-dim">{meta?.label ?? realm}</p>
-          <p className="font-terminal text-[9px] text-muted-foreground/70">Cosmic sector · tap void to dismiss</p>
+          <p className="font-terminal text-[9px] text-muted-foreground/70">Realm sector · tap void to dismiss</p>
         </div>
-        <button type="button" onClick={onClose} className="cosmic-ctl-icon">
+        <button type="button" onClick={onClose} className="prime-ctl-icon">
           <X className="h-4 w-4" />
         </button>
       </header>

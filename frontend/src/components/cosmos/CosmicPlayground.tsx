@@ -8,7 +8,6 @@ import { PrimeBackground } from "./prime/PrimeBackground";
 import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
-import type { RudraThemeMode } from "@/lib/rudra-theme";
 import type { ActStep, AgentInfo, SchedulerJob, ServiceHealth, SkillInfo } from "@/lib/api";
 import type { GrahaId } from "./navagraha-config";
 import type { LucideIcon } from "lucide-react";
@@ -23,8 +22,6 @@ interface Message {
 }
 
 export function CosmicPlayground({
-  themeMode,
-  onThemeCycle,
   operator,
   status,
   clock,
@@ -69,8 +66,6 @@ export function CosmicPlayground({
   memorySynced = true,
   onQuickSubmit,
 }: {
-  themeMode: RudraThemeMode;
-  onThemeCycle: () => void;
   operator: string | null;
   status: string;
   clock: Date | null;
@@ -128,13 +123,9 @@ export function CosmicPlayground({
         supportingGrahaIds={supportingGrahaIds ?? []}
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
-        streamingActive={Boolean(streamingMsgId)}
-        themeVariant="prime"
       />
 
       <RudraPrimeShell
-        themeMode={themeMode}
-        onThemeCycle={onThemeCycle}
         operator={operator}
         status={status}
         clock={clock}

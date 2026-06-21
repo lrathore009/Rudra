@@ -1,7 +1,6 @@
 "use client";
 
 import { Volume2, VolumeX } from "lucide-react";
-import { themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
 
 function VoiceWaveform({ active }: { active: boolean }) {
@@ -16,8 +15,6 @@ function VoiceWaveform({ active }: { active: boolean }) {
 }
 
 export function PrimeHeader({
-  themeMode,
-  onThemeCycle,
   status,
   clock,
   onLogout,
@@ -26,8 +23,6 @@ export function PrimeHeader({
   listening,
   voiceArmed,
 }: {
-  themeMode: RudraThemeMode;
-  onThemeCycle: () => void;
   status: string;
   clock: Date | null;
   onLogout: () => void;
@@ -72,9 +67,7 @@ export function PrimeHeader({
       </div>
 
       <div className="ml-auto flex items-center justify-end gap-2 text-[8px] tracking-widest">
-        <button type="button" onClick={onThemeCycle} className="prime-ctl">
-          {themeModeLabel(themeMode)}
-        </button>
+        <span className="prime-ctl prime-ctl-static">PRIME</span>
         <span className="tabular-nums text-[var(--prime-cyan)] opacity-80">
           {clock ? clock.toLocaleTimeString("en-GB") : "--:--:--"}
         </span>

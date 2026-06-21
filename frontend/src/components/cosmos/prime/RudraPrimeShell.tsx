@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
-import type { RudraThemeMode } from "@/lib/rudra-theme";
 import type { ActStep, AgentInfo, SchedulerJob, ServiceHealth, SkillInfo } from "@/lib/api";
 import type { GrahaId } from "../navagraha-config";
 import { grahaById } from "../navagraha-config";
@@ -27,8 +26,6 @@ interface Message {
 }
 
 export interface RudraPrimeShellProps {
-  themeMode: RudraThemeMode;
-  onThemeCycle: () => void;
   operator: string | null;
   status: string;
   clock: Date | null;
@@ -67,8 +64,6 @@ export interface RudraPrimeShellProps {
 }
 
 export function RudraPrimeShell({
-  themeMode,
-  onThemeCycle,
   status,
   clock,
   onLogout,
@@ -152,8 +147,6 @@ export function RudraPrimeShell({
       />
 
       <PrimeHeader
-        themeMode={themeMode}
-        onThemeCycle={onThemeCycle}
         status={status}
         clock={clock}
         onLogout={onLogout}

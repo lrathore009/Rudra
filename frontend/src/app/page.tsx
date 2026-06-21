@@ -12,7 +12,7 @@ import {
 import { BootSequence } from "@/components/hud/BootSequence";
 import { type Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
-import { FIRST_BREATH_KEY, FOOTER_TICKER_SEGMENTS, grahaName, hapticTap, resolveThemeMode, sutraPlaceholder, worldGreeting, type RudraThemeMode } from "@/lib/rudra-theme";
+import { FIRST_BREATH_KEY, FOOTER_TICKER_SEGMENTS, grahaName, hapticTap, sutraPlaceholder, worldGreeting } from "@/lib/rudra-theme";
 import { blip, damru, damruBeat, facetChime, releaseBreath, setAmbient, stopAmbient } from "@/lib/sound";
 import { analyzeNavagrahaRouting, isMajorQuery } from "@/components/cosmos/navagraha-routing";
 import { grahaByAgent, grahaById, type GrahaId } from "@/components/cosmos/navagraha-config";
@@ -100,7 +100,6 @@ export default function Jarvis() {
   const [muted, setMuted] = useState(false);
   const [listening, setListening] = useState(false);
   const [voiceHint, setVoiceHint] = useState<string | null>(null);
-  const [themeMode, setThemeMode] = useState<RudraThemeMode>("auto");
   const [activeRoutedAgent, setActiveRoutedAgent] = useState<string | undefined>();
   const [leadGrahaId, setLeadGrahaId] = useState<GrahaId | undefined>();
   const [supportingGrahaIds, setSupportingGrahaIds] = useState<GrahaId[]>([]);
@@ -139,8 +138,6 @@ export default function Jarvis() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("rudra-theme-mode") as RudraThemeMode | null;
-    if (saved === "sandhya" || saved === "nisha" || saved === "auto") setThemeMode(saved);
     if (sessionStorage.getItem(FIRST_BREATH_KEY) === "pending") {
       sessionStorage.removeItem(FIRST_BREATH_KEY);
       setFirstBreath(true);
@@ -285,10 +282,6 @@ export default function Jarvis() {
     [processing, stageIdx]
   );
 
-  const resolvedTheme = useMemo(
-    () => resolveThemeMode(themeMode, clock?.getHours() ?? 12),
-    [themeMode, clock]
-  );
   const isStreaming = useMemo(() => messages.some((m) => m.streaming), [messages]);
   const activeFacetTag = useMemo(
     () => grahaName(selectedAgent ?? activeRoutedAgent),
@@ -560,13 +553,6 @@ export default function Jarvis() {
       <FirstBreathOverlay show={firstBreath} onDone={() => setFirstBreath(false)} />
       {!booting && (
         <CosmicPlayground
-          themeMode={themeMode}
-          onThemeCycle={() => {
-            const next: RudraThemeMode =
-              themeMode === "auto" ? "sandhya" : themeMode === "sandhya" ? "nisha" : "auto";
-            setThemeMode(next);
-            localStorage.setItem("rudra-theme-mode", next);
-          }}
           operator={operator}
           status={status}
           clock={clock}

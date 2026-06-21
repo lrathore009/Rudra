@@ -4,7 +4,7 @@ export function BootSequence() {
   return (
     <div
       className="boot-fade-short fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: "hsl(var(--cosmos-void))" }}
+      style={{ background: "#08051a" }}
     >
       <div className="rudra-breath h-28 w-28">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -14,12 +14,14 @@ export function BootSequence() {
           className="h-full w-full object-contain trident-idle"
           style={{
             mixBlendMode: "screen",
-            filter: "drop-shadow(0 0 20px hsl(var(--cosmos-cyan) / 0.7))",
+            filter: "drop-shadow(0 0 20px rgba(0, 212, 255, 0.7))",
           }}
         />
       </div>
-      <div className="mt-5 font-hud text-xl neon">RUDRA</div>
-      <p className="mt-2 font-terminal text-[10px] text-muted-foreground">trishula · awakening</p>
+      <div className="mt-5 font-hud text-xl" style={{ color: "var(--prime-gold-bright)" }}>
+        RUDRA
+      </div>
+      <p className="mt-2 font-terminal text-[10px] text-muted-foreground">Prime · awakening</p>
     </div>
   );
 }

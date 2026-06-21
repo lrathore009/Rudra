@@ -1,23 +1,19 @@
 "use client";
 
-import { useRef } from "react";
 import dynamic from "next/dynamic";
-import { CosmicViewControls } from "./CosmicViewControls";
-import type { CosmicNavHandle } from "./cosmic-nav-types";
+import { PrimeBackground } from "./prime/PrimeBackground";
 
 const CosmicScene = dynamic(
   () => import("./CosmicScene").then((m) => m.CosmicScene),
   { ssr: false }
 );
 
-/** Login — full inclined-orbit sanctum with free camera navigation */
+/** Login — Prime nebula + 3D sanctum (orbit controls only) */
 export function LoginCosmos() {
-  const navRef = useRef<CosmicNavHandle | null>(null);
-
   return (
-    <div className="absolute inset-0 bg-[#030308]">
-      <CosmicScene variant="login" processing={false} navRef={navRef} />
-      <CosmicViewControls navRef={navRef} className="top-[42%]" />
+    <div className="absolute inset-0">
+      <PrimeBackground />
+      <CosmicScene variant="login" processing={false} />
     </div>
   );
 }

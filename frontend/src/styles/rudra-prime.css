@@ -519,3 +519,79 @@
 .prime-arc-reticle {
   display: none;
 }
+
+.prime-ctl-static {
+  cursor: default;
+  opacity: 0.75;
+}
+
+/* ── Login ── */
+.login-prime-page {
+  background: #08051a;
+  color: hsl(195 100% 92%);
+}
+
+.login-prime-form {
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(4, 6, 12, 0.82);
+  backdrop-filter: blur(12px);
+  padding: 1.25rem 1.5rem 1.5rem;
+  box-shadow: 0 0 40px rgba(107, 47, 168, 0.12);
+}
+
+.login-prime-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(0, 212, 255, 0.65);
+}
+
+.login-prime-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+  background: transparent;
+  padding: 0.5rem 0.25rem;
+  font-family: "SF Mono", "JetBrains Mono", monospace;
+  font-size: 14px;
+  color: hsl(195 100% 92%);
+  outline: none;
+}
+
+.login-prime-input:focus {
+  border-bottom-color: rgba(0, 212, 255, 0.65);
+}
+
+.login-prime-input-key {
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 4px;
+  background: rgba(10, 14, 24, 0.5);
+  padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+}
+
+.login-prime-submit {
+  border: 1px solid rgba(201, 160, 64, 0.45);
+  border-radius: 4px;
+  background: rgba(201, 160, 64, 0.08);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--prime-gold-bright);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.login-prime-submit:hover:not(:disabled) {
+  border-color: rgba(201, 160, 64, 0.7);
+  background: rgba(201, 160, 64, 0.14);
+}
+
+.login-prime-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
