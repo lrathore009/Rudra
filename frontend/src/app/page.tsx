@@ -204,7 +204,8 @@ export default function Jarvis() {
           {
             id: "w",
             role: "system",
-            content: "Rudra Prime online. Trishula core fused with Jarvis engine. Speak or transmit your command.",
+            content:
+              "Be still. Nine planets orbit. The Trishul holds the still point. Ask, and counsel will arise from the void.",
             ts: new Date(),
           },
         ]);
@@ -545,31 +546,6 @@ export default function Jarvis() {
     { icon: Sparkles, label: "Capabilities", run: () => submit("List what you can do for me right now.") },
   ];
 
-  const handleModuleAction = useCallback(
-    (id: string) => {
-      switch (id) {
-        case "time":
-          void submit("What is the current time and date?");
-          break;
-        case "wikipedia":
-          void submit("Search Wikipedia and summarize the most relevant topic for my last question.");
-          break;
-        case "voice":
-          void startVoice();
-          break;
-        case "memory":
-          setActiveRealm("archive");
-          break;
-        case "research":
-          void submit("Research the current state of local-first personal AI and summarize the key points.");
-          break;
-        default:
-          break;
-      }
-    },
-    [submit, startVoice]
-  );
-
   if (!authReady) {
     return (
       <main className="relative h-screen w-screen overflow-hidden bg-background text-foreground">
@@ -579,7 +555,7 @@ export default function Jarvis() {
   }
 
   return (
-    <main data-theme={resolvedTheme} data-skin="prime" className="relative h-screen w-screen overflow-hidden">
+    <main data-theme="prime" className="relative h-screen w-screen overflow-hidden">
       {booting && <BootSequence />}
       <FirstBreathOverlay show={firstBreath} onDone={() => setFirstBreath(false)} />
       {!booting && (
@@ -602,7 +578,6 @@ export default function Jarvis() {
           onToggleMute={() => setMuted((v) => !v)}
           greeting={worldGreeting(clock?.getHours() ?? 12)}
           logLine={log.slice(-1)[0] ?? "awakening…"}
-          logLines={log.map((l) => l.replace(/^[◇·>!\s]+/, "").trim()).filter(Boolean)}
           tickerIdx={tickerIdx}
           processing={processing}
           leadGrahaId={leadGrahaId}
@@ -617,6 +592,7 @@ export default function Jarvis() {
           input={input}
           onInputChange={setInput}
           onSubmit={() => void submit()}
+          onQuickSubmit={(q) => void submit(q)}
           onStop={stop}
           onVoice={() => void startVoice()}
           listening={listening}
@@ -635,7 +611,6 @@ export default function Jarvis() {
           successRate={successRate}
           subsysRate={subsysRate}
           onAskProject={(name) => submit(`What should I do next in ${name}?`)}
-          onModuleAction={handleModuleAction}
           uplinkActive={systemsNominal}
           memorySynced={systemsNominal}
         />

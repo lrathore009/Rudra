@@ -4,63 +4,59 @@
 
 @layer base {
   :root {
-    /* Rudra Prime — Trishula × Jarvis hybrid: gold sacred + cyan HUD */
-    --cosmos-void: 220 28% 5%;
-    --cosmos-deep: 215 35% 8%;
-    --cosmos-cyan: 195 100% 50%;
-    --cosmos-violet: 262 55% 58%;
-    --cosmos-magenta: 328 70% 58%;
-    --cosmos-star: 210 40% 96%;
+    /* Trishula Cosmos — deep void, cyan trident, violet nebula */
+    --cosmos-void: 235 60% 4%;
+    --cosmos-deep: 250 48% 8%;
+    --cosmos-cyan: 190 95% 62%;
+    --cosmos-violet: 262 85% 68%;
+    --cosmos-magenta: 328 80% 64%;
+    --cosmos-star: 210 70% 95%;
     --cosmos-gold: 43 90% 58%;
 
-    --prime-cyan: 195 100% 50%;
-    --prime-gold: 43 90% 58%;
-    --prime-steel: 210 35% 18%;
-    --prime-terminal: 145 65% 48%;
-
-    --background: 220 28% 5%;
-    --foreground: 210 40% 96%;
-    --card: 215 35% 8%;
-    --card-foreground: 210 40% 96%;
-    --popover: 215 35% 8%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 195 100% 50%;
-    --primary-foreground: 220 28% 5%;
-    --secondary: 215 32% 11%;
-    --secondary-foreground: 210 35% 82%;
-    --muted: 215 28% 12%;
-    --muted-foreground: 210 25% 58%;
-    --accent: 43 55% 16%;
-    --accent-foreground: 43 90% 72%;
+    --background: 235 58% 4%;
+    --foreground: 210 70% 95%;
+    --card: 248 46% 9%;
+    --card-foreground: 210 70% 95%;
+    --popover: 248 46% 9%;
+    --popover-foreground: 210 70% 95%;
+    --primary: 190 95% 62%;
+    --primary-foreground: 235 60% 4%;
+    --secondary: 250 44% 10%;
+    --secondary-foreground: 210 45% 82%;
+    --muted: 250 38% 12%;
+    --muted-foreground: 210 35% 58%;
+    --accent: 262 55% 18%;
+    --accent-foreground: 262 85% 78%;
     --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 98%;
-    --border: 195 40% 22%;
-    --input: 215 30% 12%;
-    --ring: 195 100% 50%;
+    --border: 262 40% 22%;
+    --input: 250 38% 14%;
+    --ring: 190 95% 62%;
     --radius: 0.625rem;
 
-    --rudra-gold: 43 90% 58%;
-    --rudra-gold-bright: 43 100% 68%;
-    --rudra-gold-dim: 195 45% 35%;
-    --rudra-saffron: 195 100% 50%;
-    --rudra-bark: 215 32% 12%;
-    --rudra-bark-deep: 220 28% 6%;
-    --rudra-ivory: 210 40% 96%;
-    --rudra-ember: 328 70% 58%;
-    --rudra-leaf: 145 65% 48%;
-    --rudra-night: 220 28% 5%;
-    --rudra-glass: 215 35% 9%;
+    /* Rudra tokens — remapped to cosmos (keeps existing class names working) */
+    --rudra-gold: 190 95% 62%;
+    --rudra-gold-bright: 190 100% 75%;
+    --rudra-gold-dim: 262 45% 42%;
+    --rudra-saffron: 262 85% 68%;
+    --rudra-bark: 250 40% 14%;
+    --rudra-bark-deep: 250 44% 7%;
+    --rudra-ivory: 210 70% 95%;
+    --rudra-ember: 328 80% 64%;
+    --rudra-leaf: 165 55% 48%;
+    --rudra-night: 235 60% 4%;
+    --rudra-glass: 248 46% 9%;
 
-    --hud-cyan: var(--prime-cyan);
-    --hud-cyan-bright: 195 100% 65%;
-    --hud-amber: var(--prime-gold);
+    --hud-cyan: var(--cosmos-cyan);
+    --hud-cyan-bright: var(--rudra-gold-bright);
+    --hud-amber: var(--cosmos-violet);
     --hud-green: var(--rudra-leaf);
     --hud-red: 0 72% 52%;
     --hud-grid: var(--rudra-gold-dim);
     --hud-glass: var(--rudra-glass);
 
-    --rudra-panel: 215 35% 9%;
-    --rudra-terminal: var(--prime-terminal);
+    --rudra-panel: 248 46% 9%;
+    --rudra-terminal: var(--rudra-leaf);
   }
 }
 
@@ -102,12 +98,6 @@
 .neon-violet {
   color: hsl(var(--cosmos-violet));
   text-shadow: 0 0 8px hsl(var(--cosmos-violet) / 0.65);
-}
-.neon-prime {
-  color: hsl(var(--prime-gold));
-  text-shadow:
-    0 0 6px hsl(var(--prime-cyan) / 0.75),
-    0 0 14px hsl(var(--prime-gold) / 0.35);
 }
 
 /* ---------- glass panels — cosmic frame ---------- */
@@ -1143,25 +1133,18 @@ body { background: hsl(var(--cosmos-void)); }
   line-height: 1.25;
   white-space: normal;
 }
-/* Login — Rudra Prime */
-.login-cosmos-page,
-.login-prime-page {
-  background:
-    linear-gradient(hsl(var(--prime-cyan) / 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--prime-cyan) / 0.025) 1px, transparent 1px),
-    #060a10;
-  background-size: 48px 48px, 48px 48px, 100% 100%;
+/* Login — 3D cosmos only, dark void */
+.login-cosmos-page {
+  background: #030308;
   color: hsl(var(--cosmos-star));
 }
 .login-cosmos-form {
-  border: 1px solid hsl(var(--prime-cyan) / 0.28);
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.15);
   border-radius: 8px;
-  background: hsl(var(--cosmos-void) / 0.78);
-  backdrop-filter: blur(14px);
+  background: hsl(var(--cosmos-void) / 0.72);
+  backdrop-filter: blur(12px);
   padding: 1.25rem 1.5rem 1.5rem;
-  box-shadow:
-    0 0 40px hsl(var(--prime-cyan) / 0.12),
-    inset 0 0 0 1px hsl(var(--prime-gold) / 0.1);
+  box-shadow: 0 0 40px hsl(var(--cosmos-violet) / 0.12);
 }
 .login-cosmos-label {
   display: block;
@@ -1170,12 +1153,12 @@ body { background: hsl(var(--cosmos-void)); }
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: hsl(var(--prime-gold) / 0.75);
+  color: hsl(var(--cosmos-cyan) / 0.65);
 }
 .login-cosmos-input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid hsl(var(--prime-cyan) / 0.35);
+  border-bottom: 1px solid hsl(var(--cosmos-cyan) / 0.3);
   background: transparent;
   padding: 0.5rem 0.25rem;
   font-family: monospace;
@@ -1184,30 +1167,29 @@ body { background: hsl(var(--cosmos-void)); }
   outline: none;
 }
 .login-cosmos-input:focus {
-  border-bottom-color: hsl(var(--prime-cyan) / 0.75);
+  border-bottom-color: hsl(var(--cosmos-cyan) / 0.65);
 }
 .login-cosmos-input-key {
-  border: 1px solid hsl(var(--prime-cyan) / 0.25);
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.2);
   border-radius: 4px;
-  background: hsl(var(--cosmos-deep) / 0.55);
+  background: hsl(var(--cosmos-deep) / 0.5);
   padding: 0.55rem 0.75rem 0.55rem 2.25rem;
 }
 .login-cosmos-submit {
-  border: 1px solid hsl(var(--prime-gold) / 0.45);
+  border: 1px solid hsl(var(--cosmos-cyan) / 0.45);
   border-radius: 4px;
-  background: linear-gradient(180deg, hsl(var(--prime-cyan) / 0.12), hsl(var(--prime-gold) / 0.06));
+  background: hsl(var(--cosmos-cyan) / 0.08);
   padding: 0.75rem 1rem;
   font-family: var(--font-hud, monospace);
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: hsl(var(--prime-cyan));
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  color: hsl(var(--cosmos-cyan));
+  transition: border-color 0.2s, background 0.2s;
 }
 .login-cosmos-submit:hover:not(:disabled) {
-  border-color: hsl(var(--prime-cyan) / 0.75);
-  background: linear-gradient(180deg, hsl(var(--prime-cyan) / 0.18), hsl(var(--prime-gold) / 0.1));
-  box-shadow: 0 0 20px hsl(var(--prime-cyan) / 0.15);
+  border-color: hsl(var(--cosmos-cyan) / 0.7);
+  background: hsl(var(--cosmos-cyan) / 0.14);
 }
 .login-cosmos-submit:disabled {
   cursor: not-allowed;
@@ -1354,111 +1336,5 @@ body { background: hsl(var(--cosmos-void)); }
   box-shadow: 0 -24px 80px hsl(var(--cosmos-violet) / 0.15);
   padding: 1rem 1.1rem 1.25rem;
   backdrop-filter: blur(16px);
-}
-
-/* ---------- Rudra Prime shell ---------- */
-.rudra-prime-shell.cosmic-hud {
-  background:
-    linear-gradient(hsl(var(--prime-cyan) / 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--prime-cyan) / 0.03) 1px, transparent 1px),
-    linear-gradient(180deg, hsl(var(--cosmos-void) / 0.72) 0%, transparent 16%, transparent 68%, hsl(var(--cosmos-void) / 0.82) 100%);
-  background-size: 48px 48px, 48px 48px, 100% 100%;
-}
-.cosmic-command-panel {
-  border: 1px solid hsl(var(--prime-cyan) / 0.35);
-  border-radius: 8px;
-  background: hsl(var(--cosmos-deep) / 0.62);
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 30px hsl(var(--prime-cyan) / 0.12),
-    inset 0 0 0 1px hsl(var(--prime-gold) / 0.12),
-    inset 0 1px 0 hsl(var(--prime-cyan) / 0.1);
-}
-.cosmic-status-badge-prime {
-  border-color: hsl(var(--prime-gold) / 0.4);
-  color: hsl(var(--prime-cyan) / 0.95);
-  box-shadow: 0 0 14px hsl(var(--prime-cyan) / 0.18);
-}
-.cosmic-status-wave {
-  display: inline-flex;
-  gap: 2px;
-  align-items: flex-end;
-  height: 0.65rem;
-  margin-right: 0.15rem;
-}
-.cosmic-status-wave span {
-  display: block;
-  width: 2px;
-  background: hsl(var(--prime-cyan));
-  border-radius: 1px;
-  animation: primeWave 0.8s ease-in-out infinite;
-}
-.cosmic-status-wave span:nth-child(2) { animation-delay: 0.12s; }
-.cosmic-status-wave span:nth-child(3) { animation-delay: 0.24s; }
-@keyframes primeWave {
-  0%, 100% { height: 3px; opacity: 0.4; }
-  50% { height: 8px; opacity: 1; }
-}
-.prime-module-tile {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-width: 6.5rem;
-  border: 1px solid hsl(var(--prime-gold) / 0.28);
-  border-radius: 4px;
-  padding: 0.38rem 0.55rem;
-  font-family: monospace;
-  font-size: 7px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: hsl(var(--cosmos-star) / 0.65);
-  background: hsl(var(--cosmos-deep) / 0.72);
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 12px hsl(var(--prime-cyan) / 0.06);
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
-}
-.prime-module-tile:hover,
-.prime-module-tile-active {
-  border-color: hsl(var(--prime-cyan) / 0.55);
-  color: hsl(var(--prime-cyan) / 0.95);
-  box-shadow: 0 0 14px hsl(var(--prime-cyan) / 0.15), inset 0 0 16px hsl(var(--prime-cyan) / 0.08);
-}
-.prime-split-panel { width: 100%; }
-.prime-counsel-pane,
-.prime-terminal-pane {
-  border: 1px solid hsl(var(--prime-cyan) / 0.2);
-  border-radius: 6px;
-  padding: 0.55rem 0.75rem;
-  background: hsl(var(--cosmos-deep) / 0.55);
-  backdrop-filter: blur(10px);
-  min-height: 5rem;
-}
-.prime-terminal-pane {
-  border-color: hsl(var(--prime-gold) / 0.22);
-  background: hsl(var(--cosmos-void) / 0.75);
-}
-.prime-pane-label {
-  color: hsl(var(--prime-gold) / 0.7);
-  margin-bottom: 0.15rem;
-}
-.prime-terminal-line {
-  color: hsl(var(--prime-terminal) / 0.88);
-  text-shadow: 0 0 8px hsl(var(--prime-terminal) / 0.25);
-}
-.graha-label-card {
-  border: 1px solid hsl(var(--prime-cyan) / 0.35);
-  background: hsl(var(--cosmos-void) / 0.88);
-  box-shadow: 0 0 10px hsl(var(--prime-gold) / 0.08);
-}
-.cosmic-realm-tile {
-  border-color: hsl(var(--prime-gold) / 0.28);
-  background: hsl(var(--cosmos-deep) / 0.62);
-  box-shadow: inset 0 0 16px hsl(var(--prime-cyan) / 0.06);
-}
-.cosmic-realm-tile-active {
-  border-color: hsl(var(--prime-cyan) / 0.55);
-  color: hsl(var(--prime-cyan));
-  box-shadow: 0 0 16px hsl(var(--prime-cyan) / 0.22), inset 0 0 20px hsl(var(--prime-gold) / 0.08);
 }
 

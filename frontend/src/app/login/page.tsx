@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Lock } from "lucide-react";
-import { RudraPrimeWordmark, RudraPrimeTagline } from "@/components/hud/SutraWordmark";
+import { SutraWordmark, RudraTagline } from "@/components/hud/SutraWordmark";
 import { FIRST_BREATH_KEY } from "@/lib/rudra-theme";
 import { login } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -37,13 +37,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div data-skin="prime" className="login-cosmos-page login-prime-page relative min-h-screen overflow-hidden text-foreground">
+    <div className="login-cosmos-page relative min-h-screen overflow-hidden bg-[#030308] text-foreground">
       <LoginCosmos />
 
       <div className="relative z-10 flex min-h-screen flex-col">
         <header className="flex flex-col items-center px-4 pt-10 sm:pt-14">
-          <RudraPrimeWordmark className="text-xl sm:text-2xl" />
-          <RudraPrimeTagline className="mt-2 text-center" />
+          <SutraWordmark className="text-xl sm:text-2xl" />
+          <RudraTagline className="mt-2" />
         </header>
 
         <div className="flex-1" aria-hidden />
@@ -87,12 +87,12 @@ export default function LoginPage() {
               disabled={loading || !password}
               className={cn("login-cosmos-submit mt-6 w-full", loading && "opacity-70")}
             >
-              {loading ? "INITIALIZING…" : "ENTER PRIME"}
+              {loading ? "AWAKENING…" : "ENTER COSMOS"}
             </button>
           </form>
 
           <p className="mt-6 text-center font-terminal text-[8px] text-muted-foreground/45">
-            Trishula Core · Jarvis Engine · OWNER credentials in backend .env
+            OWNER_USERNAME / OWNER_PASSWORD in backend .env
           </p>
         </div>
       </div>

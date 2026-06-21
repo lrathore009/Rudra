@@ -3,8 +3,7 @@
 import { useRef } from "react";
 import { CosmicScene } from "./CosmicScene";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
-import { CosmicViewControls } from "./CosmicViewControls";
-import { RudraCosmicShell } from "./shell";
+import { RudraPrimeShell } from "./prime";
 import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
@@ -33,7 +32,6 @@ export function CosmicPlayground({
   onToggleMute,
   greeting,
   logLine,
-  logLines,
   tickerIdx,
   processing,
   leadGrahaId,
@@ -66,9 +64,9 @@ export function CosmicPlayground({
   successRate,
   subsysRate,
   onAskProject,
-  onModuleAction,
   uplinkActive = true,
   memorySynced = true,
+  onQuickSubmit,
 }: {
   themeMode: RudraThemeMode;
   onThemeCycle: () => void;
@@ -80,7 +78,6 @@ export function CosmicPlayground({
   onToggleMute: () => void;
   greeting: string;
   logLine: string;
-  logLines?: string[];
   tickerIdx: number;
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -113,9 +110,9 @@ export function CosmicPlayground({
   successRate: number;
   subsysRate: number;
   onAskProject: (name: string) => void;
-  onModuleAction?: (id: string) => void;
   uplinkActive?: boolean;
   memorySynced?: boolean;
+  onQuickSubmit?: (query: string) => void;
 }) {
   const navRef = useRef<CosmicNavHandle | null>(null);
 
@@ -129,10 +126,9 @@ export function CosmicPlayground({
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
         streamingActive={Boolean(streamingMsgId)}
-        listening={listening}
       />
 
-      <RudraCosmicShell
+      <RudraPrimeShell
         themeMode={themeMode}
         onThemeCycle={onThemeCycle}
         operator={operator}
@@ -141,14 +137,10 @@ export function CosmicPlayground({
         onLogout={onLogout}
         muted={muted}
         onToggleMute={onToggleMute}
-        greeting={greeting}
         tickerIdx={tickerIdx}
         processing={processing}
         leadGrahaId={leadGrahaId}
-        supportingGrahaIds={supportingGrahaIds}
-        pulseGrahaIds={pulseGrahaIds}
         leadGrahaName={leadGrahaName}
-        supportingGrahaNames={supportingGrahaNames}
         onSelectAgent={onSelectAgent}
         messages={messages}
         streamingMsgId={streamingMsgId}
@@ -165,8 +157,8 @@ export function CosmicPlayground({
         onRealmChange={onRealmChange}
         uplinkActive={uplinkActive}
         memorySynced={memorySynced}
-        logLines={logLines ?? (logLine ? [logLine] : [])}
-        onModuleAction={onModuleAction}
+        logLine={logLine}
+        onQuickSubmit={onQuickSubmit}
         agents={agents}
         skills={skills}
         jobs={jobs}
@@ -175,8 +167,6 @@ export function CosmicPlayground({
         steps={steps}
         showProcess={showProcess}
       />
-
-      <CosmicViewControls navRef={navRef} />
 
       <div className="sr-only">
         {actions.map((a) => (

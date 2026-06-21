@@ -43,7 +43,7 @@ export function RudraCommandBar({
 
   return (
     <motion.form
-      className="pointer-events-auto cosmic-command-panel prime-command-bar mb-3 flex w-full max-w-5xl items-center gap-3 px-5 py-3.5"
+      className="pointer-events-auto cosmic-command-panel mb-3 flex w-full max-w-4xl items-center gap-3 px-5 py-3.5"
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit();

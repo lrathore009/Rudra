@@ -1,0 +1,449 @@
+/* Rudra Prime — pixel-matched to rudra-prime-preview.png */
+
+:root {
+  --prime-void: #04060c;
+  --prime-deep: #0a0e18;
+  --prime-cyan: #00d4ff;
+  --prime-cyan-dim: #0099bb;
+  --prime-gold: #c9a040;
+  --prime-gold-bright: #f0d070;
+  --prime-gold-dark: #8a6520;
+  --prime-steel: #1a2844;
+  --prime-grid: rgba(0, 212, 255, 0.06);
+  --prime-terminal: #44ffaa;
+}
+
+.rudra-prime-shell {
+  --background: 220 30% 4%;
+  --foreground: 195 100% 92%;
+  --primary: 195 100% 50%;
+  --primary-foreground: 220 30% 4%;
+  --muted-foreground: 195 40% 58%;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+}
+
+.rudra-prime-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 42%, rgba(0, 80, 120, 0.12), transparent 70%),
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+}
+
+.rudra-prime-vignette {
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 6, 12, 0.72) 0%,
+    transparent 14%,
+    transparent 58%,
+    rgba(4, 6, 12, 0.88) 100%
+  );
+}
+
+/* ── Header ── */
+.prime-logo-row {
+  font-family: var(--font-cinzel), "Cinzel", serif;
+}
+.prime-logo-gold {
+  color: var(--prime-gold-bright);
+  text-shadow:
+    0 0 8px rgba(201, 160, 64, 0.8),
+    0 0 24px rgba(240, 208, 112, 0.35);
+  letter-spacing: 0.18em;
+}
+.prime-tagline {
+  color: var(--prime-cyan);
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.prime-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 2px;
+  padding: 0.25rem 0.55rem;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--prime-cyan);
+  background: rgba(10, 14, 24, 0.75);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.12), inset 0 0 8px rgba(0, 212, 255, 0.05);
+}
+.prime-voice-pill {
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.2);
+}
+.prime-ctl {
+  border: 1px solid rgba(0, 212, 255, 0.28);
+  border-radius: 2px;
+  padding: 0.12rem 0.4rem;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.75);
+  background: rgba(4, 6, 12, 0.55);
+}
+.prime-ctl-icon {
+  display: flex;
+  height: 1.6rem;
+  width: 1.6rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 212, 255, 0.28);
+  border-radius: 2px;
+  color: rgba(0, 212, 255, 0.75);
+  background: rgba(4, 6, 12, 0.55);
+}
+
+/* ── Waveform ── */
+.prime-waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+  margin-left: 0.35rem;
+}
+.prime-waveform span {
+  display: block;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--prime-cyan);
+  animation: primeWave 0.8s ease-in-out infinite;
+}
+.prime-waveform span:nth-child(1) { animation-delay: 0s; height: 4px; }
+.prime-waveform span:nth-child(2) { animation-delay: 0.1s; height: 8px; }
+.prime-waveform span:nth-child(3) { animation-delay: 0.2s; height: 12px; }
+.prime-waveform span:nth-child(4) { animation-delay: 0.15s; height: 6px; }
+.prime-waveform span:nth-child(5) { animation-delay: 0.05s; height: 10px; }
+@keyframes primeWave {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* ── Left sidebar ── */
+.prime-sidebar {
+  position: fixed;
+  left: 0.65rem;
+  top: 50%;
+  z-index: 15;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.prime-sidebar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: 3.25rem;
+  border: 1px solid rgba(0, 212, 255, 0.22);
+  border-radius: 2px;
+  padding: 0.45rem 0.25rem;
+  font-size: 5.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.7);
+  background: rgba(10, 14, 24, 0.72);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.prime-sidebar-btn:hover {
+  border-color: rgba(0, 212, 255, 0.55);
+  color: var(--prime-cyan);
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.15);
+}
+.prime-sidebar-btn svg {
+  height: 0.85rem;
+  width: 0.85rem;
+}
+.prime-sidebar-nominal {
+  font-size: 5px;
+  color: rgba(68, 255, 170, 0.75);
+  letter-spacing: 0.06em;
+}
+
+/* ── Graha panels ── */
+.prime-graha-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  padding: 4.5rem 0 11rem;
+}
+.prime-graha-slot {
+  position: absolute;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  max-width: 9.5rem;
+}
+.prime-graha-slot-right {
+  transform: translate(-50%, -50%);
+}
+.prime-graha-panel {
+  border: 1px solid;
+  border-radius: 1px;
+  padding: 0.28rem 0.45rem 0.32rem;
+  background: rgba(4, 6, 12, 0.88);
+  backdrop-filter: blur(8px);
+  text-align: left;
+}
+.prime-graha-panel-right {
+  text-align: right;
+}
+.prime-graha-symbol {
+  font-size: 11px;
+  line-height: 1;
+  margin-bottom: 0.1rem;
+}
+.prime-graha-name {
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.prime-graha-attrs {
+  margin-top: 0.15rem;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 5.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.55);
+  opacity: 0.9;
+}
+
+/* ── Command bar ── */
+.prime-command-wrap {
+  width: 100%;
+  max-width: 52rem;
+}
+.prime-command-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, var(--prime-gold-dark), var(--prime-gold-bright), var(--prime-gold-dark)) 1;
+  padding: 0.55rem 0.75rem;
+  background: rgba(6, 8, 16, 0.82);
+  box-shadow:
+    0 0 24px rgba(201, 160, 64, 0.12),
+    inset 0 1px 0 rgba(240, 208, 112, 0.08);
+}
+.prime-mandala {
+  flex-shrink: 0;
+  height: 1.75rem;
+  width: 1.75rem;
+  opacity: 0.75;
+}
+.prime-command-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgba(210, 220, 230, 0.75);
+}
+.prime-command-input::placeholder {
+  color: rgba(180, 190, 200, 0.45);
+}
+.prime-mic-btn {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 212, 255, 0.45);
+  border-radius: 50%;
+  color: var(--prime-cyan);
+  background: rgba(0, 212, 255, 0.08);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.25);
+  cursor: pointer;
+}
+.prime-mic-btn-active {
+  animation: primeMicPulse 1.2s ease-in-out infinite;
+}
+@keyframes primeMicPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 212, 255, 0.3); }
+  50% { box-shadow: 0 0 28px rgba(0, 212, 255, 0.65); }
+}
+.prime-send-btn {
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, var(--prime-gold-dark), var(--prime-gold-bright)) 1;
+  padding: 0.35rem 0.85rem;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--prime-gold-bright);
+  background: rgba(20, 16, 8, 0.85);
+  cursor: pointer;
+}
+.prime-send-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Dual pane ── */
+.prime-dual-pane {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 52rem;
+  min-height: 5.5rem;
+}
+.prime-counsel-box {
+  border: 1px solid rgba(201, 160, 64, 0.45);
+  border-radius: 1px;
+  padding: 0.55rem 0.65rem;
+  background: rgba(8, 10, 18, 0.88);
+  box-shadow: 0 0 20px rgba(201, 160, 64, 0.08), inset 0 0 12px rgba(201, 160, 64, 0.03);
+}
+.prime-counsel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-cinzel), "Cinzel", serif;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--prime-gold);
+}
+.prime-counsel-text {
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(240, 208, 112, 0.82);
+}
+.prime-log-box {
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 1px;
+  padding: 0.55rem 0.65rem;
+  background: rgba(4, 8, 14, 0.92);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.06);
+}
+.prime-log-title {
+  margin-bottom: 0.35rem;
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.55);
+}
+.prime-log-line {
+  font-family: "SF Mono", "JetBrains Mono", monospace;
+  font-size: 7.5px;
+  line-height: 1.65;
+  color: var(--prime-terminal);
+  letter-spacing: 0.04em;
+}
+
+/* ── Realm hex nav ── */
+.prime-realm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+.prime-realm-hex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 5.5rem;
+  max-width: 6.25rem;
+  min-height: 3.5rem;
+  border: 1px solid rgba(201, 160, 64, 0.28);
+  clip-path: polygon(50% 0%, 92% 18%, 92% 82%, 50% 100%, 8% 82%, 8% 18%);
+  padding: 0.5rem 0.35rem 0.4rem;
+  font-size: 5.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  color: rgba(240, 208, 112, 0.65);
+  background: rgba(10, 12, 20, 0.72);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.prime-realm-hex:hover,
+.prime-realm-hex-active {
+  border-color: rgba(201, 160, 64, 0.55);
+  color: var(--prime-gold-bright);
+  box-shadow: 0 0 16px rgba(201, 160, 64, 0.18);
+}
+.prime-realm-hex svg {
+  height: 0.85rem;
+  width: 0.85rem;
+  color: var(--prime-gold);
+}
+
+/* ── Footer ── */
+.prime-footer {
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.55);
+}
+.prime-om {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(201, 160, 64, 0.35);
+  border-radius: 50%;
+  font-family: var(--font-cinzel), serif;
+  font-size: 0.95rem;
+  color: var(--prime-gold-bright);
+  box-shadow: 0 0 16px rgba(201, 160, 64, 0.25);
+}
+
+/* ── Arc reticle overlay (center) ── */
+.prime-arc-reticle {
+  position: fixed;
+  left: 50%;
+  top: 46%;
+  z-index: 4;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  width: min(42vw, 420px);
+  height: min(42vw, 420px);
+  border: 1px dashed rgba(0, 212, 255, 0.12);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(0, 212, 255, 0.08),
+    0 0 60px rgba(0, 212, 255, 0.06);
+}
+.prime-arc-reticle::before,
+.prime-arc-reticle::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  border-radius: 50%;
+}
+.prime-arc-reticle::after {
+  inset: 24%;
+  border-color: rgba(201, 160, 64, 0.15);
+}
