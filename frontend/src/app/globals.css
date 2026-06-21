@@ -1143,18 +1143,25 @@ body { background: hsl(var(--cosmos-void)); }
   line-height: 1.25;
   white-space: normal;
 }
-/* Login — 3D cosmos only, dark void */
-.login-cosmos-page {
-  background: #030308;
+/* Login — Rudra Prime */
+.login-cosmos-page,
+.login-prime-page {
+  background:
+    linear-gradient(hsl(var(--prime-cyan) / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--prime-cyan) / 0.025) 1px, transparent 1px),
+    #060a10;
+  background-size: 48px 48px, 48px 48px, 100% 100%;
   color: hsl(var(--cosmos-star));
 }
 .login-cosmos-form {
-  border: 1px solid hsl(var(--cosmos-cyan) / 0.15);
+  border: 1px solid hsl(var(--prime-cyan) / 0.28);
   border-radius: 8px;
-  background: hsl(var(--cosmos-void) / 0.72);
-  backdrop-filter: blur(12px);
+  background: hsl(var(--cosmos-void) / 0.78);
+  backdrop-filter: blur(14px);
   padding: 1.25rem 1.5rem 1.5rem;
-  box-shadow: 0 0 40px hsl(var(--cosmos-violet) / 0.12);
+  box-shadow:
+    0 0 40px hsl(var(--prime-cyan) / 0.12),
+    inset 0 0 0 1px hsl(var(--prime-gold) / 0.1);
 }
 .login-cosmos-label {
   display: block;
@@ -1163,12 +1170,12 @@ body { background: hsl(var(--cosmos-void)); }
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: hsl(var(--cosmos-cyan) / 0.65);
+  color: hsl(var(--prime-gold) / 0.75);
 }
 .login-cosmos-input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid hsl(var(--cosmos-cyan) / 0.3);
+  border-bottom: 1px solid hsl(var(--prime-cyan) / 0.35);
   background: transparent;
   padding: 0.5rem 0.25rem;
   font-family: monospace;
@@ -1177,29 +1184,30 @@ body { background: hsl(var(--cosmos-void)); }
   outline: none;
 }
 .login-cosmos-input:focus {
-  border-bottom-color: hsl(var(--cosmos-cyan) / 0.65);
+  border-bottom-color: hsl(var(--prime-cyan) / 0.75);
 }
 .login-cosmos-input-key {
-  border: 1px solid hsl(var(--cosmos-cyan) / 0.2);
+  border: 1px solid hsl(var(--prime-cyan) / 0.25);
   border-radius: 4px;
-  background: hsl(var(--cosmos-deep) / 0.5);
+  background: hsl(var(--cosmos-deep) / 0.55);
   padding: 0.55rem 0.75rem 0.55rem 2.25rem;
 }
 .login-cosmos-submit {
-  border: 1px solid hsl(var(--cosmos-cyan) / 0.45);
+  border: 1px solid hsl(var(--prime-gold) / 0.45);
   border-radius: 4px;
-  background: hsl(var(--cosmos-cyan) / 0.08);
+  background: linear-gradient(180deg, hsl(var(--prime-cyan) / 0.12), hsl(var(--prime-gold) / 0.06));
   padding: 0.75rem 1rem;
   font-family: var(--font-hud, monospace);
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: hsl(var(--cosmos-cyan));
-  transition: border-color 0.2s, background 0.2s;
+  color: hsl(var(--prime-cyan));
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
 .login-cosmos-submit:hover:not(:disabled) {
-  border-color: hsl(var(--cosmos-cyan) / 0.7);
-  background: hsl(var(--cosmos-cyan) / 0.14);
+  border-color: hsl(var(--prime-cyan) / 0.75);
+  background: linear-gradient(180deg, hsl(var(--prime-cyan) / 0.18), hsl(var(--prime-gold) / 0.1));
+  box-shadow: 0 0 20px hsl(var(--prime-cyan) / 0.15);
 }
 .login-cosmos-submit:disabled {
   cursor: not-allowed;

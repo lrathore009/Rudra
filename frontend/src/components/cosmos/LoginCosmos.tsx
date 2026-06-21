@@ -15,8 +15,8 @@ export function LoginCosmos() {
   const navRef = useRef<CosmicNavHandle | null>(null);
 
   return (
-    <div className="absolute inset-0 bg-[#030308]">
-      <CosmicScene variant="login" processing={false} navRef={navRef} />
+    <div className="absolute inset-0 bg-[#060a10]">
+      <CosmicScene variant="login" processing={false} navRef={navRef} listening={false} />
       <CosmicViewControls navRef={navRef} className="top-[42%]" />
     </div>
   );
