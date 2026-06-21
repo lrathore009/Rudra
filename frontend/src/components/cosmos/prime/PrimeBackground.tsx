@@ -1,12 +1,10 @@
 "use client";
 
-/** Full-screen CSS background matched to rudra-prime-preview.png (nebula + stars, behind canvas) */
+/** Flat void — no nebula, no stars */
 export function PrimeBackground() {
   return (
     <div className="prime-bg-root" aria-hidden>
-      <div className="prime-bg-nebula" />
-      <div className="prime-bg-stars" />
-      <div className="prime-bg-vignette" />
+      <div className="prime-bg-void" />
     </div>
   );
 }

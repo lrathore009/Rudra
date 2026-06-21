@@ -290,6 +290,11 @@ export default function Jarvis() {
 
   const leadGrahaName = useMemo(() => grahaById(leadGrahaId)?.name, [leadGrahaId]);
 
+  const counselText = useMemo(() => {
+    const last = [...messages].reverse().find((m) => m.role === "assistant" && m.content.trim());
+    return last?.content;
+  }, [messages]);
+
   const supportingGrahaNames = useMemo(
     () => supportingGrahaIds.map((id) => grahaById(id)?.name).filter(Boolean) as string[],
     [supportingGrahaIds]
@@ -564,7 +569,12 @@ export default function Jarvis() {
           onToggleMute={() => setMuted((v) => !v)}
           greeting={worldGreeting(clock?.getHours() ?? 12)}
           logLine={log.slice(-1)[0] ?? "awakening…"}
+          logLines={log}
           processing={processing}
+          leadGrahaId={leadGrahaId}
+          leadGrahaName={leadGrahaName}
+          pulseGrahaIds={pulseGrahaIds}
+          counselText={counselText}
           streamingMsgId={streamingMsgId}
           input={input}
           onInputChange={setInput}
@@ -576,7 +586,21 @@ export default function Jarvis() {
           voiceHint={voiceHint}
           placeholder={sutraPlaceholder(clock?.getHours() ?? 12, processing)}
           actions={ACTIONS}
+          activeRealm={activeRealm}
+          onRealmChange={setActiveRealm}
+          onSelectAgent={setSelectedAgent}
+          agents={agents}
+          skills={skills}
+          jobs={jobs}
+          vitals={vitals}
+          stages={stages}
+          steps={steps}
+          showProcess={showProcess}
+          successRate={successRate}
+          subsysRate={subsysRate}
+          onAskProject={(name) => void submit(`What should I do next in ${name}?`)}
           uplinkActive={systemsNominal}
+          memorySynced={systemsNominal}
         />
       )}
     </main>

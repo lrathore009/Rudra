@@ -1,6 +1,6 @@
 "use client";
 
-/** Subtle hex grid — no orbital rings or center reticle */
+/** Subtle hex grid only — orbits live in FlatMandala */
 export function PrimeGridOverlay() {
   return (
     <div className="prime-grid-overlay" aria-hidden>
