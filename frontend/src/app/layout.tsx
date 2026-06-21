@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Cormorant_Garamond, Inter, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import "../styles/observatory.css";
 import "../styles/rudra-prime.css";
 
 const cinzel = Cinzel({
@@ -40,9 +41,9 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://rudra-kl5i.vercel.app"),
-  title: "RUDRA — Prime",
+  title: "RUDRA — Observatory Nine",
   description:
-    "Rudra Prime — cosmic command deck with voice-armed counsel, nine Navagraha planets, and the Trishul at the still point.",
+    "Rudra Observatory Nine — mission-control deck for nine aligned agents, 2D instrument dial, and observation previews.",
   icons: { icon: "/trishula-icon.png", apple: "/trishula-icon.png" },
   openGraph: {
     title: "RUDRA — Prime",

@@ -1,8 +1,6 @@
 "use client";
 
-import { FlatMandala } from "@/components/mandala/FlatMandala";
-import { RudraPrimeShell } from "./prime";
-import { PrimeBackground } from "./prime/PrimeBackground";
+import { ObservatoryShell } from "@/components/observatory";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
@@ -13,17 +11,11 @@ import type { LucideIcon } from "lucide-react";
 export function CosmicPlayground({
   operator,
   status,
-  clock,
   onLogout,
-  muted,
-  onToggleMute,
-  greeting,
-  logLine,
   logLines,
+  logLine,
   processing,
   leadGrahaId,
-  leadGrahaName,
-  pulseGrahaIds,
   counselText,
   input,
   onInputChange,
@@ -31,15 +23,9 @@ export function CosmicPlayground({
   onStop,
   onVoice,
   listening,
-  voiceHint,
   placeholder,
-  actions,
   streamingMsgId,
   uplinkActive = true,
-  memorySynced = true,
-  onQuickSubmit,
-  activeRealm,
-  onRealmChange,
   onGrahaSelect,
   selectedGrahaId,
   onSelectAgent,
@@ -53,6 +39,9 @@ export function CosmicPlayground({
   successRate,
   subsysRate,
   onAskProject,
+  activeRealm,
+  onRealmChange,
+  systemsNominal = true,
 }: {
   operator: string | null;
   status: string;
@@ -96,58 +85,32 @@ export function CosmicPlayground({
   successRate: number;
   subsysRate: number;
   onAskProject: (name: string) => void;
+  systemsNominal?: boolean;
 }) {
   const lines = logLines ?? (logLine ? [logLine] : []);
 
   return (
-    <div className="cosmic-playground prime-stage mandala-stage relative h-screen w-screen overflow-hidden">
-      <PrimeBackground />
-
-      <FlatMandala
-        leadGrahaId={leadGrahaId}
-        pulseGrahaIds={pulseGrahaIds ?? []}
-        processing={processing}
-      />
-
-      <RudraPrimeShell
+    <div className="cosmic-playground relative h-screen w-screen overflow-hidden">
+      <ObservatoryShell
         status={status}
-        clock={clock}
         onLogout={onLogout}
-        muted={muted}
-        onToggleMute={onToggleMute}
+        logLines={lines}
         processing={processing}
+        leadGrahaId={leadGrahaId}
+        counselText={counselText}
+        uplinkActive={uplinkActive}
+        systemsNominal={systemsNominal}
         input={input}
         onInputChange={onInputChange}
         onSubmit={onSubmit}
         onStop={onStop}
         onVoice={onVoice}
         listening={listening}
-        voiceHint={voiceHint}
         placeholder={placeholder}
-        streamingMsgId={streamingMsgId}
-        actions={actions}
-        uplinkActive={uplinkActive}
-        memorySynced={memorySynced}
-        onQuickSubmit={onQuickSubmit}
-        leadGrahaId={leadGrahaId}
-        leadGrahaName={leadGrahaName}
-        counselText={counselText}
-        logLines={lines}
-        activeRealm={activeRealm}
-        onRealmChange={onRealmChange}
+        streamingActive={Boolean(streamingMsgId)}
         onGrahaSelect={onGrahaSelect}
         selectedGrahaId={selectedGrahaId}
       />
-
-      <div className="sr-only">
-        {actions.map((a) => (
-          <button key={a.label} type="button" onClick={a.run}>
-            {a.label}
-          </button>
-        ))}
-        {operator && <span>{greeting}</span>}
-        <span>{logLine}</span>
-      </div>
 
       {activeRealm && (
         <>
@@ -157,7 +120,7 @@ export function CosmicPlayground({
             aria-label="Close realm"
             onClick={() => onRealmChange(null)}
           />
-          <div className="cosmic-realm-wrap cosmic-realm-wrap-3d">
+          <div className="cosmic-realm-wrap">
             <CosmicRealmPanel
               realm={activeRealm}
               onClose={() => onRealmChange(null)}
@@ -178,6 +141,8 @@ export function CosmicPlayground({
           </div>
         </>
       )}
+
+      <div className="sr-only">{operator && <span>Rudra observatory</span>}</div>
     </div>
   );
 }

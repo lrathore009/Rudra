@@ -109,6 +109,7 @@ export default function Jarvis() {
   const [tickerIdx, setTickerIdx] = useState(0);
   const [streamingMsgId, setStreamingMsgId] = useState<string | null>(null);
   const [activeRealm, setActiveRealm] = useState<RealmId | null>(null);
+  const [selectedGrahaId, setSelectedGrahaId] = useState<GrahaId | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
   const recRef = useRef<SpeechRecognitionHandle | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -553,7 +554,7 @@ export default function Jarvis() {
   }
 
   return (
-    <main data-theme="prime" className="relative h-screen w-screen overflow-hidden">
+    <main data-theme="observatory" className="relative h-screen w-screen overflow-hidden">
       {booting && <BootSequence />}
       <FirstBreathOverlay show={firstBreath} onDone={() => setFirstBreath(false)} />
       {!booting && (
@@ -588,6 +589,8 @@ export default function Jarvis() {
           actions={ACTIONS}
           activeRealm={activeRealm}
           onRealmChange={setActiveRealm}
+          onGrahaSelect={setSelectedGrahaId}
+          selectedGrahaId={selectedGrahaId}
           onSelectAgent={setSelectedAgent}
           agents={agents}
           skills={skills}
