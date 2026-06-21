@@ -564,12 +564,7 @@ export default function Jarvis() {
           onToggleMute={() => setMuted((v) => !v)}
           greeting={worldGreeting(clock?.getHours() ?? 12)}
           logLine={log.slice(-1)[0] ?? "awakening…"}
-          tickerIdx={tickerIdx}
           processing={processing}
-          leadGrahaId={leadGrahaId}
-          leadGrahaName={leadGrahaName}
-          onSelectAgent={setSelectedAgent}
-          messages={messages}
           streamingMsgId={streamingMsgId}
           input={input}
           onInputChange={setInput}
@@ -581,20 +576,7 @@ export default function Jarvis() {
           voiceHint={voiceHint}
           placeholder={sutraPlaceholder(clock?.getHours() ?? 12, processing)}
           actions={ACTIONS}
-          activeRealm={activeRealm}
-          onRealmChange={setActiveRealm}
-          agents={agents}
-          skills={skills}
-          jobs={jobs}
-          vitals={vitals}
-          stages={stages}
-          steps={steps}
-          showProcess={showProcess}
-          successRate={successRate}
-          subsysRate={subsysRate}
-          onAskProject={(name) => submit(`What should I do next in ${name}?`)}
           uplinkActive={systemsNominal}
-          memorySynced={systemsNominal}
         />
       )}
     </main>

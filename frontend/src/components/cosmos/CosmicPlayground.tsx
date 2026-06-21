@@ -1,25 +1,10 @@
 "use client";
 
-import { CosmicRealmPanel } from "./CosmicRealmPanel";
 import { RudraPrimeShell } from "./prime";
 import { PrimeBackground } from "./prime/PrimeBackground";
-import type { Stage } from "@/components/hud/ProcessStream";
-import type { RealmId } from "@/components/tablet/RealmRim";
-import type { ActStep, AgentInfo, SchedulerJob, ServiceHealth, SkillInfo } from "@/lib/api";
-import type { GrahaId } from "./navagraha-config";
 import type { LucideIcon } from "lucide-react";
 
-interface Message {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  agent?: string;
-  agentType?: string;
-  streaming?: boolean;
-}
-
 export function CosmicPlayground({
-  operator,
   status,
   clock,
   onLogout,
@@ -27,13 +12,7 @@ export function CosmicPlayground({
   onToggleMute,
   greeting,
   logLine,
-  tickerIdx,
   processing,
-  leadGrahaId,
-  leadGrahaName,
-  onSelectAgent,
-  messages,
-  streamingMsgId,
   input,
   onInputChange,
   onSubmit,
@@ -43,20 +22,9 @@ export function CosmicPlayground({
   voiceHint,
   placeholder,
   actions,
-  activeRealm,
-  onRealmChange,
-  agents,
-  skills,
-  jobs,
-  vitals,
-  stages,
-  steps,
-  showProcess,
-  successRate,
-  subsysRate,
-  onAskProject,
+  operator,
+  streamingMsgId,
   uplinkActive = true,
-  memorySynced = true,
   onQuickSubmit,
 }: {
   operator: string | null;
@@ -67,13 +35,7 @@ export function CosmicPlayground({
   onToggleMute: () => void;
   greeting: string;
   logLine: string;
-  tickerIdx: number;
   processing: boolean;
-  leadGrahaId?: GrahaId;
-  leadGrahaName?: string;
-  onSelectAgent: (type?: string) => void;
-  messages: Message[];
-  streamingMsgId: string | null;
   input: string;
   onInputChange: (v: string) => void;
   onSubmit: () => void;
@@ -83,20 +45,8 @@ export function CosmicPlayground({
   voiceHint?: string | null;
   placeholder: string;
   actions: { icon: LucideIcon; label: string; run: () => void }[];
-  activeRealm: RealmId | null;
-  onRealmChange: (r: RealmId | null) => void;
-  agents: AgentInfo[];
-  skills: SkillInfo[];
-  jobs: SchedulerJob[];
-  vitals: ServiceHealth[];
-  stages: Stage[];
-  steps: ActStep[];
-  showProcess: boolean;
-  successRate: number;
-  subsysRate: number;
-  onAskProject: (name: string) => void;
+  streamingMsgId: string | null;
   uplinkActive?: boolean;
-  memorySynced?: boolean;
   onQuickSubmit?: (query: string) => void;
 }) {
   return (
@@ -104,19 +54,12 @@ export function CosmicPlayground({
       <PrimeBackground />
 
       <RudraPrimeShell
-        operator={operator}
         status={status}
         clock={clock}
         onLogout={onLogout}
         muted={muted}
         onToggleMute={onToggleMute}
-        tickerIdx={tickerIdx}
         processing={processing}
-        leadGrahaId={leadGrahaId}
-        leadGrahaName={leadGrahaName}
-        onSelectAgent={onSelectAgent}
-        messages={messages}
-        streamingMsgId={streamingMsgId}
         input={input}
         onInputChange={onInputChange}
         onSubmit={onSubmit}
@@ -125,20 +68,10 @@ export function CosmicPlayground({
         listening={listening}
         voiceHint={voiceHint}
         placeholder={placeholder}
+        streamingMsgId={streamingMsgId}
         actions={actions}
-        activeRealm={activeRealm}
-        onRealmChange={onRealmChange}
         uplinkActive={uplinkActive}
-        memorySynced={memorySynced}
-        logLine={logLine}
         onQuickSubmit={onQuickSubmit}
-        agents={agents}
-        skills={skills}
-        jobs={jobs}
-        vitals={vitals}
-        stages={stages}
-        steps={steps}
-        showProcess={showProcess}
       />
 
       <div className="sr-only">
@@ -150,36 +83,6 @@ export function CosmicPlayground({
         {operator && <span>{greeting}</span>}
         <span>{logLine}</span>
       </div>
-
-      {activeRealm && (
-        <>
-          <button
-            type="button"
-            className="cosmic-realm-backdrop"
-            aria-label="Close realm"
-            onClick={() => onRealmChange(null)}
-          />
-          <div className="cosmic-realm-wrap cosmic-realm-wrap-3d">
-            <CosmicRealmPanel
-              realm={activeRealm}
-              onClose={() => onRealmChange(null)}
-              agents={agents}
-              selectedAgent={undefined}
-              onSelectAgent={onSelectAgent}
-              skills={skills}
-              showProcess={showProcess}
-              stages={stages}
-              steps={steps}
-              processing={processing}
-              successRate={successRate}
-              subsysRate={subsysRate}
-              vitals={vitals}
-              jobs={jobs}
-              onAskProject={onAskProject}
-            />
-          </div>
-        </>
-      )}
     </div>
   );
 }
