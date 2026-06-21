@@ -13,30 +13,6 @@ const LoginCosmos = dynamic(
   { ssr: false }
 );
 
-function PrimeLogo({ className = "" }: { className?: string }) {
-  return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
-      <span className="inline-flex items-center gap-0.5 text-2xl leading-none sm:text-3xl">
-        <span className="prime-logo-gold">RUD</span>
-        <span className="relative mx-0.5 inline-flex h-[1.1em] w-[0.5em] items-end justify-center" aria-hidden>
-          <svg viewBox="0 0 24 48" className="h-full w-full" fill="none">
-            <path
-              d="M12 2 L12 18 M12 18 L4 42 M12 18 L20 42 M12 14 L8 8 M12 14 L16 8"
-              stroke="#f0d070"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              style={{ filter: "drop-shadow(0 0 6px rgba(201,160,64,0.8))" }}
-            />
-            <circle cx="12" cy="16" r="2.5" fill="rgba(0,212,255,0.9)" />
-          </svg>
-        </span>
-        <span className="prime-logo-gold">A</span>
-      </span>
-      <span className="prime-tagline text-center">Prime · The void holds your counsel</span>
-    </div>
-  );
-}
-
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("owner");
@@ -64,10 +40,6 @@ export default function LoginPage() {
       <LoginCosmos />
 
       <div className="relative z-10 flex min-h-screen flex-col">
-        <header className="flex flex-col items-center px-4 pt-10 sm:pt-14">
-          <PrimeLogo />
-        </header>
-
         <div className="flex-1" aria-hidden />
 
         <div className="px-4 pb-10 sm:pb-14">
