@@ -10,7 +10,7 @@ const STAR_COUNT = 2500;
 const METEOR_COUNT = 48;
 const NEURAL_NODES = 36;
 
-function MilkyWaySky({ reducedMotion }: { reducedMotion: boolean }) {
+function MilkyWaySky({ reducedMotion, dimmed = false }: { reducedMotion: boolean; dimmed?: boolean }) {
   const map = useTexture(SSS_STARS_MILKY_WAY);
   map.colorSpace = THREE.SRGBColorSpace;
   const ref = useRef<THREE.Mesh>(null);
@@ -22,7 +22,7 @@ function MilkyWaySky({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <mesh ref={ref} scale={[-1, 1, 1]}>
       <sphereGeometry args={[140, 64, 64]} />
-      <meshBasicMaterial map={map} side={THREE.BackSide} depthWrite={false} />
+      <meshBasicMaterial map={map} side={THREE.BackSide} depthWrite={false} transparent opacity={dimmed ? 0.35 : 1} />
     </mesh>
   );
 }
@@ -55,18 +55,31 @@ function Starfield({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
+function NebulaClouds({ reducedMotion, variant = "cosmos" }: { reducedMotion: boolean; variant?: "cosmos" | "prime" }) {
+  const isPrime = variant === "prime";
   const blobs = useMemo(
-    () => [
-      { pos: [-14, 2, -12] as [number, number, number], color: "#7b3fa8", scale: 22 },
-      { pos: [18, -4, -16] as [number, number, number], color: "#1a5a9a", scale: 26 },
-      { pos: [-6, 6, -24] as [number, number, number], color: "#c040a0", scale: 28 },
-      { pos: [10, -8, -20] as [number, number, number], color: "#2244cc", scale: 18 },
-      { pos: [0, -2, -8] as [number, number, number], color: "#553311", scale: 18 },
-      { pos: [0, 0, -30] as [number, number, number], color: "#4422aa", scale: 32 },
-    ],
-    []
+    () =>
+      isPrime
+        ? [
+            { pos: [0, 0, -18] as [number, number, number], color: "#6b2fa8", scale: 38 },
+            { pos: [-12, 4, -22] as [number, number, number], color: "#9b4fd4", scale: 28 },
+            { pos: [14, -2, -20] as [number, number, number], color: "#1a6aaa", scale: 32 },
+            { pos: [-8, -6, -16] as [number, number, number], color: "#2244cc", scale: 24 },
+            { pos: [8, 8, -26] as [number, number, number], color: "#c040a0", scale: 22 },
+            { pos: [0, -4, -12] as [number, number, number], color: "#5533aa", scale: 20 },
+          ]
+        : [
+            { pos: [-14, 2, -12] as [number, number, number], color: "#7b3fa8", scale: 22 },
+            { pos: [18, -4, -16] as [number, number, number], color: "#1a5a9a", scale: 26 },
+            { pos: [-6, 6, -24] as [number, number, number], color: "#c040a0", scale: 28 },
+            { pos: [10, -8, -20] as [number, number, number], color: "#2244cc", scale: 18 },
+            { pos: [0, -2, -8] as [number, number, number], color: "#553311", scale: 18 },
+            { pos: [0, 0, -30] as [number, number, number], color: "#4422aa", scale: 32 },
+          ],
+    [isPrime]
   );
+
+  const opacity = isPrime ? 0.16 : 0.09;
 
   if (reducedMotion) {
     return (
@@ -74,7 +87,7 @@ function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
         {blobs.map((b, i) => (
           <mesh key={i} position={b.pos}>
             <sphereGeometry args={[b.scale, 12, 12]} />
-            <meshBasicMaterial color={b.color} transparent opacity={0.09} depthWrite={false} />
+            <meshBasicMaterial color={b.color} transparent opacity={opacity} depthWrite={false} />
           </mesh>
         ))}
       </group>
@@ -87,7 +100,7 @@ function NebulaClouds({ reducedMotion }: { reducedMotion: boolean }) {
         <Float key={i} speed={0.4 + i * 0.1} rotationIntensity={0.1} floatIntensity={0.6}>
           <mesh position={b.pos}>
             <sphereGeometry args={[b.scale, 16, 16]} />
-            <meshBasicMaterial color={b.color} transparent opacity={0.09} depthWrite={false} />
+            <meshBasicMaterial color={b.color} transparent opacity={opacity} depthWrite={false} />
           </mesh>
         </Float>
       ))}
@@ -187,18 +200,23 @@ function NeuralWeb({ intensity, reducedMotion }: { intensity: number; reducedMot
   );
 }
 
-function SanctumWarmGlow() {
+function SanctumWarmGlow({ variant = "cosmos" }: { variant?: "cosmos" | "prime" }) {
+  const isPrime = variant === "prime";
   return (
     <group position={[0, -1.5, 0]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[8, 48]} />
-        <meshBasicMaterial color="#ffaa44" transparent opacity={0.06} depthWrite={false} />
+        <meshBasicMaterial color="#ffaa44" transparent opacity={isPrime ? 0.1 : 0.06} depthWrite={false} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <circleGeometry args={[14, 48]} />
-        <meshBasicMaterial color="#6644aa" transparent opacity={0.04} depthWrite={false} />
+        <meshBasicMaterial color={isPrime ? "#8844cc" : "#6644aa"} transparent opacity={isPrime ? 0.12 : 0.04} depthWrite={false} />
       </mesh>
-      <pointLight color="#ffcc88" intensity={2.5} distance={28} position={[0, 2, 2]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <circleGeometry args={[22, 48]} />
+        <meshBasicMaterial color="#2244aa" transparent opacity={isPrime ? 0.08 : 0} depthWrite={false} />
+      </mesh>
+      <pointLight color={isPrime ? "#aa88ff" : "#ffcc88"} intensity={isPrime ? 3.2 : 2.5} distance={32} position={[0, 2, 2]} />
     </group>
   );
 }
@@ -206,20 +224,28 @@ function SanctumWarmGlow() {
 export function CosmicEnvironment({
   neuralIntensity = 0.5,
   reducedMotion = false,
+  variant = "cosmos",
 }: {
   neuralIntensity?: number;
   reducedMotion?: boolean;
+  variant?: "cosmos" | "prime";
 }) {
+  const isPrime = variant === "prime";
+  const bg = isPrime ? "#08051a" : "#020208";
+  const neuralScale = isPrime ? 0.35 : 1;
+
   return (
     <>
-      <color attach="background" args={["#020208"]} />
-      <fog attach="fog" args={["#020208", 40, 130]} />
-      <MilkyWaySky reducedMotion={reducedMotion} />
+      {!isPrime && <color attach="background" args={[bg]} />}
+      <fog attach="fog" args={[bg, isPrime ? 35 : 40, isPrime ? 110 : 130]} />
+      <MilkyWaySky reducedMotion={reducedMotion} dimmed={isPrime} />
       <Starfield reducedMotion={reducedMotion} />
-      <NebulaClouds reducedMotion={reducedMotion} />
-      <SanctumWarmGlow />
+      <NebulaClouds reducedMotion={reducedMotion} variant={variant} />
+      <SanctumWarmGlow variant={variant} />
       {!reducedMotion && <Meteors />}
-      <NeuralWeb intensity={neuralIntensity} reducedMotion={reducedMotion} />
+      {neuralScale > 0 && (
+        <NeuralWeb intensity={neuralIntensity * neuralScale} reducedMotion={reducedMotion} />
+      )}
     </>
   );
 }

@@ -22,27 +22,123 @@
   font-family: var(--font-orbitron), "Orbitron", sans-serif;
 }
 
-.rudra-prime-shell::before {
-  content: "";
+/* ── Full-screen Prime background (matches preview nebula + grid + orbits) ── */
+.prime-stage {
+  background: #08051a;
+}
+
+.prime-bg-root {
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.prime-stage .cosmic-canvas {
+  position: absolute !important;
+  inset: 0;
+  z-index: 1;
+}
+
+.prime-grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.prime-bg-nebula {
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 42%, rgba(0, 80, 120, 0.12), transparent 70%),
-    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
-  background-size: auto, 48px 48px, 48px 48px;
+    radial-gradient(ellipse 55% 45% at 50% 42%, rgba(107, 47, 168, 0.38), transparent 68%),
+    radial-gradient(ellipse 40% 35% at 22% 55%, rgba(155, 79, 212, 0.28), transparent 62%),
+    radial-gradient(ellipse 38% 32% at 78% 48%, rgba(26, 106, 170, 0.32), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 55% 65%, rgba(68, 34, 170, 0.22), transparent 65%),
+    radial-gradient(ellipse 30% 25% at 40% 30%, rgba(192, 64, 160, 0.15), transparent 55%),
+    linear-gradient(180deg, #06040f 0%, #08051a 35%, #0a0618 65%, #06040f 100%);
+}
+
+.prime-bg-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 30% 65%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 55% 15%, rgba(200, 220, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 70% 40%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 85% 75%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 15% 85%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 92% 12%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 48% 88%, rgba(255, 255, 255, 0.35), transparent);
+  background-size: 100% 100%;
+}
+
+.prime-bg-hex {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(60deg, rgba(120, 80, 200, 0.025) 1px, transparent 1px),
+    linear-gradient(-60deg, rgba(120, 80, 200, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 40px 69.28px, 40px 69.28px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, #000 30%, transparent 100%);
+}
+
+.prime-bg-orbits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.85;
+}
+
+.prime-orbit-ring {
+  fill: none;
+  stroke: rgba(0, 212, 255, 0.22);
+  stroke-width: 1;
+}
+.prime-orbit-1 { stroke: rgba(0, 212, 255, 0.28); stroke-width: 1.2; }
+.prime-orbit-2 { stroke: rgba(0, 212, 255, 0.2); }
+.prime-orbit-3 { stroke: rgba(201, 160, 64, 0.18); }
+.prime-orbit-4 { stroke: rgba(0, 212, 255, 0.15); stroke-dasharray: 4 6; }
+.prime-orbit-5 { stroke: rgba(187, 85, 255, 0.16); }
+.prime-orbit-6 { stroke: rgba(68, 136, 255, 0.14); }
+
+.prime-orbit-cross {
+  stroke: rgba(0, 212, 255, 0.08);
+  stroke-width: 0.75;
+}
+.prime-orbit-core {
+  fill: rgba(0, 212, 255, 0.35);
+  filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.6));
+}
+
+.prime-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 45%, transparent 40%, rgba(4, 3, 12, 0.55) 100%),
+    linear-gradient(180deg, rgba(4, 3, 12, 0.5) 0%, transparent 12%, transparent 70%, rgba(4, 3, 12, 0.75) 100%);
+}
+
+.rudra-prime-shell::before {
+  content: none;
 }
 
 .rudra-prime-vignette {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(4, 6, 12, 0.72) 0%,
-    transparent 14%,
-    transparent 58%,
-    rgba(4, 6, 12, 0.88) 100%
+    rgba(4, 6, 12, 0.55) 0%,
+    transparent 12%,
+    transparent 62%,
+    rgba(4, 6, 12, 0.82) 100%
   );
 }
 
@@ -419,31 +515,7 @@
   box-shadow: 0 0 16px rgba(201, 160, 64, 0.25);
 }
 
-/* ── Arc reticle overlay (center) ── */
+/* ── Arc reticle overlay (center) — kept subtle; 3D rings primary */
 .prime-arc-reticle {
-  position: fixed;
-  left: 50%;
-  top: 46%;
-  z-index: 4;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  width: min(42vw, 420px);
-  height: min(42vw, 420px);
-  border: 1px dashed rgba(0, 212, 255, 0.12);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 1px rgba(0, 212, 255, 0.08),
-    0 0 60px rgba(0, 212, 255, 0.06);
-}
-.prime-arc-reticle::before,
-.prime-arc-reticle::after {
-  content: "";
-  position: absolute;
-  inset: 12%;
-  border: 1px solid rgba(0, 212, 255, 0.18);
-  border-radius: 50%;
-}
-.prime-arc-reticle::after {
-  inset: 24%;
-  border-color: rgba(201, 160, 64, 0.15);
+  display: none;
 }

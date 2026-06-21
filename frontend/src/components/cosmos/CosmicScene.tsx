@@ -7,6 +7,7 @@ import { CosmicNavigation } from "./CosmicNavigation";
 import type { CosmicNavHandle } from "./cosmic-nav-types";
 import * as THREE from "three";
 import { CosmicEnvironment } from "./CosmicEnvironment";
+import { PrimeOrbitalRings3D } from "./PrimeOrbitalRings3D";
 import { TrishulDamru3D, type TrishulPhase } from "./TrishulDamru3D";
 import { RudraPlatform } from "./RudraPlatform";
 import { NAVAGRAHA, THIRD_EYE_OFFSET, TRISHUL_SCALE, grahaById, grahaPosition, type GrahaId } from "./navagraha-config";
@@ -55,6 +56,7 @@ function SceneContent({
   ui,
   streamingActive,
   navRef,
+  themeVariant = "prime",
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -65,6 +67,7 @@ function SceneContent({
   ui?: CosmicUI3DProps;
   streamingActive?: boolean;
   navRef?: Ref<CosmicNavHandle | null>;
+  themeVariant?: "cosmos" | "prime";
 }) {
   const reducedMotion = useReducedMotion();
   const positionsRef = useGrahaPositionsRef();
@@ -162,16 +165,17 @@ function SceneContent({
   };
 
   const isLogin = variant === "login";
+  const isPrime = themeVariant === "prime";
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={isLogin ? [0, 0.6, 22] : [0, 0.8, 26]} fov={isLogin ? 50 : 54} />
+      <PerspectiveCamera makeDefault position={isLogin ? [0, 0.6, 22] : [0, 0.5, 24]} fov={isLogin ? 50 : 52} />
       <CosmicNavigation variant={variant} navRef={navRef} />
       <directionalLight
         castShadow
         position={[6, 18, 14]}
-        intensity={1.55}
-        color="#fff4e8"
+        intensity={isPrime ? 1.35 : 1.55}
+        color={isPrime ? "#ffe8cc" : "#fff4e8"}
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={60}
         shadow-camera-left={-18}
@@ -180,14 +184,16 @@ function SceneContent({
         shadow-camera-bottom={-18}
         shadow-bias={-0.00015}
       />
-      <directionalLight position={[-8, 6, -10]} intensity={0.45} color="#6688cc" />
-      <pointLight position={[-6, 8, 10]} intensity={0.65} color="#8866cc" />
-      <pointLight position={[6, 4, -8]} intensity={0.42} color="#4488ff" />
-      <pointLight position={[0, -2, 8]} intensity={2.1} color="#ffcc88" />
-      <ambientLight intensity={0.22} color="#2a2844" />
-      <Environment preset="night" environmentIntensity={0.42} />
+      <directionalLight position={[-8, 6, -10]} intensity={0.45} color={isPrime ? "#8866cc" : "#6688cc"} />
+      <pointLight position={[-6, 8, 10]} intensity={isPrime ? 0.85 : 0.65} color="#9966ff" />
+      <pointLight position={[6, 4, -8]} intensity={0.55} color="#00d4ff" />
+      <pointLight position={[0, -2, 8]} intensity={isPrime ? 2.6 : 2.1} color="#ffcc88" />
+      <ambientLight intensity={isPrime ? 0.18 : 0.22} color={isPrime ? "#1a1040" : "#2a2844"} />
+      <Environment preset="night" environmentIntensity={isPrime ? 0.28 : 0.42} />
       <ContactShadows position={[0, -3.4, 0]} opacity={0.42} scale={28} blur={2.4} far={12} color="#0a0818" />
-      <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} />
+      <CosmicEnvironment neuralIntensity={neuralIntensity} reducedMotion={reducedMotion} variant={themeVariant} />
+
+      {isPrime && !isLogin && <PrimeOrbitalRings3D reducedMotion={reducedMotion} />}
 
       <RudraPlatform reducedMotion={reducedMotion} />
 
@@ -235,6 +241,7 @@ export function CosmicScene({
   ui,
   streamingActive,
   navRef,
+  themeVariant = "prime",
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -245,13 +252,20 @@ export function CosmicScene({
   ui?: CosmicUI3DProps;
   streamingActive?: boolean;
   navRef?: Ref<CosmicNavHandle | null>;
+  themeVariant?: "cosmos" | "prime";
 }) {
   return (
     <Canvas
       className="cosmic-canvas"
       shadows
-      gl={{ antialias: true, alpha: false, powerPreference: "high-performance", logarithmicDepthBuffer: true }}
+      gl={{
+        antialias: true,
+        alpha: themeVariant === "prime",
+        powerPreference: "high-performance",
+        logarithmicDepthBuffer: true,
+      }}
       dpr={[1, 1.75]}
+      style={themeVariant === "prime" ? { background: "transparent" } : undefined}
     >
       <Suspense fallback={null}>
         <GrahaPositionsProvider>
@@ -265,6 +279,7 @@ export function CosmicScene({
             ui={ui}
             streamingActive={streamingActive}
             navRef={navRef}
+            themeVariant={themeVariant}
           />
         </GrahaPositionsProvider>
       </Suspense>

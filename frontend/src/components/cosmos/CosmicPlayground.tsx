@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { CosmicScene } from "./CosmicScene";
 import { CosmicRealmPanel } from "./CosmicRealmPanel";
 import { RudraPrimeShell } from "./prime";
+import { PrimeBackground } from "./prime/PrimeBackground";
 import type { CosmicNavHandle } from "./cosmic-nav-types";
 import type { Stage } from "@/components/hud/ProcessStream";
 import type { RealmId } from "@/components/tablet/RealmRim";
@@ -117,7 +118,9 @@ export function CosmicPlayground({
   const navRef = useRef<CosmicNavHandle | null>(null);
 
   return (
-    <div className="cosmic-playground relative h-screen w-screen overflow-hidden">
+    <div className="cosmic-playground prime-stage relative h-screen w-screen overflow-hidden">
+      <PrimeBackground />
+
       <CosmicScene
         navRef={navRef}
         processing={processing}
@@ -126,6 +129,7 @@ export function CosmicPlayground({
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
         streamingActive={Boolean(streamingMsgId)}
+        themeVariant="prime"
       />
 
       <RudraPrimeShell

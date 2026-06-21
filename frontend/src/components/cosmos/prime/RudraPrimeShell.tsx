@@ -15,6 +15,7 @@ import { PrimeCommandBar } from "./PrimeCommandBar";
 import { PrimeDualPane } from "./PrimeDualPane";
 import { PrimeRealmNav } from "./PrimeRealmNav";
 import { PrimeFooter } from "./PrimeFooter";
+import { PrimeGridOverlay } from "./PrimeGridOverlay";
 
 interface Message {
   id: string;
@@ -130,7 +131,7 @@ export function RudraPrimeShell({
 
   return (
     <div className="rudra-prime-shell rudra-prime-vignette pointer-events-none fixed inset-0 z-10 flex flex-col">
-      <div className="prime-arc-reticle" aria-hidden />
+      <PrimeGridOverlay />
 
       <PrimeGrahaPanels
         leadGrahaId={leadGrahaId}
