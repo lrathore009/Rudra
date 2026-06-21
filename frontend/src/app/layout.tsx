@@ -24,20 +24,20 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://rudra-kl5i.vercel.app"),
-  title: "RUDRA — Trishula Cosmos",
+  title: "RUDRA PRIME — Trishula × Jarvis",
   description:
-    "Personal Intelligence OS — a cosmic command deck where the trishula awakens and nine planets answer.",
+    "Personal Intelligence OS — Rudra Prime fuses Trishula cosmos with Jarvis voice engine. Nine Grahas, arc reactor core, local-first counsel.",
   icons: { icon: "/trishula-icon.png", apple: "/trishula-icon.png" },
   openGraph: {
-    title: "RUDRA — Trishula Cosmos",
-    description: "Nine planets, one trident. Local-first personal intelligence for Laxman.",
-    images: [{ url: "/trishula-icon.png", width: 512, height: 512, alt: "Rudra trishula" }],
+    title: "RUDRA PRIME — Trishula × Jarvis",
+    description: "Nine Grahas orbit the arc reactor. Local-first personal intelligence for Laxman.",
+    images: [{ url: "/trishula-icon.png", width: 512, height: 512, alt: "Rudra Prime" }],
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "RUDRA — Trishula Cosmos",
-    description: "Nine planets, one trident. Local-first personal intelligence.",
+    title: "RUDRA PRIME — Trishula × Jarvis",
+    description: "Trishula core · Jarvis engine · local-first counsel.",
     images: ["/trishula-icon.png"],
   },
 };

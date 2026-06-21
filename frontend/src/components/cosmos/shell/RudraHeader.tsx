@@ -2,9 +2,19 @@
 
 import { motion } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
-import { SutraWordmark, RudraTagline } from "@/components/hud/SutraWordmark";
+import { RudraPrimeWordmark, RudraPrimeTagline } from "@/components/hud/SutraWordmark";
 import { themeModeLabel, type RudraThemeMode } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
+
+function VoiceWave() {
+  return (
+    <span className="cosmic-status-wave" aria-hidden>
+      <span />
+      <span />
+      <span />
+    </span>
+  );
+}
 
 export function RudraHeader({
   themeMode,
@@ -16,6 +26,8 @@ export function RudraHeader({
   onToggleMute,
   greeting,
   operator,
+  listening,
+  processing,
 }: {
   themeMode: RudraThemeMode;
   onThemeCycle: () => void;
@@ -26,8 +38,17 @@ export function RudraHeader({
   onToggleMute: () => void;
   greeting?: string;
   operator?: string | null;
+  listening?: boolean;
+  processing?: boolean;
 }) {
   const nominal = status.toLowerCase().includes("nominal") || status.toLowerCase().includes("online");
+  const statusLabel = listening
+    ? "Present · Listening"
+    : processing
+      ? "Present · Processing"
+      : nominal
+        ? "Present · Nominal"
+        : status;
 
   return (
     <motion.header
@@ -36,9 +57,9 @@ export function RudraHeader({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex min-w-0 flex-col gap-1">
-        <SutraWordmark className="text-sm sm:text-base" />
-        <RudraTagline className="hidden sm:block" />
+      <div className="flex min-w-0 flex-col gap-1 pl-14 sm:pl-0">
+        <RudraPrimeWordmark className="text-sm sm:text-base" />
+        <RudraPrimeTagline className="hidden sm:block" />
         {operator && greeting && (
           <motion.span
             className="hidden font-terminal text-[7px] uppercase tracking-[0.2em] text-muted-foreground/50 lg:block"
@@ -51,46 +72,27 @@ export function RudraHeader({
         )}
       </div>
 
-      <motion.div
-        className="flex justify-center pt-0.5"
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: "spring", stiffness: 400, damping: 28 }}
-      >
-        <span className={cn("cosmic-status-badge", nominal && "cosmic-status-badge-nominal")}>
-          <span className="cosmic-status-signal" aria-hidden>
-            ((o))
-          </span>
-          {nominal ? "Present · Nominal" : status}
+      <motion.div className="flex justify-center pt-0.5" whileHover={{ scale: 1.02 }}>
+        <span
+          className={cn(
+            "cosmic-status-badge cosmic-status-badge-prime",
+            (nominal || listening) && "cosmic-status-badge-nominal"
+          )}
+        >
+          {listening ? <VoiceWave /> : <span className="cosmic-status-signal">((o))</span>}
+          {statusLabel}
         </span>
       </motion.div>
 
       <div className="ml-auto flex items-center justify-end gap-2 font-terminal text-[10px] sm:gap-3">
-        <motion.button
-          type="button"
-          onClick={onThemeCycle}
-          className="cosmic-ctl hidden sm:inline"
-          whileTap={{ scale: 0.96 }}
-        >
+        <motion.button type="button" onClick={onThemeCycle} className="cosmic-ctl hidden sm:inline" whileTap={{ scale: 0.96 }}>
           {themeModeLabel(themeMode)}
         </motion.button>
-        <span className="text-muted-foreground tabular-nums">
-          {clock ? clock.toLocaleTimeString("en-GB") : "--:--:--"}
-        </span>
-        <motion.button
-          type="button"
-          onClick={onLogout}
-          className="cosmic-ctl hidden sm:inline"
-          whileTap={{ scale: 0.96 }}
-        >
+        <span className="text-muted-foreground tabular-nums">{clock ? clock.toLocaleTimeString("en-GB") : "--:--:--"}</span>
+        <motion.button type="button" onClick={onLogout} className="cosmic-ctl hidden sm:inline" whileTap={{ scale: 0.96 }}>
           Exit
         </motion.button>
-        <motion.button
-          type="button"
-          onClick={onToggleMute}
-          className="cosmic-ctl-icon"
-          title={muted ? "Unmute" : "Mute"}
-          whileTap={{ scale: 0.92 }}
-        >
+        <motion.button type="button" onClick={onToggleMute} className="cosmic-ctl-icon" title={muted ? "Unmute" : "Mute"} whileTap={{ scale: 0.92 }}>
           {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
         </motion.button>
       </div>

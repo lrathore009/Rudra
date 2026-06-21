@@ -13,9 +13,8 @@ import { NAVAGRAHA, THIRD_EYE_OFFSET, TRISHUL_SCALE, grahaById, grahaPosition, t
 import { GrahaOrbit3D, GrahaPositionsProvider, useGrahaPositionsRef } from "./GrahaOrbit3D";
 import { LightningBolt3D } from "./LightningBolt3D";
 import { useReducedMotion } from "./use-reduced-motion";
-import { CosmicUI3D } from "./CosmicUI3D";
+import { ArcReactorRing3D } from "./ArcReactorRing3D";
 import { GrahaRimLabels3D } from "./GrahaRimLabels3D";
-import type { CosmicUI3DProps } from "./cosmic-ui-types";
 
 export type CosmosPhase =
   | "idle"
@@ -52,9 +51,9 @@ function SceneContent({
   pulseGrahaIds,
   errorFacet,
   variant = "main",
-  ui,
   streamingActive,
   navRef,
+  listening = false,
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -62,9 +61,9 @@ function SceneContent({
   pulseGrahaIds: GrahaId[];
   errorFacet?: string;
   variant?: "main" | "login";
-  ui?: CosmicUI3DProps;
   streamingActive?: boolean;
   navRef?: Ref<CosmicNavHandle | null>;
+  listening?: boolean;
 }) {
   const reducedMotion = useReducedMotion();
   const positionsRef = useGrahaPositionsRef();
@@ -202,6 +201,7 @@ function SceneContent({
       ))}
 
       <group renderOrder={100}>
+        <ArcReactorRing3D processing={processing} listening={listening} reducedMotion={reducedMotion} />
         <TrishulDamru3D
           phase={eyePhaseFromCosmos(phase)}
           spinning={spinning}
@@ -219,8 +219,6 @@ function SceneContent({
           processing={processing}
         />
       )}
-
-      {ui && !isLogin && <CosmicUI3D {...ui} streamingActive={streamingActive} />}
     </>
   );
 }
@@ -232,9 +230,9 @@ export function CosmicScene({
   pulseGrahaIds = [],
   errorFacet,
   variant = "main",
-  ui,
   streamingActive,
   navRef,
+  listening = false,
 }: {
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -242,9 +240,9 @@ export function CosmicScene({
   pulseGrahaIds?: GrahaId[];
   errorFacet?: string;
   variant?: "main" | "login";
-  ui?: CosmicUI3DProps;
   streamingActive?: boolean;
   navRef?: Ref<CosmicNavHandle | null>;
+  listening?: boolean;
 }) {
   return (
     <Canvas
@@ -262,9 +260,9 @@ export function CosmicScene({
             pulseGrahaIds={pulseGrahaIds}
             errorFacet={errorFacet}
             variant={variant}
-            ui={ui}
             streamingActive={streamingActive}
             navRef={navRef}
+            listening={listening}
           />
         </GrahaPositionsProvider>
       </Suspense>

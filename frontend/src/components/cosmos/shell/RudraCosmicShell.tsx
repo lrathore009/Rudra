@@ -9,11 +9,12 @@ import type { GrahaId } from "../navagraha-config";
 import { grahaById } from "../navagraha-config";
 import type { LucideIcon } from "lucide-react";
 import { RudraHeader } from "./RudraHeader";
-import { RudraCounselPane } from "./RudraCounselPane";
+import { RudraPrimeCounselSplit } from "./RudraPrimeCounselSplit";
 import { RudraCommandBar } from "./RudraCommandBar";
 import { RudraRealmNav } from "./RudraRealmNav";
 import { RudraFooter } from "./RudraFooter";
 import { GrahaOrbitLabels } from "./GrahaOrbitLabels";
+import { PrimeModuleSidebar } from "./PrimeModuleSidebar";
 
 interface Message {
   id: string;
@@ -57,9 +58,9 @@ export interface RudraCosmicShellProps {
   onRealmChange: (r: RealmId | null) => void;
   uplinkActive?: boolean;
   memorySynced?: boolean;
-  /** Hide counsel stream until user sends first command */
   showResponse?: boolean;
-  /** @internal — passed for realm panel compatibility */
+  logLines?: string[];
+  onModuleAction?: (id: string) => void;
   agents?: AgentInfo[];
   skills?: SkillInfo[];
   jobs?: SchedulerJob[];
@@ -69,70 +70,71 @@ export interface RudraCosmicShellProps {
   showProcess?: boolean;
 }
 
-/**
- * Production shell matching the Trishula Cosmos mockup — 2D overlay on full-screen R3F canvas.
- * Header · orbit labels · counsel stream · command bar · realm nav · footer.
- */
-export function RudraCosmicShell({
-  themeMode,
-  onThemeCycle,
-  operator,
-  status,
-  clock,
-  onLogout,
-  muted,
-  onToggleMute,
-  greeting,
-  tickerIdx,
-  processing,
-  leadGrahaId,
-  supportingGrahaIds,
-  pulseGrahaIds,
-  leadGrahaName,
-  supportingGrahaNames,
-  onSelectAgent,
-  messages,
-  streamingMsgId,
-  input,
-  onInputChange,
-  onSubmit,
-  onStop,
-  onVoice,
-  listening,
-  voiceHint,
-  placeholder,
-  actions,
-  activeRealm,
-  onRealmChange,
-  uplinkActive = true,
-  memorySynced = true,
-  showResponse = true,
-}: RudraCosmicShellProps) {
-  const [selectedGrahaId, setSelectedGrahaId] = useState<GrahaId | undefined>();
+/** Rudra Prime — Trishula × Jarvis hybrid shell on full-screen R3F canvas. */
+export function RudraCosmicShell(props: RudraCosmicShellProps) {
+  const {
+    themeMode,
+    onThemeCycle,
+    operator,
+    status,
+    clock,
+    onLogout,
+    muted,
+    onToggleMute,
+    greeting,
+    tickerIdx,
+    processing,
+    leadGrahaId,
+    supportingGrahaIds,
+    pulseGrahaIds,
+    leadGrahaName,
+    onSelectAgent,
+    messages,
+    streamingMsgId,
+    input,
+    onInputChange,
+    onSubmit,
+    onStop,
+    onVoice,
+    listening,
+    voiceHint,
+    placeholder,
+    actions,
+    activeRealm,
+    onRealmChange,
+    uplinkActive = true,
+    memorySynced = true,
+    showResponse = true,
+    logLines = [],
+    onModuleAction,
+  } = props;
 
-  const selectedGrahaName = useMemo(() => {
-    const g = grahaById(selectedGrahaId);
-    return g?.name;
-  }, [selectedGrahaId]);
+  const [selectedGrahaId, setSelectedGrahaId] = useState<GrahaId | undefined>();
+  const [activeModule, setActiveModule] = useState<string | undefined>();
+
+  const selectedGrahaName = useMemo(() => grahaById(selectedGrahaId)?.name, [selectedGrahaId]);
 
   const handleGrahaSelect = useCallback(
     (id: GrahaId) => {
       setSelectedGrahaId((prev) => {
         const next = prev === id ? undefined : id;
-        const graha = grahaById(next);
-        onSelectAgent(graha?.agentType);
+        onSelectAgent(grahaById(next)?.agentType);
         return next;
       });
     },
     [onSelectAgent]
   );
 
-  const latestAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
-  const counselVisible =
-    showResponse && (processing || Boolean(streamingMsgId) || Boolean(latestAssistant?.content));
+  const handleModule = useCallback(
+    (id: string) => {
+      setActiveModule(id);
+      onModuleAction?.(id);
+    },
+    [onModuleAction]
+  );
 
   return (
-    <div className="rudra-cosmic-shell cosmic-hud pointer-events-none fixed inset-0 z-10 flex flex-col">
+    <div className="rudra-prime-shell rudra-cosmic-shell cosmic-hud pointer-events-none fixed inset-0 z-10 flex flex-col">
       <GrahaOrbitLabels
         leadGrahaId={leadGrahaId}
         supportingGrahaIds={supportingGrahaIds}
@@ -140,8 +142,9 @@ export function RudraCosmicShell({
         selectedGrahaId={selectedGrahaId}
         processing={processing}
         onGrahaSelect={handleGrahaSelect}
-        dimmed={counselVisible}
       />
+
+      <PrimeModuleSidebar activeId={activeModule} listening={listening} onModule={handleModule} />
 
       <RudraHeader
         themeMode={themeMode}
@@ -153,16 +156,18 @@ export function RudraCosmicShell({
         onToggleMute={onToggleMute}
         greeting={greeting}
         operator={operator}
+        listening={listening}
+        processing={processing}
       />
 
-      <div className="flex flex-1 flex-col items-center justify-end px-4 pb-1 sm:px-8">
-        <RudraCounselPane
+      <div className="flex flex-1 flex-col items-center justify-end px-4 pb-1 sm:pl-24 sm:px-8">
+        <RudraPrimeCounselSplit
           messages={messages}
           streamingMsgId={streamingMsgId}
           processing={processing}
           leadGrahaName={leadGrahaName}
-          supportingGrahaNames={supportingGrahaNames}
-          selectedGrahaName={selectedGrahaName}
+          logLines={logLines}
+          listening={listening}
           showResponse={showResponse}
         />
 
@@ -193,14 +198,16 @@ export function RudraCosmicShell({
       </div>
 
       <RudraRealmNav activeRealm={activeRealm} onRealmChange={onRealmChange} />
-      <RudraFooter tickerIdx={tickerIdx} uplinkActive={uplinkActive} memorySynced={memorySynced} />
+      <RudraFooter tickerIdx={tickerIdx} uplinkActive={uplinkActive} memorySynced={memorySynced} voiceActive={listening || processing} />
     </div>
   );
 }
 
 export { RudraHeader } from "./RudraHeader";
 export { RudraCommandBar } from "./RudraCommandBar";
-export { RudraCounselPane } from "./RudraCounselPane";
+export { RudraPrimeCounselSplit } from "./RudraPrimeCounselSplit";
 export { RudraRealmNav } from "./RudraRealmNav";
 export { RudraFooter } from "./RudraFooter";
 export { GrahaOrbitLabels } from "./GrahaOrbitLabels";
+export { PrimeModuleSidebar } from "./PrimeModuleSidebar";
+export { PrimeTerminalLog } from "./PrimeTerminalLog";

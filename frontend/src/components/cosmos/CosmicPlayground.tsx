@@ -33,6 +33,7 @@ export function CosmicPlayground({
   onToggleMute,
   greeting,
   logLine,
+  logLines,
   tickerIdx,
   processing,
   leadGrahaId,
@@ -65,6 +66,7 @@ export function CosmicPlayground({
   successRate,
   subsysRate,
   onAskProject,
+  onModuleAction,
   uplinkActive = true,
   memorySynced = true,
 }: {
@@ -78,6 +80,7 @@ export function CosmicPlayground({
   onToggleMute: () => void;
   greeting: string;
   logLine: string;
+  logLines?: string[];
   tickerIdx: number;
   processing: boolean;
   leadGrahaId?: GrahaId;
@@ -110,6 +113,7 @@ export function CosmicPlayground({
   successRate: number;
   subsysRate: number;
   onAskProject: (name: string) => void;
+  onModuleAction?: (id: string) => void;
   uplinkActive?: boolean;
   memorySynced?: boolean;
 }) {
@@ -125,6 +129,7 @@ export function CosmicPlayground({
         pulseGrahaIds={pulseGrahaIds ?? []}
         errorFacet={errorFacet}
         streamingActive={Boolean(streamingMsgId)}
+        listening={listening}
       />
 
       <RudraCosmicShell
@@ -160,6 +165,8 @@ export function CosmicPlayground({
         onRealmChange={onRealmChange}
         uplinkActive={uplinkActive}
         memorySynced={memorySynced}
+        logLines={logLines ?? (logLine ? [logLine] : [])}
+        onModuleAction={onModuleAction}
         agents={agents}
         skills={skills}
         jobs={jobs}

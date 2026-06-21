@@ -58,12 +58,12 @@ export const SUTRA_TICKER = [
 
 export const FOOTER_TICKER_SEGMENTS = [
   "Memory lattice synced",
-  "Signal before answer",
-  "Encrypted counsel channel",
-  "Navagraha routing live",
+  "Voice engine active",
+  "Trishula core nominal",
+  "Jarvis routing live",
 ];
 
-export const RUDRA_TAGLINE = "The void holds your counsel";
+export const RUDRA_TAGLINE = "The void holds your counsel · at your service, sir";
 
 export function grahaName(agentType?: string): string | undefined {
   if (!agentType) return undefined;
@@ -104,9 +104,9 @@ export function themeModeLabel(mode: RudraThemeMode): string {
   return "VOID";
 }
 
-export function sutraPlaceholder(hour: number, processing: boolean): string {
-  if (processing) return "Third eye opening…";
-  return "What wisdom do you seek?";
+export function sutraPlaceholder(_hour: number, processing: boolean): string {
+  if (processing) return "Recognizing…";
+  return "What wisdom do you seek — or speak your command";
 }
 
 export function coreRhythmFromState(
@@ -129,10 +129,10 @@ export function hapticTap(pattern: number | number[] = 8): void {
 }
 
 export function worldGreeting(hour: number): string {
-  if (hour >= 5 && hour < 12) return "The Navagraha await Rudra's command";
-  if (hour >= 12 && hour < 17) return "Nine Grahas orbit the Trishula";
-  if (hour >= 17 && hour < 21) return "Nebula phase — command before rest";
-  return "The void holds your counsel";
+  if (hour >= 5 && hour < 12) return "Good morning — Trishula core online";
+  if (hour >= 12 && hour < 17) return "Nine Grahas orbit the arc reactor";
+  if (hour >= 17 && hour < 21) return "Prime phase — command before rest";
+  return "Welcome back, sir — Rudra Prime at your service";
 }
 
 export const FIRST_BREATH_KEY = "rudra-first-breath";

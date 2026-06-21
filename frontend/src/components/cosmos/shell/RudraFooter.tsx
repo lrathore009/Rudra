@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FOOTER_TICKER_SEGMENTS } from "@/lib/rudra-theme";
 import { cn } from "@/lib/utils";
 
 function StatusPulse({ active }: { active: boolean }) {
@@ -9,16 +8,15 @@ function StatusPulse({ active }: { active: boolean }) {
 }
 
 export function RudraFooter({
-  tickerIdx,
   uplinkActive = true,
   memorySynced = true,
+  voiceActive = false,
 }: {
-  tickerIdx: number;
+  tickerIdx?: number;
   uplinkActive?: boolean;
   memorySynced?: boolean;
+  voiceActive?: boolean;
 }) {
-  const footerSegment = FOOTER_TICKER_SEGMENTS[tickerIdx % FOOTER_TICKER_SEGMENTS.length];
-
   return (
     <motion.footer
       className="pointer-events-none flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 pb-3 font-terminal text-[7px] uppercase tracking-[0.14em] text-muted-foreground/55 sm:px-8 sm:text-[8px]"
@@ -29,10 +27,12 @@ export function RudraFooter({
       <span className="cosmic-footer-status truncate">
         <StatusPulse active={uplinkActive} />
         Encrypted uplink · {uplinkActive ? "Active" : "Offline"}
+        <StatusPulse active={voiceActive || uplinkActive} />
+        · Voice {voiceActive ? "active" : "ready"}
         <StatusPulse active={memorySynced} />
-        · {footerSegment}
+        · Memory lattice synced
       </span>
-      <span className="ml-auto shrink-0">Trishula OS v1.9 · Rudra Core Online</span>
+      <span className="ml-auto shrink-0">Rudra Prime OS v1.0 · Trishula Core · Jarvis Engine</span>
     </motion.footer>
   );
 }

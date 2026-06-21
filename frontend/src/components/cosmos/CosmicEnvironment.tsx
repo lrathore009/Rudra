@@ -212,8 +212,8 @@ export function CosmicEnvironment({
 }) {
   return (
     <>
-      <color attach="background" args={["#020208"]} />
-      <fog attach="fog" args={["#020208", 40, 130]} />
+      <color attach="background" args={["#060a10"]} />
+      <fog attach="fog" args={["#060a10", 40, 130]} />
       <MilkyWaySky reducedMotion={reducedMotion} />
       <Starfield reducedMotion={reducedMotion} />
       <NebulaClouds reducedMotion={reducedMotion} />
